@@ -1,0 +1,12 @@
+.qd-start_running,
+.qd-start_requested,
+.qd-start_waiting,
+.qd-start_finished {
+    margin-top: 1em;
+}
+
+.qd-start_requested-title,
+.qd-start_waiting-title,
+.qd-start_finished-title {
+    font-weight: bolder;
+}

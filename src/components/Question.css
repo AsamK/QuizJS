@@ -1,0 +1,8 @@
+.qd-question {
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}

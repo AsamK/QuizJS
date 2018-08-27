@@ -1,0 +1,28 @@
+.qd-answer {
+    align-items: center;
+    background-color: black;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.qd-answer_correct {
+    background-color: green;
+}
+
+.qd-answer_correct-but {
+    animation: correct-but-animation 1s infinite;
+}
+
+@keyframes correct-but-animation {
+    to {
+        background-color: green;
+    }
+}
+
+.qd-answer_wrong {
+    background-color: red;
+}

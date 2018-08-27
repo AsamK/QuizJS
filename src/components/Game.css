@@ -1,0 +1,38 @@
+.qd-game_header {
+    display: flex;
+    margin: 1em;
+}
+
+.qd-game_points {
+    flex: none;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.qd-game_user {
+    flex: auto;
+    overflow: hidden;
+    text-align: center;
+}
+
+.qd-game_round {
+    display: flex;
+    margin: 1em;
+}
+
+.qd-game_round-category {
+    flex: none;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.qd-game_round-questions {
+    display: flex;
+    flex: auto;
+    overflow: hidden;
+}
+
+.qd-game_round-question-block {
+    flex: auto;
+    margin-right: 3px;
+}
