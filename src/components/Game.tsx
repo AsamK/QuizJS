@@ -1,6 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
+
 import { GameState } from '../api/IApiGame';
 import { selectGame, startPlaying } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';

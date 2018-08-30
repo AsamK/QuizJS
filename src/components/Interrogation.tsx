@@ -1,6 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
+
 import { createSelector } from 'reselect';
 import { IApiCategory } from '../api/IApiCategory';
 import { IAppStore } from '../redux/interfaces/IAppStore';

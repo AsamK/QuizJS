@@ -1,11 +1,21 @@
 .qd-app {
     display: flex;
+    flex: auto;
     flex-direction: column;
-    height: 100%;
     margin: 0 auto;
     max-width: 500px;
+    padding: 1em;
+}
+
+.qd-app_refresh {
+    margin-bottom: 1em;
 }
 
 .qd-interrogation {
     flex: auto;
+}
+
+.qd-login,
+.qd-create-user {
+    margin-bottom: 2em;
 }

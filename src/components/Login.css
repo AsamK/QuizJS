@@ -1,0 +1,8 @@
+.qd-login_form {
+    display: flex;
+    flex-direction: column;
+}
+
+.qd-login_form > label {
+    margin-bottom: 10px;
+}

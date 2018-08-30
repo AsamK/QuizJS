@@ -15,6 +15,8 @@ import { rootReducer } from './redux/reducers';
 import { AppThunkDispatch } from './redux/thunks';
 import { extraThunkArgument } from './settings';
 
+import 'map.prototype.tojson'; // TODO only import for development
+
 const reduxMiddlewares: Middleware[] = [
   thunkMiddleware.withExtraArgument(extraThunkArgument), // lets us use dispatch() functions
 ];

@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect, Provider } from 'react-redux';
 import { Store } from 'redux';
-import './App.css';
 
 import { STORAGE_KEY_COOKIE } from '../consts';
 import { cookieLoaded } from '../redux/actions/ui.actions';
@@ -12,6 +11,7 @@ import { loggedInSelector, mainViewSelector } from '../redux/selectors/ui.select
 import { AppThunkDispatch, loadData, login } from '../redux/thunks';
 import { createRequestFn, extraThunkArgument, QD_SERVER } from '../settings';
 import { assertUnreachable } from '../utils/utils';
+import './App.css';
 import CategorySelection from './CategorySelection';
 import CreateUser from './CreateUser';
 import Game from './Game';
@@ -68,7 +68,7 @@ class App extends React.Component<IAppProps, IAppState> {
     } else {
       content = this.renderContent();
       content = <>
-        <button onClick={this.refresh}>Refresh</button>
+        <button className="qd-app_refresh" onClick={this.refresh}>Refresh</button>
         {content}
       </>;
     }

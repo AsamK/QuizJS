@@ -1,0 +1,8 @@
+.qd-create-user_form {
+    display: flex;
+    flex-direction: column;
+}
+
+.qd-create-user_form > label {
+    margin-bottom: 10px;
+}

@@ -11,5 +11,6 @@ body {
 
 /* stylelint-disable-next-line selector-max-specificity, selector-max-id */
 #content {
+  display: flex;
   height: 100%;
 }

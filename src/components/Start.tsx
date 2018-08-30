@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { GameState } from '../api/IApiGame';
 
+import { GameState } from '../api/IApiGame';
 import { selectGame, showCreateNewGame } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IGame } from '../redux/interfaces/IGame';
@@ -22,36 +22,55 @@ interface IStartDispatchProps {
 interface IStartProps extends IStartStateProps, IStartDispatchProps {
 }
 
+interface IStartElementProps {
+    game: IGame;
+    onGameSelected: (gameId: number) => void;
+}
+
+function StartElement({ game, onGameSelected }: IStartElementProps): React.ReactElement<IStartElementProps> {
+    const yourCorrect = game.your_answers.filter(a => a === 0).length;
+    const opponentCorrect = game.opponent_answers.filter(a => a === 0).length;
+    return <div
+        className="qd-start_entry"
+        key={game.game_id}
+        onClick={() => onGameSelected(game.game_id)}
+    >
+        <div className="qd-start_entry_opponent">
+            {game.opponent.name}
+            <div className="qd-start_entry_info">{
+                game.state === GameState.ELAPSED ? 'Abgelaufen' :
+                    game.state === GameState.GAVE_UP ? 'Aufgegeben' :
+                        game.state === GameState.REQUESTED ? 'Anfrage' :
+                            game.state === GameState.FINISHED ? (
+                                yourCorrect > opponentCorrect ? 'Gewonnen' :
+                                    yourCorrect < opponentCorrect ? 'Verloren' :
+                                        'Unentschieden'
+                            ) : null
+            }</div>
+        </div>
+        <div className="qd-start_entry_points">
+            {yourCorrect}-{opponentCorrect}
+        </div>
+        <div className="qd-start_entry_time">
+            {new Date(game.timestamp).toISOString()}
+        </div>
+    </div>;
+}
+
 function Start({ games, user, onGameSelected, onNewGame }: IStartProps): React.ReactElement<IStartProps> {
     const requestedGames = games.filter(game => game.your_turn && game.state === GameState.REQUESTED)
-        .map(g => {
-            return <div key={g.game_id} onClick={() => onGameSelected(g.game_id)}>{g.opponent.name}:&nbsp;
-              {g.your_answers.filter(a => a === 0).length} vs {g.opponent_answers.filter(a => a === 0).length}
-            </div>;
-        });
+        .map(g => <StartElement game={g} onGameSelected={onGameSelected} />);
     const runningGames = games.filter(game => game.your_turn && game.state === GameState.ACTIVE)
-        .map(g => {
-            return <div key={g.game_id} onClick={() => onGameSelected(g.game_id)}>{g.opponent.name}:&nbsp;
-              {g.your_answers.filter(a => a === 0).length} vs {g.opponent_answers.filter(a => a === 0).length}
-            </div>;
-        });
+        .map(g => <StartElement game={g} onGameSelected={onGameSelected} />);
     const waitingGames = games.filter(game => !game.your_turn &&
         game.state !== GameState.FINISHED &&
         game.state !== GameState.ELAPSED &&
         game.state !== GameState.GAVE_UP)
-        .map(g => {
-            return <div key={g.game_id} onClick={() => onGameSelected(g.game_id)}>{g.opponent.name}:&nbsp;
-              {g.your_answers.filter(a => a === 0).length} vs {g.opponent_answers.filter(a => a === 0).length}
-            </div>;
-        });
+        .map(g => <StartElement game={g} onGameSelected={onGameSelected} />);
     const finishedGames = games.filter(game => game.state === GameState.FINISHED ||
         game.state === GameState.GAVE_UP ||
         game.state === GameState.ELAPSED)
-        .map(g => {
-            return <div key={g.game_id} onClick={() => onGameSelected(g.game_id)}>{g.opponent.name}:&nbsp;
-              {g.your_answers.filter(a => a === 0).length} vs {g.opponent_answers.filter(a => a === 0).length}
-            </div>;
-        });
+        .map(g => <StartElement game={g} onGameSelected={onGameSelected} />);
     return <div className="qd-start">
         Eingeloggt als: {!user ? 'Unbekannt' : user.name}
         <button onClick={onNewGame}>Neues Spiel starten</button>

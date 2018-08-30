@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { AppThunkDispatch, createUser } from '../redux/thunks';
+import './CreateUser.css';
 
 interface ICreateUserStateProps {
 }
@@ -30,11 +32,14 @@ class CreateUser extends React.Component<ICreateUserProps, ICreateUserState> {
     public render(): React.ReactNode {
         const { name, email, password, password2 } = this.state;
         const { onCreateUser } = this.props;
-        return <div>
-            <form onSubmit={e => {
-                onCreateUser(name, email, password);
-                e.preventDefault();
-            }}>
+        return <div className="qd-create-user">
+            <form
+                className="qd-create-user_form"
+                onSubmit={e => {
+                    onCreateUser(name, email, password);
+                    e.preventDefault();
+                }}
+            >
                 <label>Name: <input value={name} onChange={e => this.setState({ name: e.target.value })} /></label>
                 <label>E-Mail: <input value={email} onChange={e => this.setState({ email: e.target.value })} /></label>
                 <label>Password: <input value={password} onChange={e => this.setState({ password: e.target.value })} /></label>

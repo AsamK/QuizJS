@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './Login.css';
+
 interface ILoginProps {
     onLogin: (name: string, password: string) => void;
 }
@@ -18,11 +20,13 @@ class Login extends React.Component<ILoginProps, ILoginState> {
     public render(): React.ReactNode {
         const { name, password } = this.state;
         const { onLogin } = this.props;
-        return <div>
-            <form onSubmit={e => {
-                onLogin(name, password);
-                e.preventDefault();
-            }}>
+        return <div className="qd-login">
+            <form
+                className="qd-login_form"
+                onSubmit={e => {
+                    onLogin(name, password);
+                    e.preventDefault();
+                }}>
                 <label>Name: <input value={name} onChange={e => this.setState({ name: e.target.value })} /></label>
                 <label>Passwort: <input value={password} onChange={e => this.setState({ password: e.target.value })} /></label>
                 <button type="submit">Login</button>
