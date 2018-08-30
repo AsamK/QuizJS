@@ -1,7 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { IAppStore } from '../redux/interfaces/IAppStore';
+import { AppThunkDispatch, createUser } from '../redux/thunks';
 
-interface ICreateUserProps {
+interface ICreateUserStateProps {
+}
+interface ICreateUserDispatchProps {
     onCreateUser: (name: string, email: string, password: string) => void;
+}
+
+interface ICreateUserProps extends ICreateUserStateProps, ICreateUserDispatchProps {
 }
 
 interface ICreateUserState {
@@ -38,4 +46,15 @@ class CreateUser extends React.Component<ICreateUserProps, ICreateUserState> {
     }
 }
 
-export default CreateUser;
+const mapStateToProps = (state: IAppStore): ICreateUserStateProps => {
+    return {
+    };
+};
+
+const mapDispatchToProps = (dispatch: AppThunkDispatch): ICreateUserDispatchProps => {
+    return {
+        onCreateUser: (name, email, password) => dispatch(createUser(name, email, password)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateUser);

@@ -1,4 +1,4 @@
-import { IApiGame } from './IApiGame';
+import { IApiBooleanResult } from './IApiBooleanResult';
 import { IApiGameResponse } from './IApiGameResponse';
 import { IApiGamesResponse } from './IApiGamesResponse';
 import { IApiPopup } from './IApiPopup';
@@ -17,29 +17,7 @@ export interface IRequestOptions {
 
 export type BackendRequestFn = (method: 'GET' | 'POST', path: string, options: IRequestOptions) => Promise<Response>;
 
-export function createProxiedRequestFn(proxyUrl: string, targetHost: string, cookie?: string): BackendRequestFn {
-    return (method: 'GET' | 'POST', path: string, { contentType, body }: IRequestOptions) => {
-        const headers = new Headers([
-            ['Target-Host', targetHost],
-            ['Target-Path', path],
-        ]);
-        if (cookie) {
-            headers.set('X-Cookie', cookie);
-        }
-        if (contentType) {
-            headers.set('Content-Type', contentType);
-        }
-
-        return fetch(proxyUrl, {
-            body,
-            headers,
-            method,
-            mode: 'cors',
-        });
-    };
-}
-
-export function login(requestFn: BackendRequestFn, userName: string, passwordSalt: string, password: string,
+export function apiLogin(requestFn: BackendRequestFn, userName: string, passwordSalt: string, password: string,
 ): Promise<IApiPopup | { cookie: string, body: IApiStateResponse }> {
     const passwordHash = getPasswordHash(passwordSalt, password);
     const body = toFormUrlencoded({
@@ -59,7 +37,7 @@ export function login(requestFn: BackendRequestFn, userName: string, passwordSal
     );
 }
 
-export function createUser(requestFn: BackendRequestFn, userName: string, email: string, passwordSalt: string, password: string,
+export function apiCreateUser(requestFn: BackendRequestFn, userName: string, email: string, passwordSalt: string, password: string,
 ): Promise<IApiPopup | { cookie: string, body: IApiStateResponse }> {
     const passwordHash = getPasswordHash(passwordSalt, password);
     const body = toFormUrlencoded({
@@ -80,7 +58,7 @@ export function createUser(requestFn: BackendRequestFn, userName: string, email:
     );
 }
 
-export function updateUser(requestFn: BackendRequestFn, userName: string, email: string, passwordSalt: string, password: string,
+export function apiUpdateUser(requestFn: BackendRequestFn, userName: string, email: string, passwordSalt: string, password: string,
 ): Promise<IApiPopup | { user: IApiUser }> {
     const passwordHash = getPasswordHash(passwordSalt, password);
     const body = toFormUrlencoded({
@@ -91,14 +69,14 @@ export function updateUser(requestFn: BackendRequestFn, userName: string, email:
     return requestFn('POST', 'users/update_user', { body, contentType: CONTENT_TYPE_URLENCODED }).then(response => response.json());
 }
 
-export function updateAvatar(requestFn: BackendRequestFn, avatarCode: string): Promise<{ t: boolean }> {
+export function apiUpdateAvatar(requestFn: BackendRequestFn, avatarCode: string): Promise<IApiBooleanResult> {
     const body = toFormUrlencoded({
         avatar_code: avatarCode,
     });
     return requestFn('POST', 'users/update_avatar', { body, contentType: CONTENT_TYPE_URLENCODED }).then(response => response.json());
 }
 
-export function addDeviceTokenAndroid(requestFn: BackendRequestFn, deviceToken: string, deviceType: string): Promise<{ t: boolean }> {
+export function apiAddDeviceTokenAndroid(requestFn: BackendRequestFn, deviceToken: string, deviceType: string): Promise<IApiBooleanResult> {
     const body = toFormUrlencoded({
         device_token: deviceToken,
         device_type: deviceType,
@@ -107,11 +85,11 @@ export function addDeviceTokenAndroid(requestFn: BackendRequestFn, deviceToken: 
         .then(response => response.json());
 }
 
-export function requestState(requestFn: BackendRequestFn): Promise<IApiStateResponse> {
+export function apiRequestState(requestFn: BackendRequestFn): Promise<IApiStateResponse> {
     return requestFn('POST', 'users/current_user_games_m', {}).then(response => response.json());
 }
 
-export function requestGames(requestFn: BackendRequestFn, gameIds: number[]): Promise<IApiGamesResponse> {
+export function apiRequestGames(requestFn: BackendRequestFn, gameIds: number[]): Promise<IApiGamesResponse> {
     const body = toFormUrlencoded({
         gids: '[' + gameIds.join(',') + ']',
     });
@@ -119,7 +97,7 @@ export function requestGames(requestFn: BackendRequestFn, gameIds: number[]): Pr
         .then(response => response.json());
 }
 
-export function requestGame(requestFn: BackendRequestFn, gameId: number): Promise<IApiGameResponse> {
+export function apiRequestGame(requestFn: BackendRequestFn, gameId: number): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         gids: String(gameId),
     });
@@ -127,7 +105,7 @@ export function requestGame(requestFn: BackendRequestFn, gameId: number): Promis
         .then(response => response.json());
 }
 
-export function requestGameM(requestFn: BackendRequestFn, gameId: number): Promise<IApiGameResponse> {
+export function apiRequestGameM(requestFn: BackendRequestFn, gameId: number): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         gids: String(gameId),
     });
@@ -135,7 +113,7 @@ export function requestGameM(requestFn: BackendRequestFn, gameId: number): Promi
         .then(response => response.json());
 }
 
-export function createGame(requestFn: BackendRequestFn, opponentId: string, mode = 0, wasRecommended = 0): Promise<IApiGameResponse> {
+export function apiCreateGame(requestFn: BackendRequestFn, opponentId: string, mode = 0, wasRecommended = 0): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         mode: String(mode),
         opponent_id: opponentId,
@@ -145,7 +123,7 @@ export function createGame(requestFn: BackendRequestFn, opponentId: string, mode
         .then(response => response.json());
 }
 
-export function createRandomGame(requestFn: BackendRequestFn, mode = 0): Promise<IApiGameResponse> {
+export function apiCreateRandomGame(requestFn: BackendRequestFn, mode = 0): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         mode: String(mode),
     });
@@ -153,16 +131,16 @@ export function createRandomGame(requestFn: BackendRequestFn, mode = 0): Promise
         .then(response => response.json());
 }
 
-export function acceptGame(requestFn: BackendRequestFn, gameId: number, accept: boolean): Promise<{ t: boolean }> {
+export function apiDeclineGame(requestFn: BackendRequestFn, gameId: number): Promise<IApiBooleanResult> {
     const body = toFormUrlencoded({
-        accept: accept ? '1' : '0',
+        accept: '0',
         game_id: String(gameId),
     });
     return requestFn('POST', 'games/accept', { body, contentType: CONTENT_TYPE_URLENCODED })
         .then(response => response.json());
 }
 
-export function giveUpGame(requestFn: BackendRequestFn, gameId: number): Promise<IApiGame> {
+export function apiGiveUpGame(requestFn: BackendRequestFn, gameId: number): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         game_id: String(gameId),
     });
@@ -170,7 +148,7 @@ export function giveUpGame(requestFn: BackendRequestFn, gameId: number): Promise
         .then(response => response.json());
 }
 
-export function removeFriend(requestFn: BackendRequestFn, userId: string): Promise<{ removed_id: string }> {
+export function apiRemoveFriend(requestFn: BackendRequestFn, userId: string): Promise<{ removed_id: string }> {
     const body = toFormUrlencoded({
         friend_id: userId,
     });
@@ -178,7 +156,7 @@ export function removeFriend(requestFn: BackendRequestFn, userId: string): Promi
         .then(response => response.json());
 }
 
-export function addFriend(requestFn: BackendRequestFn, userId: string): Promise<IApiPopup> {
+export function apiAddFriend(requestFn: BackendRequestFn, userId: string): Promise<IApiPopup> {
     const body = toFormUrlencoded({
         friend_id: userId,
     });
@@ -186,7 +164,7 @@ export function addFriend(requestFn: BackendRequestFn, userId: string): Promise<
         .then(response => response.json());
 }
 
-export function findUser(requestFn: BackendRequestFn, searchName: string): Promise<IApiUserSearchResponse | IApiPopup> {
+export function apiFindUser(requestFn: BackendRequestFn, searchName: string): Promise<IApiUserSearchResponse | IApiPopup> {
     const body = toFormUrlencoded({
         opponent_name: searchName,
     });
@@ -194,14 +172,14 @@ export function findUser(requestFn: BackendRequestFn, searchName: string): Promi
         .then(response => response.json());
 }
 
-export function requestUploadRound(
+export function apiRequestUploadRound(
     requestFn: BackendRequestFn,
     gameId: number,
     isImageQuestionDisabled: 0 | 1,
     catChoice: number,
     answers: number[],
     questionTypes: number[],
-): Promise<IApiGame> {
+): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         answers: '[' + answers.join(',') + ']',
         cat_choice: String(catChoice),
@@ -213,7 +191,7 @@ export function requestUploadRound(
         .then(response => response.json());
 }
 
-export function requestStats(requestFn: BackendRequestFn): Promise<IApiStats> {
+export function apiRequestStats(requestFn: BackendRequestFn): Promise<IApiStats> {
     return requestFn('GET', 'stats/my_stats', {}).then(response => response.json());
 }
 

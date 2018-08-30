@@ -1,4 +1,5 @@
 import { IApiImageQuestion } from './IApiImageQuestion';
+import { IApiOpponent } from './IApiOpponent';
 import { IApiQuestion } from './IApiQuestion';
 
 export const enum GameState {
@@ -6,6 +7,7 @@ export const enum GameState {
     ACTIVE = 1,
     FINISHED = 2,
     GAVE_UP = 5,
+    ELAPSED = 6,
 }
 
 export const enum QuestionType {
@@ -23,7 +25,7 @@ export interface IApiGame {
     cat_choices: number[];
     is_image_question_disabled: boolean;
     mutual: null;
-    elapsed_min: 0;
+    elapsed_min: number;
     messages: [];
     state: GameState;
     mode: 0;

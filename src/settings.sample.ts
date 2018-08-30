@@ -1,4 +1,5 @@
-import { BackendRequestFn, createProxiedRequestFn } from './api/api';
+import { BackendRequestFn } from './api/api';
+import { createProxiedRequestFn } from './utils/utils';
 
 const PROXY_URL = 'https://example.com/proxy.cgi';
 

@@ -1,43 +1,59 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { GameState } from '../api/IApiGame';
-import { IApiStateResponse } from '../api/IApiStateResponse';
+
+import { selectGame, showCreateNewGame } from '../redux/actions/ui.actions';
+import { IAppStore } from '../redux/interfaces/IAppStore';
+import { IGame } from '../redux/interfaces/IGame';
+import { IUser } from '../redux/interfaces/IUser';
+import { gamesSelector, userSelector } from '../redux/selectors/entities.selectors';
+import { AppThunkDispatch } from '../redux/thunks';
 import './Start.css';
 
-interface IStartProps {
-    gameState: IApiStateResponse;
+interface IStartStateProps {
+    games: IGame[];
+    user: IUser | null;
+}
+interface IStartDispatchProps {
     onGameSelected: (gameId: number) => void;
     onNewGame: () => void;
 }
 
-function Start({ gameState, onGameSelected, onNewGame }: IStartProps): React.ReactElement<IStartProps> {
-    const requestedGames = gameState.user.games.filter(game => game.your_turn && game.state === GameState.REQUESTED)
+interface IStartProps extends IStartStateProps, IStartDispatchProps {
+}
+
+function Start({ games, user, onGameSelected, onNewGame }: IStartProps): React.ReactElement<IStartProps> {
+    const requestedGames = games.filter(game => game.your_turn && game.state === GameState.REQUESTED)
         .map(g => {
             return <div key={g.game_id} onClick={() => onGameSelected(g.game_id)}>{g.opponent.name}:&nbsp;
-              {g.opponent_answers.filter(a => a === 0).length} vs {g.your_answers.filter(a => a === 0).length}
+              {g.your_answers.filter(a => a === 0).length} vs {g.opponent_answers.filter(a => a === 0).length}
             </div>;
         });
-    const runningGames = gameState.user.games.filter(game => game.your_turn && game.state === GameState.ACTIVE)
+    const runningGames = games.filter(game => game.your_turn && game.state === GameState.ACTIVE)
         .map(g => {
             return <div key={g.game_id} onClick={() => onGameSelected(g.game_id)}>{g.opponent.name}:&nbsp;
-              {g.opponent_answers.filter(a => a === 0).length} vs {g.your_answers.filter(a => a === 0).length}
+              {g.your_answers.filter(a => a === 0).length} vs {g.opponent_answers.filter(a => a === 0).length}
             </div>;
         });
-    const waitingGames = gameState.user.games.filter(game => !game.your_turn &&
+    const waitingGames = games.filter(game => !game.your_turn &&
         game.state !== GameState.FINISHED &&
+        game.state !== GameState.ELAPSED &&
         game.state !== GameState.GAVE_UP)
         .map(g => {
             return <div key={g.game_id} onClick={() => onGameSelected(g.game_id)}>{g.opponent.name}:&nbsp;
-              {g.opponent_answers.filter(a => a === 0).length} vs {g.your_answers.filter(a => a === 0).length}
+              {g.your_answers.filter(a => a === 0).length} vs {g.opponent_answers.filter(a => a === 0).length}
             </div>;
         });
-    const finishedGames = gameState.user.games.filter(game => game.state === GameState.FINISHED || game.state === GameState.GAVE_UP)
+    const finishedGames = games.filter(game => game.state === GameState.FINISHED ||
+        game.state === GameState.GAVE_UP ||
+        game.state === GameState.ELAPSED)
         .map(g => {
             return <div key={g.game_id} onClick={() => onGameSelected(g.game_id)}>{g.opponent.name}:&nbsp;
-              {g.opponent_answers.filter(a => a === 0).length} vs {g.your_answers.filter(a => a === 0).length}
+              {g.your_answers.filter(a => a === 0).length} vs {g.opponent_answers.filter(a => a === 0).length}
             </div>;
         });
     return <div className="qd-start">
-        Eingeloggt als: {gameState.user.name}
+        Eingeloggt als: {!user ? 'Unbekannt' : user.name}
         <button onClick={onNewGame}>Neues Spiel starten</button>
         <div className="qd-start_running">
             {runningGames}
@@ -63,4 +79,18 @@ function Start({ gameState, onGameSelected, onNewGame }: IStartProps): React.Rea
     </div >;
 }
 
-export default Start;
+const mapStateToProps = (state: IAppStore): IStartStateProps => {
+    return {
+        games: gamesSelector(state),
+        user: userSelector(state),
+    };
+};
+
+const mapDispatchToProps = (dispatch: AppThunkDispatch): IStartDispatchProps => {
+    return {
+        onGameSelected: gameId => dispatch(selectGame(gameId)),
+        onNewGame: () => dispatch(showCreateNewGame()),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Start);

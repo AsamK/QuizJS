@@ -1,15 +1,24 @@
 import React from 'react';
 
-import { IApiCategory } from '../api/IApiCategory';
+import { connect } from 'react-redux';
+import { IAppStore } from '../redux/interfaces/IAppStore';
+import { ICategory } from '../redux/interfaces/ICategory';
+import { selectedGameCategoriesForSelection } from '../redux/selectors/ui.selectors';
+import { AppThunkDispatch, selectCategoryForSelectedGame } from '../redux/thunks';
 
-interface ICategorySelectionProps {
-    categories: IApiCategory[];
+interface ICategorySelectionStateProps {
+    categories: ICategory[] | null;
+}
+interface ICategorySelectionDispatchProps {
     onCategorySelected: (index: number) => void;
+}
+
+interface ICategorySelectionProps extends ICategorySelectionStateProps, ICategorySelectionDispatchProps {
 }
 
 function CategorySelection({ categories, onCategorySelected }: ICategorySelectionProps): React.ReactElement<ICategorySelectionProps> {
     return <div>
-        {categories.map((category, i) =>
+        {!categories ? null : categories.map((category, i) =>
             <div
                 key={category.cat_id}
                 style={{ backgroundColor: category.color }}
@@ -19,4 +28,16 @@ function CategorySelection({ categories, onCategorySelected }: ICategorySelectio
     </div>;
 }
 
-export default CategorySelection;
+const mapStateToProps = (state: IAppStore): ICategorySelectionStateProps => {
+    return {
+        categories: selectedGameCategoriesForSelection(state),
+    };
+};
+
+const mapDispatchToProps = (dispatch: AppThunkDispatch): ICategorySelectionDispatchProps => {
+    return {
+        onCategorySelected: (index: number) => dispatch(selectCategoryForSelectedGame(index)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CategorySelection);
