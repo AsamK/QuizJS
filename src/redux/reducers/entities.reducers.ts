@@ -81,7 +81,7 @@ const mapApiGameToGame = (game: IApiGame): IGame => ({
     opponent_question_types: game.opponent_question_types,
     rating_bonus: game.rating_bonus,
     state: game.state,
-    timestamp: (Math.round(Date.now() / 60 / 1000) - game.elapsed_min) * 60 * 1000,
+    timestamp: (Math.floor(Date.now() / 60 / 1000) - game.elapsed_min) * 60 * 1000,
     you_gave_up: game.you_gave_up,
     your_answers: game.your_answers,
     your_question_types: game.your_question_types,

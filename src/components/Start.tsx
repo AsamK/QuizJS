@@ -9,6 +9,7 @@ import { IUser } from '../redux/interfaces/IUser';
 import { gamesSelector, userSelector } from '../redux/selectors/entities.selectors';
 import { AppThunkDispatch } from '../redux/thunks';
 import './Start.css';
+import { Time } from './Time';
 
 interface IStartStateProps {
     games: IGame[];
@@ -51,7 +52,10 @@ function StartElement({ game, onGameSelected }: IStartElementProps): React.React
             {yourCorrect}-{opponentCorrect}
         </div>
         <div className="qd-start_entry_time">
-            {new Date(game.timestamp).toISOString()}
+            <Time
+                timestamp={game.timestamp}
+                showSeconds={false}
+            />
         </div>
     </div>;
 }
