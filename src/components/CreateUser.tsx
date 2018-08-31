@@ -42,8 +42,15 @@ class CreateUser extends React.Component<ICreateUserProps, ICreateUserState> {
             >
                 <label>Name: <input value={name} onChange={e => this.setState({ name: e.target.value })} /></label>
                 <label>E-Mail: <input value={email} onChange={e => this.setState({ email: e.target.value })} /></label>
-                <label>Password: <input value={password} onChange={e => this.setState({ password: e.target.value })} /></label>
-                <label>Passwort wiederholen: <input value={password2} onChange={e => this.setState({ password2: e.target.value })}
+                <label>Password: <input
+                    type="password"
+                    value={password}
+                    onChange={e => this.setState({ password: e.target.value })}
+                /></label>
+                <label>Passwort wiederholen: <input
+                    type="password"
+                    value={password2}
+                    onChange={e => this.setState({ password2: e.target.value })}
                 /></label>
                 <button type="submit" disabled={!password || password !== password2}>Erstellen</button>
             </form>

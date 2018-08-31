@@ -28,7 +28,11 @@ class Login extends React.Component<ILoginProps, ILoginState> {
                     e.preventDefault();
                 }}>
                 <label>Name: <input value={name} onChange={e => this.setState({ name: e.target.value })} /></label>
-                <label>Passwort: <input value={password} onChange={e => this.setState({ password: e.target.value })} /></label>
+                <label>Passwort: <input
+                    type="password"
+                    value={password}
+                    onChange={e => this.setState({ password: e.target.value })}
+                /></label>
                 <button type="submit">Login</button>
             </form>
         </div>;
