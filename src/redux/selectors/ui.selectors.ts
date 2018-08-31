@@ -105,7 +105,7 @@ export const selectedGameCategoryIndex = createSelector(selectedGameSelector, se
     },
 );
 
-export const selectedGameCategoriesForSelection = createSelector(
+export const selectedGameCategoriesForSelectionSelector = createSelector(
     selectedGameQuestionsSelector,
     questionRoundOffsetSelector,
     categoriesSelector,
@@ -123,7 +123,19 @@ export const selectedGameCategoriesForSelection = createSelector(
     },
 );
 
-export const selectedGameQuestionIndex = createSelector(
+export const selectedGameQuestionIndexForAnswersSelector = createSelector(
+    roundIndexSelector,
+    selectedGameStateSelector,
+    showAnswerSelector,
+    (roundIndex, gameState, showAnswer) => {
+        if (roundIndex == null) {
+            return null;
+        }
+        return roundIndex * QUESTIONS_PER_ROUND + ((gameState.pendingAnswers.length - (showAnswer ? 1 : 0)) % QUESTIONS_PER_ROUND);
+    },
+);
+
+export const selectedGameQuestionIndexSelector = createSelector(
     questionRoundOffsetSelector,
     selectedGameCategoryIndex,
     selectedGameStateSelector,
@@ -138,7 +150,7 @@ export const selectedGameQuestionIndex = createSelector(
 );
 
 export const selectedGameQuestionSelector = createSelector(
-    selectedGameQuestionIndex,
+    selectedGameQuestionIndexSelector,
     selectedGameQuestionsSelector,
     (questionIndex, questions) => {
         if (questionIndex == null || questions == null) {

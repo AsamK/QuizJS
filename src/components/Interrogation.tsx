@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import { IApiCategory } from '../api/IApiCategory';
 import { TIME_ELAPSED_ANSWER } from '../consts';
 import { IAppStore } from '../redux/interfaces/IAppStore';
-import { selectedGameCategory, selectedGameQuestionSelector, selectedGameStateSelector, showAnswerSelector } from '../redux/selectors/ui.selectors';
+import { selectedGameCategory, selectedGameQuestionIndexForAnswersSelector, selectedGameQuestionSelector, selectedGameSelector, selectedGameStateSelector, showAnswerSelector } from '../redux/selectors/ui.selectors';
 import { AppThunkDispatch, nextQuestionSelectedGame, selectAnswerForSelectedGame } from '../redux/thunks';
 import { getRandomOrder, shuffleArray } from '../utils/utils';
 import Answer, { AnswerState } from './Answer';
@@ -23,6 +23,8 @@ interface IInterrogationStateProps {
     imageUrl?: string;
     showCorrectAnswerIndex: number | null;
     showSelectedAnswerIndex: number | null;
+    opponentAnswerIndex: number | null;
+    opponentName: string | null;
 }
 interface IInterrogationDispatchProps {
     onAnswerClick: (index: number) => void;
@@ -63,6 +65,7 @@ class Interrogation extends React.Component<IInterrogationProps> {
     public render(): React.ReactElement<IInterrogationProps> {
         const {
             answers, category, imageUrl, question, showCorrectAnswerIndex, showSelectedAnswerIndex, onAnswerClick, onContinueClick,
+            opponentAnswerIndex, opponentName,
         } = this.props;
         const answerElements = answers
             .map((answer, i) => <Answer
@@ -73,6 +76,9 @@ class Interrogation extends React.Component<IInterrogationProps> {
                             AnswerState.NEUTRAL
                 }
                 answer={answer}
+                info={
+                    opponentAnswerIndex !== i ? undefined : opponentName || undefined
+                }
                 onClick={() => onAnswerClick(i)}
             />);
         const remainingSeconds = this.props.timeLimit <= 0
@@ -109,6 +115,8 @@ class Interrogation extends React.Component<IInterrogationProps> {
 }
 
 const mapStateToProps = (state: IAppStore): IInterrogationStateProps => {
+    const game = selectedGameSelector(state);
+    const questionIndex = selectedGameQuestionIndexForAnswersSelector(state);
     const question = selectedGameQuestionSelector(state);
     const gameState = selectedGameStateSelector(state);
     const showAnswer = showAnswerSelector(state);
@@ -127,6 +135,10 @@ const mapStateToProps = (state: IAppStore): IInterrogationStateProps => {
         category: selectedGameCategory(state),
         firstShownTimestamp: gameState.firstShownTimestamp,
         imageUrl: !question ? undefined : question.image_url,
+        opponentAnswerIndex: !showAnswer || !game || questionIndex == null ? null : questionIndex >= game.opponent_answers.length
+            ? null
+            : game.opponent_answers[questionIndex],
+        opponentName: !showAnswer || !game ? null : game.opponent.name,
         question: !question ? '' : question.question,
         showCorrectAnswerIndex: !showAnswer ? null : 0,
         showSelectedAnswerIndex: !showAnswer || gameState.pendingAnswers.length === 0
