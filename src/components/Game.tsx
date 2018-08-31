@@ -21,7 +21,7 @@ interface IGameDispatchProps {
     onDeclineGame: (gameId: number) => void;
     onGiveUp: (gameId: number) => void;
     onNewGame: (userId: string) => void;
-    onPlay: () => void;
+    onPlay: (gameId: number) => void;
     onRemoveFriend: (userId: string) => void;
     requestGame: (gameId: number) => void;
 }
@@ -83,26 +83,34 @@ class Game extends React.PureComponent<IGameProps> {
                 <div className="qd-game_user">{game.opponent.name}</div>
             </div>
             {rounds}
-            <button onClick={onPlay}
-                disabled={!game.your_turn || (game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED)}
-            >Spielen</button>
-            <button onClick={() => onNewGame(game.opponent.user_id)}
-                disabled={game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP}>Nochmal</button>
-            <button
-                onClick={() => {
-                    if (game.state === GameState.REQUESTED && game.your_turn) {
-                        onDeclineGame(game.game_id);
-                    } else {
-                        onGiveUp(game.game_id);
-                    }
-                }}
-                disabled={game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED}
-            >Aufgeben</button>
-            {
-                isFriend ?
-                    <button onClick={() => onRemoveFriend(game.opponent.user_id)}>-Freund</button> :
-                    <button onClick={() => onAddFriend(game.opponent.user_id, game.opponent.name)}>+Freund</button>
-            }
+            <div className="qd-game_footer">
+                {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP ? null :
+                    <button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}
+                    >Nochmal</button>
+                }
+                {game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED ? null :
+                    <button
+                        className="qd-game_give-up"
+                        onClick={() => {
+                            if (game.state === GameState.REQUESTED && game.your_turn) {
+                                onDeclineGame(game.game_id);
+                            } else {
+                                onGiveUp(game.game_id);
+                            }
+                        }}
+                    >Aufgeben</button>
+                }
+                <button
+                    className="qd-game_play"
+                    onClick={() => onPlay(game.game_id)}
+                    disabled={!game.your_turn || (game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED)}
+                >Spielen</button>
+                {
+                    isFriend ?
+                        <button onClick={() => onRemoveFriend(game.opponent.user_id)}>-Freund</button> :
+                        <button onClick={() => onAddFriend(game.opponent.user_id, game.opponent.name)}>+Freund</button>
+                }
+            </div>
         </div >;
     }
 }
@@ -122,7 +130,7 @@ const mapDispatchToProps = (dispatch: AppThunkDispatch): IGameDispatchProps => {
         onDeclineGame: gameId => dispatch(declineGame(gameId)),
         onGiveUp: gameId => dispatch(giveUpGame(gameId)),
         onNewGame: userId => dispatch(createGame(userId)),
-        onPlay: () => dispatch(startPlaying()),
+        onPlay: gameId => dispatch(startPlaying(gameId, Date.now())),
         onRemoveFriend: userId => dispatch(removeFriend(userId)),
         requestGame: gameId => dispatch(loadGame(gameId)),
     };

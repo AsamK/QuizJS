@@ -32,7 +32,6 @@ function StartElement({ game, onGameSelected }: IStartElementProps): React.React
     const opponentCorrect = game.opponent_answers.filter(a => a === 0).length;
     return <div
         className="qd-start_entry"
-        key={game.game_id}
         onClick={() => onGameSelected(game.game_id)}
     >
         <div className="qd-start_entry_opponent">
@@ -59,18 +58,18 @@ function StartElement({ game, onGameSelected }: IStartElementProps): React.React
 
 function Start({ games, user, onGameSelected, onNewGame }: IStartProps): React.ReactElement<IStartProps> {
     const requestedGames = games.filter(game => game.your_turn && game.state === GameState.REQUESTED)
-        .map(g => <StartElement game={g} onGameSelected={onGameSelected} />);
+        .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     const runningGames = games.filter(game => game.your_turn && game.state === GameState.ACTIVE)
-        .map(g => <StartElement game={g} onGameSelected={onGameSelected} />);
+        .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     const waitingGames = games.filter(game => !game.your_turn &&
         game.state !== GameState.FINISHED &&
         game.state !== GameState.ELAPSED &&
         game.state !== GameState.GAVE_UP)
-        .map(g => <StartElement game={g} onGameSelected={onGameSelected} />);
+        .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     const finishedGames = games.filter(game => game.state === GameState.FINISHED ||
         game.state === GameState.GAVE_UP ||
         game.state === GameState.ELAPSED)
-        .map(g => <StartElement game={g} onGameSelected={onGameSelected} />);
+        .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     return <div className="qd-start">
         Eingeloggt als: {!user ? 'Unbekannt' : user.name}
         <button onClick={onNewGame}>Neues Spiel starten</button>

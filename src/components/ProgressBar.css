@@ -1,0 +1,10 @@
+.qd-progress-bar {
+    background-color: gray;
+    padding: 2px;
+}
+
+.qd-progress-bar_progress {
+    background-color: blue;
+    height: 100%;
+    transition: .2s width ease;
+}

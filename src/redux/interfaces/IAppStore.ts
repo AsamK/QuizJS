@@ -26,6 +26,8 @@ export interface IGameState {
     pendingAnswers: number[];
     pendingQuestionTypes: QuestionType[];
     selectedCategoryIndex: number | null;
+    firstShownTimestamp: number | null;
+    answeredTimestamp: number | null;
 }
 
 export interface IStoreUi {

@@ -205,7 +205,7 @@ export function selectAnswerForSelectedGame(answerIndex: number): AppThunkAction
 
         const question = selectedGameQuestionSelector(state);
         const questionType = !question || !question.image_url ? QuestionType.NORMAL : QuestionType.IMAGE;
-        dispatch(selectAnswer(gameId, answerIndex, questionType));
+        dispatch(selectAnswer(gameId, answerIndex, questionType, Date.now()));
     };
 }
 export function nextQuestionSelectedGame(): AppThunkAction {
@@ -227,7 +227,7 @@ export function nextQuestionSelectedGame(): AppThunkAction {
         } else if (gameState.pendingAnswers.length % QUESTIONS_PER_ROUND === 0) {
             dispatch(finishRound(gameId));
         } else {
-            dispatch(nextQuestion(gameId));
+            dispatch(nextQuestion(gameId, Date.now()));
         }
     };
 }

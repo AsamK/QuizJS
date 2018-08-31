@@ -12,8 +12,8 @@ const Question = ({ question, imageUrl, onClick }: IQuestionProps) => {
     return <div className="qd-question"
         onClick={onClick}
     >
-        {question}
-        {imageUrl && <img src={imageUrl} />}
+        <span className="qd-question_text">{question}</span>
+        {imageUrl && <img className="qd-question_image" src={imageUrl} />}
     </div>;
 };
 

@@ -3,16 +3,21 @@ import { connect } from 'react-redux';
 
 import { createSelector } from 'reselect';
 import { IApiCategory } from '../api/IApiCategory';
+import { TIME_ELAPSED_ANSWER } from '../consts';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { selectedGameCategory, selectedGameQuestionSelector, selectedGameStateSelector, showAnswerSelector } from '../redux/selectors/ui.selectors';
 import { AppThunkDispatch, nextQuestionSelectedGame, selectAnswerForSelectedGame } from '../redux/thunks';
 import { getRandomOrder, shuffleArray } from '../utils/utils';
 import Answer, { AnswerState } from './Answer';
 import './Interrogation.css';
+import ProgressBar from './ProgressBar';
 import Question from './Question';
 
 interface IInterrogationStateProps {
     answers: [string, string, string, string];
+    firstShownTimestamp: number | null;
+    answeredTimestamp: number | null;
+    timeLimit: number;
     category: IApiCategory | null;
     question: string;
     imageUrl?: string;
@@ -27,11 +32,33 @@ interface IInterrogationDispatchProps {
 interface IInterrogationProps extends IInterrogationStateProps, IInterrogationDispatchProps {
 }
 
-export interface IQuizQuestion {
-}
-
 class Interrogation extends React.Component<IInterrogationProps> {
     private answerOrder = createSelector(question => question, () => getRandomOrder(4));
+    private timer: number | undefined;
+
+    public componentDidMount(): void {
+        this.timer = window.setInterval(this.handleTimer, 200);
+    }
+
+    public componentDidUpdate(): void {
+        if (this.props.answeredTimestamp == null) {
+            if (this.timer == null) {
+                this.timer = window.setInterval(this.handleTimer, 200);
+            }
+        } else {
+            if (this.timer != null) {
+                window.clearInterval(this.timer);
+                this.timer = undefined;
+            }
+        }
+    }
+
+    public componentWillUnmount(): void {
+        if (this.timer != null) {
+            window.clearInterval(this.timer);
+            this.timer = undefined;
+        }
+    }
 
     public render(): React.ReactElement<IInterrogationProps> {
         const {
@@ -48,6 +75,9 @@ class Interrogation extends React.Component<IInterrogationProps> {
                 answer={answer}
                 onClick={() => onAnswerClick(i)}
             />);
+        const remainingSeconds = this.props.timeLimit <= 0
+            ? 0
+            : (this.props.timeLimit - this.getElapsedSeconds());
         return <div className="qd-interrogation">
             <div
                 className="qd-interrogation_category"
@@ -55,7 +85,26 @@ class Interrogation extends React.Component<IInterrogationProps> {
             >{!category ? null : category.name}</div>
             <Question question={question} imageUrl={imageUrl} onClick={onContinueClick} />
             {shuffleArray(answerElements, this.answerOrder(question))}
+            <ProgressBar
+                progress={remainingSeconds / this.props.timeLimit}
+            />
         </div>;
+    }
+
+    private handleTimer = () => {
+        if (this.getElapsedSeconds() >= this.props.timeLimit) {
+            this.props.onAnswerClick(TIME_ELAPSED_ANSWER);
+        } else {
+            this.forceUpdate();
+        }
+    };
+
+    private getElapsedSeconds(): number {
+        if (this.props.firstShownTimestamp == null) {
+            return 0;
+        }
+        const endTimestamp = this.props.answeredTimestamp == null ? Date.now() : this.props.answeredTimestamp;
+        return (endTimestamp - this.props.firstShownTimestamp) / 1000;
     }
 }
 
@@ -73,14 +122,17 @@ const mapStateToProps = (state: IAppStore): IInterrogationStateProps => {
             question.wrong3,
         ];
     return {
+        answeredTimestamp: gameState.answeredTimestamp,
         answers,
         category: selectedGameCategory(state),
+        firstShownTimestamp: gameState.firstShownTimestamp,
         imageUrl: !question ? undefined : question.image_url,
         question: !question ? '' : question.question,
         showCorrectAnswerIndex: !showAnswer ? null : 0,
         showSelectedAnswerIndex: !showAnswer || gameState.pendingAnswers.length === 0
             ? null
             : gameState.pendingAnswers[gameState.pendingAnswers.length - 1],
+        timeLimit: !question ? 0 : question.answer_time,
     };
 };
 

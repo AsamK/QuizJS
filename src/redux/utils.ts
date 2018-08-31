@@ -11,7 +11,9 @@ export function getGameStateOrDefault(state: Map<number, IGameState>, gameId?: n
 
 export function getDefaultGameState(): IGameState {
     return {
+        answeredTimestamp: null,
         current_answers_length: 0,
+        firstShownTimestamp: null,
         pendingAnswers: [],
         pendingQuestionTypes: [],
         selectedCategoryIndex: null,

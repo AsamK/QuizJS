@@ -24,7 +24,9 @@ export const selectGame = (gameId: number | null): IAppAction => ({
 
 export const START_PLAYING = 'START_PLAYING';
 
-export const startPlaying = (): IAppAction => ({
+export const startPlaying = (gameId: number, timestamp: number): IAppAction => ({
+    gameId,
+    timestamp,
     type: START_PLAYING,
 });
 
@@ -44,17 +46,19 @@ export const selectCategory = (gameId: number, categoryId: number): IAppAction =
 
 export const SELECT_ANSWER = 'SELECT_ANSWER';
 
-export const selectAnswer = (gameId: number, answerIndex: number, questionType: QuestionType): IAppAction => ({
+export const selectAnswer = (gameId: number, answerIndex: number, questionType: QuestionType, timestamp: number): IAppAction => ({
     answerIndex,
     gameId,
     questionType,
+    timestamp,
     type: SELECT_ANSWER,
 });
 
 export const NEXT_QUESTION = 'NEXT_QUESTION';
 
-export const nextQuestion = (gameId: number): IAppAction => ({
+export const nextQuestion = (gameId: number, timestamp: number): IAppAction => ({
     gameId,
+    timestamp,
     type: NEXT_QUESTION,
 });
 
