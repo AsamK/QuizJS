@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND } from '../../consts';
 import { IAppStore, IGameState } from '../interfaces/IAppStore';
 import { ICategory } from '../interfaces/ICategory';
+import { IGameRoundState } from '../interfaces/IGameRoundState';
 import { IQuestion } from '../interfaces/IQuestion';
 import { MainView } from '../MainView';
 import { getGameStateOrDefault } from '../utils';
@@ -156,6 +157,34 @@ export const selectedGameCategory = createSelector(
             return null;
         }
         return categories.get(question.cat_id) || null;
+    },
+);
+
+export const selectedGameRoundStateSelector = createSelector(
+    selectedGameSelector,
+    selectedGameStateSelector,
+    selectedGameQuestionsSelector,
+    categoriesSelector,
+    (game, gameState, questions, categories): IGameRoundState[] => {
+        if (!game) {
+            return [];
+        }
+        const result = [];
+        const catChoices = gameState.selectedCategoryIndex == null
+            ? game.cat_choices
+            : [...game.cat_choices, gameState.selectedCategoryIndex];
+        const roundCount = !questions ? catChoices.length : Math.ceil(questions.length / QUESTIONS_PER_ROUND / CATEGORIES_PER_ROUND);
+        const yourAnswers = [...game.your_answers, ...gameState.pendingAnswers];
+        for (let i = 0; i < roundCount; i++) {
+            const catId = !questions || game.cat_choices.length <= i ? null :
+                questions[i * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND + game.cat_choices[i] * CATEGORIES_PER_ROUND].cat_id;
+            result.push({
+                category: catId == null ? null : categories.get(catId) || null,
+                opponentAnswers: game.opponent_answers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
+                yourAnswers: yourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
+            });
+        }
+        return result;
     },
 );
 

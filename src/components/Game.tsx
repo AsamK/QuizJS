@@ -5,13 +5,15 @@ import { GameState } from '../api/IApiGame';
 import { selectGame, startPlaying } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IGame } from '../redux/interfaces/IGame';
-import { isSelectedGameWithFriendSelector, selectedGameIdSelector, selectedGameSelector } from '../redux/selectors/ui.selectors';
+import { IGameRoundState } from '../redux/interfaces/IGameRoundState';
+import { isSelectedGameWithFriendSelector, selectedGameIdSelector, selectedGameRoundStateSelector, selectedGameSelector } from '../redux/selectors/ui.selectors';
 import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend } from '../redux/thunks';
 import './Game.css';
 
 interface IGameStateProps {
     game: IGame | null;
     gameId: number | null;
+    gameRound: IGameRoundState[];
     isFriend: boolean;
 }
 
@@ -43,35 +45,35 @@ class Game extends React.PureComponent<IGameProps> {
     }
 
     public render(): React.ReactElement<IGameProps> {
-        const { game, isFriend, onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend } = this.props;
+        const { game, gameRound, isFriend, onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend } = this.props;
         if (!game) {
             return <div>'Loading game...'</div>;
         }
         const yourCorrectAnswers = game.your_answers.filter(a => a === 0).length;
         const opponentCorrectAnswers = game.opponent_answers.filter(a => a === 0).length;
-        const rounds = game.cat_choices.map((catId, i) => (
+        const rounds = gameRound.map((round, i) => (
             <div className="qd-game_round" key={i}>
                 <div className="qd-game_round-questions">
                     <QuestionItem
-                        color={game.your_answers.length <= i * 3 + 0 ? 'gray' : game.your_answers[i * 3 + 0] === 0 ? 'green' : 'red'} />
+                        color={round.yourAnswers.length <= 0 ? 'gray' : round.yourAnswers[0] === 0 ? 'green' : 'red'} />
                     <QuestionItem
-                        color={game.your_answers.length <= i * 3 + 1 ? 'gray' : game.your_answers[i * 3 + 1] === 0 ? 'green' : 'red'} />
+                        color={round.yourAnswers.length <= 1 ? 'gray' : round.yourAnswers[1] === 0 ? 'green' : 'red'} />
                     <QuestionItem
-                        color={game.your_answers.length <= i * 3 + 2 ? 'gray' : game.your_answers[i * 3 + 2] === 0 ? 'green' : 'red'} />
+                        color={round.yourAnswers.length <= 2 ? 'gray' : round.yourAnswers[2] === 0 ? 'green' : 'red'} />
                 </div>
-                <div className="qd-game_round-category">Kategorie: {catId}</div>
+                <div className="qd-game_round-info"
+                >Runde:&nbsp;{i + 1}
+                    <div className="qd-game_round-category">
+                        {!round.category ? null : round.category.name}
+                    </div>
+                </div>
                 <div className="qd-game_round-questions">
                     <QuestionItem
-                        color={game.opponent_answers.length <= i * 3 + 0 ? 'gray'
-                            : game.opponent_answers[i * 3 + 0] === 0 ? 'green' : 'red'} />
+                        color={round.opponentAnswers.length <= 0 ? 'gray' : round.opponentAnswers[0] === 0 ? 'green' : 'red'} />
                     <QuestionItem
-
-                        color={game.opponent_answers.length <= i * 3 + 1 ? 'gray'
-                            : game.opponent_answers[i * 3 + 1] === 0 ? 'green' : 'red'} />
+                        color={round.opponentAnswers.length <= 1 ? 'gray' : round.opponentAnswers[1] === 0 ? 'green' : 'red'} />
                     <QuestionItem
-
-                        color={game.opponent_answers.length <= i * 3 + 2 ? 'gray'
-                            : game.opponent_answers[i * 3 + 2] === 0 ? 'green' : 'red'} />
+                        color={round.opponentAnswers.length <= 2 ? 'gray' : round.opponentAnswers[2] === 0 ? 'green' : 'red'} />
                 </div>
             </div>
         ));
@@ -119,6 +121,7 @@ const mapStateToProps = (state: IAppStore): IGameStateProps => {
     return {
         game: selectedGameSelector(state),
         gameId: selectedGameIdSelector(state),
+        gameRound: selectedGameRoundStateSelector(state),
         isFriend: isSelectedGameWithFriendSelector(state),
     };
 };
