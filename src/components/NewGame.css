@@ -1,0 +1,10 @@
+.qd-new-game label {
+    font-weight: bolder;
+}
+
+.qd-new-game_user,
+.qd-new-game_friends {
+    background-color: lightblue;
+    cursor: pointer;
+    margin-bottom: 1px;
+}

@@ -7,6 +7,8 @@ import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IUser } from '../redux/interfaces/IUser';
 import { foundUserSelector, friendsSelector } from '../redux/selectors/entities.selectors';
 import { AppThunkDispatch, createGame, createRandomGame, searchUser } from '../redux/thunks';
+import { debounce } from '../utils/utils';
+import './NewGame.css';
 
 interface INewGameStateProps {
     foundUser: IApiOpponent | null;
@@ -22,38 +24,46 @@ interface INewGameDispatchProps {
 interface INewGameProps extends INewGameStateProps, INewGameDispatchProps {
 }
 
-const NewGame = ({ friends, foundUser, onBack, onCreateGame, onRandomGame, onSearchUser }: INewGameProps) => {
-    const friendElements = friends.map(friend =>
-        <div
-            key={friend.user_id}
-            className="qd-new-game_friend"
-            onClick={() => onCreateGame(friend.user_id)}
-        >
-            {friend.name} {friend.email}
-        </div>,
-    );
-    return <div className="qd-new-game">
-        <button onClick={onBack}>Zurück</button>
-        <button
-            onClick={onRandomGame}
-        >Beliebiger Spieler</button>
-        <div className="qd-new-game_search-user">
-            <input onChange={e => onSearchUser(e.target.value)} />
-            {!foundUser ? null :
-                <div
-                    key={foundUser.user_id}
-                    className="qd-new-game_searchUser"
-                    onClick={() => onCreateGame(foundUser.user_id)}
-                >
-                    {foundUser.name} {foundUser.avatar_code}
-                </div>
-            }
-        </div>
-        <div className="qd-new-game_friends">
-            {friendElements}
-        </div>
-    </div>;
-};
+class NewGame extends React.PureComponent<INewGameProps> {
+    private onSearchUserDebounced = debounce((name: string) => this.props.onSearchUser(name), 200);
+
+    public render(): React.ReactChild {
+        const { friends, foundUser, onBack, onCreateGame, onRandomGame } = this.props;
+        const friendElements = friends.map(friend =>
+            <div
+                key={friend.user_id}
+                className="qd-new-game_friend"
+                onClick={() => onCreateGame(friend.user_id)}
+            >
+                {friend.name} {friend.email}
+            </div>,
+        );
+        return <div className="qd-new-game">
+            <button onClick={onBack}>Zurück</button>
+            <button
+                onClick={onRandomGame}
+            >Beliebiger Spieler</button>
+            <div className="qd-new-game_search-user">
+                <label>Benutzer suchen:<input
+                    onChange={e => this.onSearchUserDebounced(e.target.value)}
+                /></label>
+                {!foundUser ? null :
+                    <div
+                        key={foundUser.user_id}
+                        className="qd-new-game_user"
+                        onClick={() => onCreateGame(foundUser.user_id)}
+                    >
+                        {foundUser.name} {foundUser.avatar_code}
+                    </div>
+                }
+            </div>
+            <label>Freunde</label>
+            <div className="qd-new-game_friends">
+                {friendElements}
+            </div>
+        </div>;
+    }
+}
 
 const mapStateToProps = (state: IAppStore): INewGameStateProps => ({
     foundUser: foundUserSelector(state),

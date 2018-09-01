@@ -54,3 +54,13 @@ export function createProxiedRequestFn(proxyUrl: string, targetHost: string, coo
 export function assertUnreachable(v: never): void {
     console.error('Reached unreachable code!');
 }
+
+export function debounce<P>(fn: (...args: P[]) => void, milliSeconds: number): (...args: P[]) => void {
+    let timer: number | null = null;
+    return (...args: P[]): void => {
+        if (timer != null) {
+            clearTimeout(timer);
+        }
+        timer = window.setTimeout(() => fn(...args), milliSeconds);
+    };
+}
