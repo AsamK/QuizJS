@@ -191,7 +191,7 @@ export function selectCategoryForSelectedGame(categoryId: number): AppThunkActio
         if (gameId == null) {
             return;
         }
-        dispatch(selectCategory(gameId, categoryId));
+        dispatch(selectCategory(gameId, categoryId, Date.now()));
     };
 }
 

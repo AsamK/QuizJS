@@ -13,7 +13,7 @@ type IAppUiAction =
     { type: typeof SELECT_GAME, gameId: number | null } |
     { type: typeof START_PLAYING, gameId: number, timestamp: number } |
     { type: typeof STOP_PLAYING } |
-    { type: typeof SELECT_CATEGORY, gameId: number, categoryId: number } |
+    { type: typeof SELECT_CATEGORY, gameId: number, categoryId: number, timestamp: number } |
     { type: typeof SELECT_ANSWER, gameId: number, answerIndex: number, questionType: QuestionType, timestamp: number } |
     { type: typeof NEXT_QUESTION, gameId: number, timestamp: number } |
     { type: typeof FINISH_ROUND, gameId: number } |

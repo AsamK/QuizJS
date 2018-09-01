@@ -38,9 +38,10 @@ export const stopPlaying = (): IAppAction => ({
 
 export const SELECT_CATEGORY = 'SELECT_CATEGORY';
 
-export const selectCategory = (gameId: number, categoryId: number): IAppAction => ({
+export const selectCategory = (gameId: number, categoryId: number, timestamp: number): IAppAction => ({
     categoryId,
     gameId,
+    timestamp,
     type: SELECT_CATEGORY,
 });
 

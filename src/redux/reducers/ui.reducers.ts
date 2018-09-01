@@ -73,6 +73,8 @@ export function gameState(state: Map<number, IGameState> = new Map(), action: IA
             const newState = new Map(state);
             newState.set(action.gameId, {
                 ...getGameStateOrDefault(state, action.gameId),
+                answeredTimestamp: null,
+                firstShownTimestamp: action.timestamp,
                 selectedCategoryIndex: action.categoryId,
             });
             return newState;
@@ -106,6 +108,7 @@ export function gameState(state: Map<number, IGameState> = new Map(), action: IA
             }
             newState.set(action.gameId, {
                 ...prev,
+                answeredTimestamp: null,
                 firstShownTimestamp: action.timestamp,
             });
             return newState;

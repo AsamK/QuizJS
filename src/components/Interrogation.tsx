@@ -17,7 +17,7 @@ interface IInterrogationStateProps {
     answers: [string, string, string, string];
     firstShownTimestamp: number | null;
     answeredTimestamp: number | null;
-    timeLimit: number;
+    timeLimit: number | null;
     category: IApiCategory | null;
     question: string;
     imageUrl?: string;
@@ -39,7 +39,7 @@ class Interrogation extends React.Component<IInterrogationProps> {
     private timer: number | undefined;
 
     public componentDidMount(): void {
-        this.timer = window.setInterval(this.handleTimer, 200);
+        this.componentDidUpdate();
     }
 
     public componentDidUpdate(): void {
@@ -81,7 +81,7 @@ class Interrogation extends React.Component<IInterrogationProps> {
                 }
                 onClick={() => onAnswerClick(i)}
             />);
-        const remainingSeconds = this.props.timeLimit <= 0
+        const remainingSeconds = this.props.timeLimit == null || this.props.timeLimit <= 0
             ? 0
             : (this.props.timeLimit - this.getElapsedSeconds());
         return <div className="qd-interrogation">
@@ -92,12 +92,15 @@ class Interrogation extends React.Component<IInterrogationProps> {
             <Question question={question} imageUrl={imageUrl} onClick={onContinueClick} />
             {shuffleArray(answerElements, this.answerOrder(question))}
             <ProgressBar
-                progress={remainingSeconds / this.props.timeLimit}
+                progress={this.props.timeLimit == null ? 1 : remainingSeconds / this.props.timeLimit}
             />
         </div>;
     }
 
     private handleTimer = () => {
+        if (this.props.timeLimit == null) {
+            return;
+        }
         if (this.getElapsedSeconds() >= this.props.timeLimit) {
             this.props.onAnswerClick(TIME_ELAPSED_ANSWER);
         } else {
@@ -144,7 +147,7 @@ const mapStateToProps = (state: IAppStore): IInterrogationStateProps => {
         showSelectedAnswerIndex: !showAnswer || gameState.pendingAnswers.length === 0
             ? null
             : gameState.pendingAnswers[gameState.pendingAnswers.length - 1],
-        timeLimit: !question ? 0 : question.answer_time,
+        timeLimit: !question ? null : question.answer_time,
     };
 };
 
