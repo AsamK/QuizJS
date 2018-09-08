@@ -185,7 +185,9 @@ export const selectedGameRoundStateSelector = createSelector(
         const catChoices = gameState.selectedCategoryIndex == null
             ? game.cat_choices
             : [...game.cat_choices, gameState.selectedCategoryIndex];
-        const roundCount = !questions ? catChoices.length : Math.ceil(questions.length / QUESTIONS_PER_ROUND / CATEGORIES_PER_ROUND);
+        const roundCount = !questions
+            ? Math.max(catChoices.length, 6)
+            : Math.ceil(questions.length / QUESTIONS_PER_ROUND / CATEGORIES_PER_ROUND);
         const yourAnswers = [...game.your_answers, ...gameState.pendingAnswers];
         for (let i = 0; i < roundCount; i++) {
             const catId = !questions || game.cat_choices.length <= i ? null :
