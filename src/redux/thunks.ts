@@ -26,7 +26,8 @@ function handlePopup(possiblePopup: IApiPopup | object): boolean {
     if (!('popup_mess' in possiblePopup)) {
         return false;
     }
-    console.error(possiblePopup);
+    // TODO Show some overlay instead of a modal alert
+    alert(possiblePopup.popup_title + '\n' + possiblePopup.popup_mess);
     return !!possiblePopup.skip;
 }
 
