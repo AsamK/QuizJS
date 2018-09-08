@@ -1,10 +1,10 @@
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDeclineGame, apiFindUser, apiGiveUpGame, apiLogin, apiRemoveFriend, apiRequestGames, apiRequestState, apiRequestUploadRound, BackendRequestFn } from '../api/api';
+import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDeclineGame, apiFindUser, apiGiveUpGame, apiLogin, apiRemoveFriend, apiRequestGames, apiRequestState, apiRequestUploadRound, apiUpdateUser, BackendRequestFn } from '../api/api';
 import { QuestionType } from '../api/IApiGame';
 import { IApiPopup } from '../api/IApiPopup';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND, STORAGE_KEY_COOKIE } from '../consts';
 import { createRequestFn, extraThunkArgument, QD_SERVER } from '../settings';
-import { addFriendError, addFriendRequest, addFriendResponse, createGameError, createGameRequest, createGameResponse, createUserError, createUserRequest, createUserResponse, declineGameError, declineGameRequest, declineGameResponse, findUserError, findUserRequest, findUserResponse, giveUpGameError, giveUpGameRequest, giveUpGameResponse, loadGamesError, loadGamesRequest, loadGamesResponse, loginError, loginRequest, loginResponse, removeFriendError, removeFriendRequest, removeFriendResponse, stateError, stateRequest, stateResponse, uploadRoundError, uploadRoundRequest, uploadRoundResponse } from './actions/entities.actions';
+import { addFriendError, addFriendRequest, addFriendResponse, createGameError, createGameRequest, createGameResponse, createUserError, createUserRequest, createUserResponse, declineGameError, declineGameRequest, declineGameResponse, findUserError, findUserRequest, findUserResponse, giveUpGameError, giveUpGameRequest, giveUpGameResponse, loadGamesError, loadGamesRequest, loadGamesResponse, loginError, loginRequest, loginResponse, removeFriendError, removeFriendRequest, removeFriendResponse, stateError, stateRequest, stateResponse, updateUserError, updateUserRequest, updateUserResponse, uploadRoundError, uploadRoundRequest, uploadRoundResponse } from './actions/entities.actions';
 import { finishRound, nextQuestion, selectAnswer, selectCategory } from './actions/ui.actions';
 import { IAppAction } from './interfaces/IAppAction';
 import { IAppStore } from './interfaces/IAppStore';
@@ -95,6 +95,17 @@ export function createUser(name: string, email: string, password: string): AppTh
                 }
             })
             .catch(e => dispatch(createUserError(e)));
+    };
+}
+
+export function updateUser(name: string, email: string, password: string | null): AppThunkAction {
+    return (dispatch, getState, { requestFn }) => {
+        dispatch(updateUserRequest());
+        apiUpdateUser(requestFn, name, email, QD_SERVER.passwordSalt, password)
+            .then(requestHandleHelper(dispatch, res => {
+                dispatch(updateUserResponse(res));
+            }))
+            .catch(e => dispatch(updateUserError(e)));
     };
 }
 

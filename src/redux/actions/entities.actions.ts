@@ -2,6 +2,7 @@ import { IApiBooleanResult } from '../../api/IApiBooleanResult';
 import { IApiGameResponse } from '../../api/IApiGameResponse';
 import { IApiGamesResponse } from '../../api/IApiGamesResponse';
 import { IApiStateResponse } from '../../api/IApiStateResponse';
+import { IApiUser } from '../../api/IApiUser';
 import { IApiUserSearchResponse } from '../../api/IApiUserSearchResponse';
 import { IAppAction } from '../interfaces/IAppAction';
 
@@ -20,6 +21,23 @@ export const createUserResponse = (response: IApiStateResponse): IAppAction => (
 
 export const createUserError = (e: any): IAppAction => ({
     type: CREATE_USER_ERROR,
+});
+
+export const UPDATE_USER_REQUEST = 'UPDATE_USER_REQUEST';
+export const UPDATE_USER_RESPONSE = 'UPDATE_USER_RESPONSE';
+export const UPDATE_USER_ERROR = 'UPDATE_USER_ERROR';
+
+export const updateUserRequest = (): IAppAction => ({
+    type: UPDATE_USER_REQUEST,
+});
+
+export const updateUserResponse = (response: { user: IApiUser }): IAppAction => ({
+    response,
+    type: UPDATE_USER_RESPONSE,
+});
+
+export const updateUserError = (e: any): IAppAction => ({
+    type: UPDATE_USER_ERROR,
 });
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';

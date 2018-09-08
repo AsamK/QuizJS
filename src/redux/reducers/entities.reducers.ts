@@ -1,6 +1,6 @@
 import { IApiGame } from '../../api/IApiGame';
 import { IApiQuestion } from '../../api/IApiQuestion';
-import { ADD_FRIEND_RESPONSE, APP_DATA_RESPONSE, CREATE_GAME_RESPONSE, DECLINE_GAME_RESPONSE, FIND_USER_ERROR, FIND_USER_RESPONSE, GIVE_UP_GAME_RESPONSE, LOAD_GAME_RESPONSE, LOAD_GAMES_RESPONSE, LOGIN_RESPONSE, REMOVE_FRIEND_RESPONSE, UPLOAD_ROUND_RESPONSE } from '../actions/entities.actions';
+import { ADD_FRIEND_RESPONSE, APP_DATA_RESPONSE, CREATE_GAME_RESPONSE, DECLINE_GAME_RESPONSE, FIND_USER_ERROR, FIND_USER_RESPONSE, GIVE_UP_GAME_RESPONSE, LOAD_GAME_RESPONSE, LOAD_GAMES_RESPONSE, LOGIN_RESPONSE, REMOVE_FRIEND_RESPONSE, UPDATE_USER_RESPONSE, UPLOAD_ROUND_RESPONSE } from '../actions/entities.actions';
 import { IAppAction } from '../interfaces/IAppAction';
 import { ICategory } from '../interfaces/ICategory';
 import { IGame } from '../interfaces/IGame';
@@ -14,6 +14,15 @@ export function user(state: IUser | null = null, action: IAppAction): typeof sta
         case APP_DATA_RESPONSE:
         case LOGIN_RESPONSE:
             return action.response.user;
+        case UPDATE_USER_RESPONSE:
+            if (!state) {
+                return state;
+            }
+            return {
+                ...state,
+                email: action.response.user.email,
+                name: action.response.user.name,
+            };
         default:
             return state;
     }

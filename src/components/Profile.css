@@ -1,0 +1,19 @@
+.qd-profile_friends {
+    margin-top: 1em;
+}
+
+.qd-profile_friend {
+    background-color: lightblue;
+    cursor: pointer;
+    margin-bottom: 1px;
+    padding: 5px;
+}
+
+.qd-profile_form {
+    display: flex;
+    flex-direction: column;
+}
+
+.qd-profile_form > label {
+    margin-bottom: 10px;
+}

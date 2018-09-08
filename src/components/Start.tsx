@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { GameState } from '../api/IApiGame';
-import { selectGame, showCreateNewGame } from '../redux/actions/ui.actions';
+import { selectGame, showCreateNewGame, showProfile } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IGame } from '../redux/interfaces/IGame';
 import { IUser } from '../redux/interfaces/IUser';
@@ -18,6 +18,7 @@ interface IStartStateProps {
 interface IStartDispatchProps {
     onGameSelected: (gameId: number) => void;
     onNewGame: () => void;
+    onShowProfile: () => void;
 }
 
 interface IStartProps extends IStartStateProps, IStartDispatchProps {
@@ -60,7 +61,7 @@ function StartElement({ game, onGameSelected }: IStartElementProps): React.React
     </div>;
 }
 
-function Start({ games, user, onGameSelected, onNewGame }: IStartProps): React.ReactElement<IStartProps> {
+function Start({ games, user, onGameSelected, onNewGame, onShowProfile }: IStartProps): React.ReactElement<IStartProps> {
     const requestedGames = games.filter(game => game.your_turn && game.state === GameState.REQUESTED)
         .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     const runningGames = games.filter(game => game.your_turn && game.state === GameState.ACTIVE)
@@ -75,8 +76,10 @@ function Start({ games, user, onGameSelected, onNewGame }: IStartProps): React.R
         game.state === GameState.ELAPSED)
         .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     return <div className="qd-start">
-        Eingeloggt als: {!user ? 'Unbekannt' : user.name}
-        <button onClick={onNewGame}>Neues Spiel starten</button>
+        Eingeloggt als: <span onClick={onShowProfile}>{!user ? 'Unbekannt' : user.name + ' <' + user.email + '>'}</span>
+        <div className="qd-start_new-game">
+            <button onClick={onNewGame}>Neues Spiel starten</button>
+        </div>
         <div className="qd-start_running">
             {runningGames}
         </div>
@@ -112,6 +115,7 @@ const mapDispatchToProps = (dispatch: AppThunkDispatch): IStartDispatchProps => 
     return {
         onGameSelected: gameId => dispatch(selectGame(gameId)),
         onNewGame: () => dispatch(showCreateNewGame()),
+        onShowProfile: () => dispatch(showProfile()),
     };
 };
 

@@ -15,6 +15,8 @@ export const loggedInSelector = createSelector(uiSelector, ui => ui.loggedIn);
 
 export const showCreateNewGameSelector = createSelector(uiSelector, ui => ui.showCreateNewGame);
 
+export const showProfileSelector = createSelector(uiSelector, ui => ui.showProfile);
+
 export const selectedGameIdSelector = createSelector(uiSelector, ui => ui.selectedGameId);
 
 export const selectedGameSelector = createSelector(selectedGameIdSelector, gamesSelector,
@@ -208,9 +210,13 @@ export const mainViewSelector = createSelector(
     selectedGameCategoryIndex,
     selectedGameSelector,
     showCreateNewGameSelector,
-    (isPlaying, categoryIndex, game, showCreateNewGame) => {
+    showProfileSelector,
+    (isPlaying, categoryIndex, game, showCreateNewGame, showProfile) => {
         if (showCreateNewGame) {
             return MainView.CREATE_GAME;
+        }
+        if (showProfile) {
+            return MainView.PROFILE;
         }
         if (!game || game.game_id == null) {
             return MainView.START;

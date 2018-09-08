@@ -15,6 +15,13 @@ export const showCreateNewGame = (show = true): IAppAction => ({
     type: SHOW_CREATE_NEW_GAME,
 });
 
+export const SHOW_PROFILE = 'SHOW_PROFILE';
+
+export const showProfile = (show = true): IAppAction => ({
+    show,
+    type: SHOW_PROFILE,
+});
+
 export const SELECT_GAME = 'SELECT_GAME';
 
 export const selectGame = (gameId: number | null): IAppAction => ({

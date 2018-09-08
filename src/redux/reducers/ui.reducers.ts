@@ -1,5 +1,5 @@
 import { APP_DATA_RESPONSE, CREATE_GAME_REQUEST, CREATE_USER_RESPONSE, DECLINE_GAME_RESPONSE, LOAD_GAME_RESPONSE, LOAD_GAMES_RESPONSE, LOGIN_RESPONSE, UPLOAD_ROUND_RESPONSE } from '../actions/entities.actions';
-import { COOKIE_LOADED, FINISH_ROUND, NEXT_QUESTION, SELECT_ANSWER, SELECT_CATEGORY, SELECT_GAME, SHOW_CREATE_NEW_GAME, START_PLAYING, STOP_PLAYING } from '../actions/ui.actions';
+import { COOKIE_LOADED, FINISH_ROUND, NEXT_QUESTION, SELECT_ANSWER, SELECT_CATEGORY, SELECT_GAME, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, STOP_PLAYING } from '../actions/ui.actions';
 import { IAppAction } from '../interfaces/IAppAction';
 import { IGameState } from '../interfaces/IAppStore';
 import { getDefaultGameState, getGameStateOrDefault } from '../utils';
@@ -21,6 +21,15 @@ export function showCreateNewGame(state = false, action: IAppAction): typeof sta
             return action.show;
         case CREATE_GAME_REQUEST:
             return false;
+        default:
+            return state;
+    }
+}
+
+export function showProfile(state = false, action: IAppAction): typeof state {
+    switch (action.type) {
+        case SHOW_PROFILE:
+            return action.show;
         default:
             return state;
     }

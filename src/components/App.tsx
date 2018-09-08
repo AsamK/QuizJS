@@ -18,6 +18,7 @@ import Game from './Game';
 import Interrogation from './Interrogation';
 import Login from './Login';
 import NewGame from './NewGame';
+import Profile from './Profile';
 import Start from './Start';
 
 interface IAppStateProps {
@@ -89,6 +90,8 @@ class App extends React.Component<IAppProps, IAppState> {
     switch (this.props.mainView) {
       case MainView.CREATE_GAME:
         return <NewGame />;
+      case MainView.PROFILE:
+        return <Profile />;
       case MainView.START:
         return <Start />;
       case MainView.GAME:

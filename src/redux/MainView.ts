@@ -4,4 +4,5 @@ export const enum MainView {
     GAME,
     INTERROGATION,
     SELECT_CATEGORY,
+    PROFILE,
 }

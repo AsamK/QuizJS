@@ -32,6 +32,7 @@ export interface IGameState {
 
 export interface IStoreUi {
     showCreateNewGame: boolean;
+    showProfile: boolean;
     selectedGameId: number | null;
     isPlaying: boolean;
     showAnswer: boolean;

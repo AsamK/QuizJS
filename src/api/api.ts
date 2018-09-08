@@ -58,9 +58,9 @@ export function apiCreateUser(requestFn: BackendRequestFn, userName: string, ema
     );
 }
 
-export function apiUpdateUser(requestFn: BackendRequestFn, userName: string, email: string, passwordSalt: string, password: string,
+export function apiUpdateUser(requestFn: BackendRequestFn, userName: string, email: string, passwordSalt: string, password: string | null,
 ): Promise<IApiPopup | { user: IApiUser }> {
-    const passwordHash = getPasswordHash(passwordSalt, password);
+    const passwordHash = password == null ? '' : getPasswordHash(passwordSalt, password);
     const body = toFormUrlencoded({
         email,
         name: userName,
