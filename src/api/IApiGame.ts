@@ -8,6 +8,7 @@ export const enum GameState {
     FINISHED = 2,
     GAVE_UP = 5,
     ELAPSED = 6,
+    NEW_RANDOM_GAME = 10,
 }
 
 export const enum QuestionType {

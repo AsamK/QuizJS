@@ -86,7 +86,7 @@ class Game extends React.PureComponent<IGameProps> {
             </div>
             {rounds}
             <div className="qd-game_footer">
-                {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP ? null :
+                {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP && game.state !== GameState.ELAPSED ? null :
                     <button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}
                     >Nochmal</button>
                 }

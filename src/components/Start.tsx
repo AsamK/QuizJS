@@ -64,7 +64,8 @@ function StartElement({ game, onGameSelected }: IStartElementProps): React.React
 function Start({ games, user, onGameSelected, onNewGame, onShowProfile }: IStartProps): React.ReactElement<IStartProps> {
     const requestedGames = games.filter(game => game.your_turn && game.state === GameState.REQUESTED)
         .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
-    const runningGames = games.filter(game => game.your_turn && game.state === GameState.ACTIVE)
+    const runningGames = games.filter(game => game.your_turn &&
+        (game.state === GameState.ACTIVE || game.state === GameState.NEW_RANDOM_GAME))
         .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     const waitingGames = games.filter(game => !game.your_turn &&
         game.state !== GameState.FINISHED &&
