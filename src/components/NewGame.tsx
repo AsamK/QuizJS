@@ -35,7 +35,7 @@ class NewGame extends React.PureComponent<INewGameProps> {
                 className="qd-new-game_friend"
                 onClick={() => onCreateGame(friend.user_id)}
             >
-                {friend.name} {friend.email}
+                ({friend.avatar_code}) {friend.name} {friend.email}
             </div>,
         );
         return <div className="qd-new-game">
@@ -53,7 +53,7 @@ class NewGame extends React.PureComponent<INewGameProps> {
                         className="qd-new-game_user"
                         onClick={() => onCreateGame(foundUser.user_id)}
                     >
-                        {foundUser.name} {foundUser.avatar_code}
+                        ({foundUser.avatar_code}) {foundUser.name}
                     </div>
                 }
             </div>

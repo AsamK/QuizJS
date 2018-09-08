@@ -3,8 +3,14 @@
 }
 
 .qd-new-game_user,
-.qd-new-game_friends {
+.qd-new-game_friend {
     background-color: lightblue;
     cursor: pointer;
     margin-bottom: 1px;
+    padding: 5px;
+}
+
+.qd-new-game_search-user {
+    display: flex;
+    flex-direction: column;
 }
