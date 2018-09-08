@@ -5,6 +5,7 @@ import './Time.css';
 export interface ITimeProps {
     timestamp: number;
     showSeconds: boolean;
+    showDays: boolean;
 }
 
 export class Time extends React.Component<ITimeProps> {
@@ -22,7 +23,7 @@ export class Time extends React.Component<ITimeProps> {
     }
 
     public render(): React.ReactChild {
-        const { showSeconds, timestamp } = this.props;
+        const { showSeconds, showDays, timestamp } = this.props;
         let diff = new Date().valueOf() - new Date(timestamp).valueOf();
         if (diff < 0) {
             // Future date shouldn't happen
@@ -34,7 +35,7 @@ export class Time extends React.Component<ITimeProps> {
         const minutes = Math.trunc(seconds / 60);
         const hours = Math.trunc(minutes / 60);
         const days = Math.trunc(hours / 24);
-        if (days > 0) {
+        if (days > 0 && showDays) {
             age = days + 'd';
             timerInterval = 1000 * 60 * 60;
         } else if (hours > 0) {

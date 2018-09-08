@@ -53,10 +53,13 @@ function StartElement({ game, onGameSelected }: IStartElementProps): React.React
             {yourCorrect}-{opponentCorrect}
         </div>
         <div className="qd-start_entry_time">
-            <Time
-                timestamp={game.timestamp}
-                showSeconds={false}
-            />
+            {!game.timestamp ? null :
+                <Time
+                    timestamp={game.timestamp}
+                    showSeconds={false}
+                    showDays={false}
+                />
+            }
         </div>
     </div>;
 }

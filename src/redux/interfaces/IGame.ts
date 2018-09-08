@@ -10,7 +10,7 @@ export interface IGame {
     opponent_question_types: QuestionType[];
     cat_choices: number[];
     is_image_question_disabled: boolean;
-    timestamp: number;
+    timestamp: number | null;
     state: GameState;
     mode: 0;
     your_turn: boolean;
