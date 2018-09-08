@@ -192,8 +192,8 @@ export const selectedGameRoundStateSelector = createSelector(
             : Math.ceil(questions.length / QUESTIONS_PER_ROUND / CATEGORIES_PER_ROUND);
         const yourAnswers = [...game.your_answers, ...gameState.pendingAnswers];
         for (let i = 0; i < roundCount; i++) {
-            const catId = !questions || game.cat_choices.length <= i ? null :
-                questions[i * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND + game.cat_choices[i] * CATEGORIES_PER_ROUND].cat_id;
+            const catId = !questions || catChoices.length <= i ? null :
+                questions[i * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND + catChoices[i] * CATEGORIES_PER_ROUND].cat_id;
             result.push({
                 category: catId == null ? null : categories.get(catId) || null,
                 opponentAnswers: game.opponent_answers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),

@@ -54,8 +54,8 @@ class Game extends React.PureComponent<IGameProps> {
         if (!game) {
             return <div>'Loading game...'</div>;
         }
-        const yourCorrectAnswers = game.your_answers.filter(a => a === 0).length;
-        const opponentCorrectAnswers = game.opponent_answers.filter(a => a === 0).length;
+        const yourCorrectAnswers = gameRound.reduce((sum, r) => sum + r.yourAnswers.filter(a => a === 0).length, 0);
+        const opponentCorrectAnswers = gameRound.reduce((sum, r) => sum + r.opponentAnswers.filter(a => a === 0).length, 0);
         const rounds = gameRound.map((round, i) => (
             <div className="qd-game_round" key={i}>
                 <div className="qd-game_round-questions">
