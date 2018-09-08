@@ -8,6 +8,7 @@ import { IUser } from '../redux/interfaces/IUser';
 import { foundUserSelector, friendsSelector } from '../redux/selectors/entities.selectors';
 import { AppThunkDispatch, createGame, createRandomGame, searchUser } from '../redux/thunks';
 import { debounce } from '../utils/utils';
+import Avatar from './Avatar';
 import './NewGame.css';
 
 interface INewGameStateProps {
@@ -35,7 +36,7 @@ class NewGame extends React.PureComponent<INewGameProps> {
                 className="qd-new-game_friend"
                 onClick={() => onCreateGame(friend.user_id)}
             >
-                ({friend.avatar_code}) {friend.name} {friend.email}
+                <Avatar avatarCode={friend.avatar_code} /> {friend.name} {friend.email}
             </div>,
         );
         return <div className="qd-new-game">
@@ -53,7 +54,7 @@ class NewGame extends React.PureComponent<INewGameProps> {
                         className="qd-new-game_user"
                         onClick={() => onCreateGame(foundUser.user_id)}
                     >
-                        ({foundUser.avatar_code}) {foundUser.name}
+                        <Avatar avatarCode={foundUser.avatar_code} /> {foundUser.name}
                     </div>
                 }
             </div>

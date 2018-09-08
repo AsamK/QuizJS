@@ -1,6 +1,6 @@
 .qd-game_header {
     display: flex;
-    margin: 1em;
+    margin: 1em 0;
 }
 
 .qd-game_points {

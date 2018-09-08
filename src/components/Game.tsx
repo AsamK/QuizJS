@@ -6,8 +6,11 @@ import { selectGame, startPlaying } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IGame } from '../redux/interfaces/IGame';
 import { IGameRoundState } from '../redux/interfaces/IGameRoundState';
+import { IUser } from '../redux/interfaces/IUser';
+import { userSelector } from '../redux/selectors/entities.selectors';
 import { isSelectedGameWithFriendSelector, selectedGameIdSelector, selectedGameRoundStateSelector, selectedGameSelector } from '../redux/selectors/ui.selectors';
 import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend } from '../redux/thunks';
+import Avatar from './Avatar';
 import './Game.css';
 
 interface IGameStateProps {
@@ -15,6 +18,7 @@ interface IGameStateProps {
     gameId: number | null;
     gameRound: IGameRoundState[];
     isFriend: boolean;
+    user: IUser | null;
 }
 
 interface IGameDispatchProps {
@@ -45,7 +49,8 @@ class Game extends React.PureComponent<IGameProps> {
     }
 
     public render(): React.ReactElement<IGameProps> {
-        const { game, gameRound, isFriend, onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend } = this.props;
+        const { game, gameRound, isFriend, user,
+            onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend } = this.props;
         if (!game) {
             return <div>'Loading game...'</div>;
         }
@@ -80,9 +85,9 @@ class Game extends React.PureComponent<IGameProps> {
         return <div>
             <button onClick={onBack}>Zurück</button>
             <div className="qd-game_header">
-                <div className="qd-game_user">Ich</div>
+                <div className="qd-game_user"><Avatar avatarCode={user ? user.avatar_code : null} /> Ich</div>
                 <div className="qd-game_points">{yourCorrectAnswers} - {opponentCorrectAnswers}</div>
-                <div className="qd-game_user">{game.opponent.name}</div>
+                <div className="qd-game_user"><Avatar avatarCode={game.opponent.avatar_code} />{game.opponent.name}</div>
             </div>
             {rounds}
             <div className="qd-game_footer">
@@ -123,6 +128,7 @@ const mapStateToProps = (state: IAppStore): IGameStateProps => {
         gameId: selectedGameIdSelector(state),
         gameRound: selectedGameRoundStateSelector(state),
         isFriend: isSelectedGameWithFriendSelector(state),
+        user: userSelector(state),
     };
 };
 

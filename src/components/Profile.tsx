@@ -6,6 +6,7 @@ import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IUser } from '../redux/interfaces/IUser';
 import { friendsSelector, userSelector } from '../redux/selectors/entities.selectors';
 import { AppThunkDispatch, updateUser } from '../redux/thunks';
+import Avatar from './Avatar';
 import './Profile.css';
 
 interface IProfileStateProps {
@@ -47,13 +48,13 @@ class Profile extends React.Component<IProfileProps, IProfileState> {
                 key={friend.user_id}
                 className="qd-profile_friend"
             >
-                {friend.name} &lt;{friend.email}&gt; ({friend.avatar_code})
+                <Avatar avatarCode={friend.avatar_code} />{friend.name} &lt;{friend.email}&gt;
             </div>,
         );
         return <div className="qd-profile">
             <button onClick={onBack}>Zurück</button>
             <h2>{user.name} ({user.user_id})</h2>
-            {!user.avatar_code ? null : <div className="qd-profile_avatar">Avatar: {user.avatar_code}</div>}
+            <div className="qd-profile_avatar">Avatar: <Avatar avatarCode={user.avatar_code} /></div>
             {this.state.updatePassword ?
                 <form className="qd-profile_form" onSubmit={e => {
                     const password = this.state.password;

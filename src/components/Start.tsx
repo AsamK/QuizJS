@@ -8,6 +8,7 @@ import { IGame } from '../redux/interfaces/IGame';
 import { IUser } from '../redux/interfaces/IUser';
 import { gamesSelector, userSelector } from '../redux/selectors/entities.selectors';
 import { AppThunkDispatch } from '../redux/thunks';
+import Avatar from './Avatar';
 import './Start.css';
 import { Time } from './Time';
 
@@ -37,6 +38,7 @@ function StartElement({ game, onGameSelected }: IStartElementProps): React.React
         onClick={() => onGameSelected(game.game_id)}
     >
         <div className="qd-start_entry_opponent">
+            <Avatar avatarCode={game.opponent.avatar_code} />
             {game.opponent.name}
             <div className="qd-start_entry_info">{
                 game.state === GameState.ELAPSED ? 'Abgelaufen' :
