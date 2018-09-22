@@ -17,17 +17,24 @@ export interface IExtraArgument {
 export type AppThunkAction<R = void> = ThunkAction<R, IAppStore, IExtraArgument, IAppAction>;
 export type AppThunkDispatch = ThunkDispatch<IAppStore, IExtraArgument, IAppAction>;
 
+function showPopup(popup: IApiPopup): void {
+    // TODO Show some overlay instead of a modal alert
+    alert(popup.popup_title + '\n' + popup.popup_mess);
+}
+
 /**
  *
  * @param possiblePopup
  * @returns true, if popup was handled and result should be skipped, otherwise false
  */
-function handlePopup(possiblePopup: IApiPopup | object): boolean {
+function handlePopup(possiblePopup: IApiPopup | { popup: IApiPopup } | object): boolean {
     if (!('popup_mess' in possiblePopup)) {
+        if ('popup' in possiblePopup && possiblePopup.popup != null) {
+            showPopup(possiblePopup.popup);
+        }
         return false;
     }
-    // TODO Show some overlay instead of a modal alert
-    alert(possiblePopup.popup_title + '\n' + possiblePopup.popup_mess);
+    showPopup(possiblePopup);
     return !!possiblePopup.skip;
 }
 
