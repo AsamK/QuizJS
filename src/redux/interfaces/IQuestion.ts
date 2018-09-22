@@ -1,14 +1,8 @@
 
 export interface IQuestion {
-    extra_explanation: {
-        images: null;
-        text: null;
-        videos: null
-    };
     q_id: number;
-    timestamp: number;
+    timestamp?: number;
     cat_id: number;
-    expires: null;
     answer_time: number;
     stats: {
         correct_answer_ratio: number;

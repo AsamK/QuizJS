@@ -5,8 +5,9 @@ import { GameState } from '../api/IApiGame';
 import { selectGame, showCreateNewGame, showProfile } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IGame } from '../redux/interfaces/IGame';
+import { IQuiz } from '../redux/interfaces/IQuiz';
 import { IUser } from '../redux/interfaces/IUser';
-import { gamesSelector, userSelector } from '../redux/selectors/entities.selectors';
+import { gamesSelector, quizzesSelector, userSelector } from '../redux/selectors/entities.selectors';
 import { AppThunkDispatch } from '../redux/thunks';
 import Avatar from './Avatar';
 import './Start.css';
@@ -14,6 +15,7 @@ import { Time } from './Time';
 
 interface IStartStateProps {
     games: IGame[];
+    quizzes: IQuiz[];
     user: IUser | null;
 }
 interface IStartDispatchProps {
@@ -66,7 +68,38 @@ function StartElement({ game, onGameSelected }: IStartElementProps): React.React
     </div>;
 }
 
-function Start({ games, user, onGameSelected, onNewGame, onShowProfile }: IStartProps): React.ReactElement<IStartProps> {
+interface IStartQuizElementProps {
+    quiz: IQuiz;
+    onQuizSelected: (quizId: string) => void;
+}
+
+function StartQuizElement({ quiz, onQuizSelected }: IStartQuizElementProps): React.ReactElement<IStartQuizElementProps> {
+    const yourCorrect = quiz.your_answers.answers.filter(a => a.answer === 0).length;
+    const answersCount = quiz.your_answers.answers.length;
+    return <div
+        className="qd-start_entry"
+        onClick={() => onQuizSelected(quiz.quiz_id)}
+    >
+        <div className="qd-start_entry_opponent">
+            {quiz.name}
+            <div className="qd-start_entry_info"></div>
+        </div>
+        <div className="qd-start_entry_points">
+            {yourCorrect}/{answersCount}
+        </div>
+        <div className="qd-start_entry_time">
+            {!quiz.pub_daterange.lower ? null :
+                <Time
+                    timestamp={new Date(quiz.pub_daterange.lower).getTime()}
+                    showSeconds={false}
+                    showDays={true}
+                />
+            }
+        </div>
+    </div>;
+}
+
+function Start({ games, user, quizzes, onGameSelected, onNewGame, onShowProfile }: IStartProps): React.ReactElement<IStartProps> {
     const requestedGames = games.filter(game => game.your_turn && game.state === GameState.REQUESTED)
         .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     const runningGames = games.filter(game => game.your_turn &&
@@ -81,12 +114,21 @@ function Start({ games, user, onGameSelected, onNewGame, onShowProfile }: IStart
         game.state === GameState.GAVE_UP ||
         game.state === GameState.ELAPSED)
         .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
+    const runningQuizElements = quizzes
+        .filter(quiz => quiz.your_answers.finish_date == null)
+        .map(quiz =>
+            <StartQuizElement key={quiz.quiz_id} quiz={quiz} onQuizSelected={() => []} />);
+    const finishedQuizElements = quizzes
+        .filter(quiz => quiz.your_answers.finish_date != null)
+        .map(quiz =>
+            <StartQuizElement key={quiz.quiz_id} quiz={quiz} onQuizSelected={() => []} />);
     return <div className="qd-start">
-        Eingeloggt als: <span onClick={onShowProfile}>{!user ? 'Unbekannt' : user.name + ' <' + user.email + '>'}</span>
+        Eingeloggt als: <span onClick={onShowProfile}>{!user ? 'Unbekannt' : user.name + ' <' + (user.email || '') + '>'}</span>
         <div className="qd-start_new-game">
             <button onClick={onNewGame}>Neues Spiel starten</button>
         </div>
         <div className="qd-start_running">
+            {runningQuizElements}
             {runningGames}
         </div>
         {requestedGames.length === 0 ? null :
@@ -104,6 +146,7 @@ function Start({ games, user, onGameSelected, onNewGame, onShowProfile }: IStart
         {finishedGames.length === 0 ? null :
             <div className="qd-start_finished">
                 <div className="qd-start_finished-title">Beendete Spiele</div>
+                {finishedQuizElements}
                 {finishedGames}
             </div>
         }
@@ -113,6 +156,7 @@ function Start({ games, user, onGameSelected, onNewGame, onShowProfile }: IStart
 const mapStateToProps = (state: IAppStore): IStartStateProps => {
     return {
         games: gamesSelector(state),
+        quizzes: quizzesSelector(state),
         user: userSelector(state),
     };
 };

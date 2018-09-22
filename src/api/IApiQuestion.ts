@@ -1,6 +1,5 @@
 import { IApiCategory } from './IApiCategory';
-
-type IsoDate = string;
+import { IsoDate } from './types';
 
 export interface IApiQuestion {
     extra_explanation: {

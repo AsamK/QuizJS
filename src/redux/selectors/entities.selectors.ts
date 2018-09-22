@@ -18,3 +18,5 @@ export const gameImageQuestionsSelector = createSelector(entitiesSelector, entit
 export const questionsSelector = createSelector(entitiesSelector, entities => entities.questions);
 
 export const categoriesSelector = createSelector(entitiesSelector, entities => entities.categories);
+
+export const quizzesSelector = createSelector(entitiesSelector, entities => entities.quizzes);

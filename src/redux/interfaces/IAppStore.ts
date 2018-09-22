@@ -3,6 +3,7 @@ import { ICategory } from './ICategory';
 import { IGame } from './IGame';
 import { IOpponent } from './IOpponent';
 import { IQuestion } from './IQuestion';
+import { IQuiz } from './IQuiz';
 import { IUser } from './IUser';
 
 export interface IAppStore {
@@ -19,6 +20,8 @@ export interface IStoreEntities {
     games: IGame[];
     questions: Map<number, IQuestion>;
     gameImageQuestions: Map<number, Map<number, number>>;
+    quizzes: IQuiz[];
+    quizQuestions: Map<number, IQuestion>;
 }
 
 export interface IGameState {

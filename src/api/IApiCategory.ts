@@ -1,5 +1,4 @@
-/* Color including hash; e.g. #ffeeff */
-type Color = string;
+import { Color } from './types';
 
 export interface IApiCategory {
     cat_id: number;

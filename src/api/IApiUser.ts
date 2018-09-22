@@ -1,6 +1,7 @@
 import { IApiCoins } from './IApiCoins';
 import { IApiDeviceToken } from './IApiDeviceToken';
 import { IApiGame } from './IApiGame';
+import { IApiQuiz } from './IApiQuiz';
 
 export interface IApiUser {
     avatar_code: string | null;
@@ -18,7 +19,7 @@ export interface IApiUser {
     only_chat_with_friends: boolean;
     q_reviewer: number;
     qc: boolean;
-    quizzes: [];
+    quizzes: IApiQuiz[];
     show_gift: boolean;
     user_id: string;
 }
