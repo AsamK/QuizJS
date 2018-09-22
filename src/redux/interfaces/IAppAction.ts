@@ -6,7 +6,7 @@ import { IApiStateResponse } from '../../api/IApiStateResponse';
 import { IApiUser } from '../../api/IApiUser';
 import { IApiUserSearchResponse } from '../../api/IApiUserSearchResponse';
 import { ADD_FRIEND_ERROR, ADD_FRIEND_REQUEST, ADD_FRIEND_RESPONSE, APP_DATA_ERROR, APP_DATA_REQUEST, APP_DATA_RESPONSE, CREATE_GAME_ERROR, CREATE_GAME_REQUEST, CREATE_GAME_RESPONSE, CREATE_USER_ERROR, CREATE_USER_REQUEST, CREATE_USER_RESPONSE, DECLINE_GAME_ERROR, DECLINE_GAME_REQUEST, DECLINE_GAME_RESPONSE, FIND_USER_ERROR, FIND_USER_REQUEST, FIND_USER_RESPONSE, GIVE_UP_GAME_ERROR, GIVE_UP_GAME_REQUEST, GIVE_UP_GAME_RESPONSE, LOAD_GAME_ERROR, LOAD_GAME_REQUEST, LOAD_GAME_RESPONSE, LOAD_GAMES_ERROR, LOAD_GAMES_REQUEST, LOAD_GAMES_RESPONSE, LOGIN_ERROR, LOGIN_REQUEST, LOGIN_RESPONSE, REMOVE_FRIEND_ERROR, REMOVE_FRIEND_REQUEST, REMOVE_FRIEND_RESPONSE, UPDATE_USER_ERROR, UPDATE_USER_REQUEST, UPDATE_USER_RESPONSE, UPLOAD_ROUND_ERROR, UPLOAD_ROUND_REQUEST, UPLOAD_ROUND_RESPONSE } from '../actions/entities.actions';
-import { COOKIE_LOADED, FINISH_ROUND, NEXT_QUESTION, SELECT_ANSWER, SELECT_CATEGORY, SELECT_GAME, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, STOP_PLAYING } from '../actions/ui.actions';
+import { COOKIE_LOADED, FINISH_ROUND, NEXT_QUESTION, SELECT_ANSWER, SELECT_CATEGORY, SELECT_GAME, SELECT_QUIZ, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, STOP_PLAYING } from '../actions/ui.actions';
 
 type IAppUiAction =
     { type: typeof COOKIE_LOADED, cookie: string } |
@@ -14,6 +14,7 @@ type IAppUiAction =
     { type: typeof SHOW_PROFILE, show: boolean } |
     { type: typeof SELECT_GAME, gameId: number | null } |
     { type: typeof START_PLAYING, gameId: number, timestamp: number } |
+    { type: typeof SELECT_QUIZ, quizId: string | null } |
     { type: typeof STOP_PLAYING } |
     { type: typeof SELECT_CATEGORY, gameId: number, categoryId: number, timestamp: number } |
     { type: typeof SELECT_ANSWER, gameId: number, answerIndex: number, questionType: QuestionType, timestamp: number } |

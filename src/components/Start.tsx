@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { GameState } from '../api/IApiGame';
-import { selectGame, showCreateNewGame, showProfile } from '../redux/actions/ui.actions';
+import { selectGame, selectQuiz, showCreateNewGame, showProfile } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IGame } from '../redux/interfaces/IGame';
 import { IQuiz } from '../redux/interfaces/IQuiz';
@@ -20,6 +20,7 @@ interface IStartStateProps {
 }
 interface IStartDispatchProps {
     onGameSelected: (gameId: number) => void;
+    onQuizSelected: (quizId: string) => void;
     onNewGame: () => void;
     onShowProfile: () => void;
 }
@@ -99,7 +100,8 @@ function StartQuizElement({ quiz, onQuizSelected }: IStartQuizElementProps): Rea
     </div>;
 }
 
-function Start({ games, user, quizzes, onGameSelected, onNewGame, onShowProfile }: IStartProps): React.ReactElement<IStartProps> {
+function Start({ games, user, quizzes, onGameSelected, onQuizSelected,
+    onNewGame, onShowProfile }: IStartProps): React.ReactElement<IStartProps> {
     const requestedGames = games.filter(game => game.your_turn && game.state === GameState.REQUESTED)
         .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     const runningGames = games.filter(game => game.your_turn &&
@@ -117,11 +119,11 @@ function Start({ games, user, quizzes, onGameSelected, onNewGame, onShowProfile 
     const runningQuizElements = quizzes
         .filter(quiz => quiz.your_answers.finish_date == null)
         .map(quiz =>
-            <StartQuizElement key={quiz.quiz_id} quiz={quiz} onQuizSelected={() => []} />);
+            <StartQuizElement key={quiz.quiz_id} quiz={quiz} onQuizSelected={onQuizSelected} />);
     const finishedQuizElements = quizzes
         .filter(quiz => quiz.your_answers.finish_date != null)
         .map(quiz =>
-            <StartQuizElement key={quiz.quiz_id} quiz={quiz} onQuizSelected={() => []} />);
+            <StartQuizElement key={quiz.quiz_id} quiz={quiz} onQuizSelected={onQuizSelected} />);
     return <div className="qd-start">
         Eingeloggt als: <span onClick={onShowProfile}>{!user ? 'Unbekannt' : user.name + ' <' + (user.email || '') + '>'}</span>
         <div className="qd-start_new-game">
@@ -165,6 +167,7 @@ const mapDispatchToProps = (dispatch: AppThunkDispatch): IStartDispatchProps => 
     return {
         onGameSelected: gameId => dispatch(selectGame(gameId)),
         onNewGame: () => dispatch(showCreateNewGame()),
+        onQuizSelected: quizId => dispatch(selectQuiz(quizId)),
         onShowProfile: () => dispatch(showProfile()),
     };
 };

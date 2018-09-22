@@ -29,6 +29,13 @@ export const selectGame = (gameId: number | null): IAppAction => ({
     type: SELECT_GAME,
 });
 
+export const SELECT_QUIZ = 'SELECT_QUIZ';
+
+export const selectQuiz = (quizId: string | null): IAppAction => ({
+    quizId,
+    type: SELECT_QUIZ,
+});
+
 export const START_PLAYING = 'START_PLAYING';
 
 export const startPlaying = (gameId: number, timestamp: number): IAppAction => ({

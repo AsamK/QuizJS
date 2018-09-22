@@ -37,6 +37,7 @@ export interface IStoreUi {
     showCreateNewGame: boolean;
     showProfile: boolean;
     selectedGameId: number | null;
+    selectedQuizId: string | null;
     isPlaying: boolean;
     showAnswer: boolean;
     gameState: Map<number, IGameState>;

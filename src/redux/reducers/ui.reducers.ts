@@ -1,5 +1,5 @@
 import { APP_DATA_RESPONSE, CREATE_GAME_REQUEST, CREATE_USER_RESPONSE, DECLINE_GAME_RESPONSE, LOAD_GAME_RESPONSE, LOAD_GAMES_RESPONSE, LOGIN_RESPONSE, UPLOAD_ROUND_RESPONSE } from '../actions/entities.actions';
-import { COOKIE_LOADED, FINISH_ROUND, NEXT_QUESTION, SELECT_ANSWER, SELECT_CATEGORY, SELECT_GAME, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, STOP_PLAYING } from '../actions/ui.actions';
+import { COOKIE_LOADED, FINISH_ROUND, NEXT_QUESTION, SELECT_ANSWER, SELECT_CATEGORY, SELECT_GAME, SELECT_QUIZ, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, STOP_PLAYING } from '../actions/ui.actions';
 import { IAppAction } from '../interfaces/IAppAction';
 import { IGameState } from '../interfaces/IAppStore';
 import { getDefaultGameState, getGameStateOrDefault } from '../utils';
@@ -45,6 +45,15 @@ export function selectedGameId(state: number | null = null, action: IAppAction):
             }
             return state;
         }
+        default:
+            return state;
+    }
+}
+
+export function selectedQuizId(state: string |  null = null, action: IAppAction): typeof state {
+    switch (action.type) {
+        case SELECT_QUIZ:
+            return action.quizId;
         default:
             return state;
     }

@@ -15,39 +15,6 @@
     text-align: center;
 }
 
-.qd-game_round {
-    align-items: center;
-    display: flex;
-    height: 45px;
-    /* margin: 1em 0; */
-}
-
-.qd-game_round-info {
-    flex: none;
-    text-align: center;
-    font-size: .8rem;
-    margin-left: 1em;
-    margin-right: 1em;
-    width: 60px;
-    /* height: 20px; */
-}
-
-.qd-game_round-category {
-    font-size: .6rem;
-}
-
-.qd-game_round-questions {
-    display: flex;
-    flex: auto;
-    height: 25px;
-    overflow: hidden;
-}
-
-.qd-game_round-question-block {
-    flex: auto;
-    margin-right: 3px;
-}
-
 .qd-game_footer {
     align-items: center;
     display: flex;

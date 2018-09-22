@@ -12,6 +12,7 @@ import { isSelectedGameWithFriendSelector, selectedGameIdSelector, selectedGameR
 import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend } from '../redux/thunks';
 import Avatar from './Avatar';
 import './Game.css';
+import GameRounds from './GameRounds';
 
 interface IGameStateProps {
     game: IGame | null;
@@ -35,12 +36,7 @@ interface IGameDispatchProps {
 interface IGameProps extends IGameStateProps, IGameDispatchProps {
 }
 
-const QuestionItem = ({ color }: { color: 'red' | 'green' | 'gray' }) => {
-    return <div className="qd-game_round-question-block" style={{ backgroundColor: color }}>
-    </div>;
-};
-
-class Game extends React.PureComponent<IGameProps> {
+export class Game extends React.PureComponent<IGameProps> {
 
     public componentDidMount(): void {
         if (this.props.gameId != null) {
@@ -56,32 +52,6 @@ class Game extends React.PureComponent<IGameProps> {
         }
         const yourCorrectAnswers = gameRound.reduce((sum, r) => sum + r.yourAnswers.filter(a => a === 0).length, 0);
         const opponentCorrectAnswers = gameRound.reduce((sum, r) => sum + r.opponentAnswers.filter(a => a === 0).length, 0);
-        const rounds = gameRound.map((round, i) => (
-            <div className="qd-game_round" key={i}>
-                <div className="qd-game_round-questions">
-                    <QuestionItem
-                        color={round.yourAnswers.length <= 0 ? 'gray' : round.yourAnswers[0] === 0 ? 'green' : 'red'} />
-                    <QuestionItem
-                        color={round.yourAnswers.length <= 1 ? 'gray' : round.yourAnswers[1] === 0 ? 'green' : 'red'} />
-                    <QuestionItem
-                        color={round.yourAnswers.length <= 2 ? 'gray' : round.yourAnswers[2] === 0 ? 'green' : 'red'} />
-                </div>
-                <div className="qd-game_round-info"
-                >Runde:&nbsp;{i + 1}
-                    <div className="qd-game_round-category">
-                        {!round.category ? null : round.category.name}
-                    </div>
-                </div>
-                <div className="qd-game_round-questions">
-                    <QuestionItem
-                        color={round.opponentAnswers.length <= 0 ? 'gray' : round.opponentAnswers[0] === 0 ? 'green' : 'red'} />
-                    <QuestionItem
-                        color={round.opponentAnswers.length <= 1 ? 'gray' : round.opponentAnswers[1] === 0 ? 'green' : 'red'} />
-                    <QuestionItem
-                        color={round.opponentAnswers.length <= 2 ? 'gray' : round.opponentAnswers[2] === 0 ? 'green' : 'red'} />
-                </div>
-            </div>
-        ));
         return <div>
             <button onClick={onBack}>Zurück</button>
             <div className="qd-game_header">
@@ -89,7 +59,7 @@ class Game extends React.PureComponent<IGameProps> {
                 <div className="qd-game_points">{yourCorrectAnswers} - {opponentCorrectAnswers}</div>
                 <div className="qd-game_user"><Avatar avatarCode={game.opponent.avatar_code} />{game.opponent.name}</div>
             </div>
-            {rounds}
+            <GameRounds gameRound={gameRound}/>
             <div className="qd-game_footer">
                 {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP && game.state !== GameState.ELAPSED ? null :
                     <button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}

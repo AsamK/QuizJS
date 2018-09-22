@@ -19,6 +19,7 @@ import Interrogation from './Interrogation';
 import Login from './Login';
 import NewGame from './NewGame';
 import Profile from './Profile';
+import QuizGame from './QuizGame';
 import Start from './Start';
 
 interface IAppStateProps {
@@ -96,6 +97,8 @@ class App extends React.Component<IAppProps, IAppState> {
         return <Start />;
       case MainView.GAME:
         return <Game />;
+      case MainView.QUIZ:
+        return <QuizGame />;
       case MainView.SELECT_CATEGORY:
         return <CategorySelection />;
       case MainView.INTERROGATION:

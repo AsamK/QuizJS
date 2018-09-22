@@ -7,7 +7,7 @@ import { IGameRoundState } from '../interfaces/IGameRoundState';
 import { IQuestion } from '../interfaces/IQuestion';
 import { MainView } from '../MainView';
 import { getGameStateOrDefault } from '../utils';
-import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, questionsSelector } from './entities.selectors';
+import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, questionsSelector, quizQuestionsSelector, quizzesSelector } from './entities.selectors';
 
 const uiSelector = (state: IAppStore) => state.ui;
 
@@ -204,29 +204,105 @@ export const selectedGameRoundStateSelector = createSelector(
     },
 );
 
+export const selectedQuizIdSelector = createSelector(uiSelector, ui => ui.selectedQuizId);
+
+export const selectedQuizSelector = createSelector(selectedQuizIdSelector, quizzesSelector,
+    (quizId, quizzes) => quizzes.find(q => q.quiz_id === quizId) || null,
+);
+
+export const selectedQuizQuestionsSelector = createSelector(
+    selectedQuizSelector,
+    quizQuestionsSelector,
+    (quiz, questions): IQuestion[] | null => {
+        if (!quiz) {
+            return null;
+        }
+
+        let invalidState = false;
+        const quizQuestions = quiz.questions.map(id => {
+            const q = questions.get(id);
+            if (!q) {
+                console.error(`INVALID STATE: Quiz question ${id} not found`);
+                invalidState = true;
+            }
+            return q;
+        });
+        if (invalidState) {
+            return null;
+        }
+
+        // cast the undefined away, as that's already checked by invalidState
+        return quizQuestions as IQuestion[];
+    },
+);
+
+export const selectedQuizRoundStateSelector = createSelector(
+    selectedQuizSelector,
+    selectedQuizQuestionsSelector,
+    categoriesSelector,
+    (quiz, questions, categories): IGameRoundState[] => {
+        if (!quiz || !questions) {
+            return [];
+        }
+        const result = [];
+        const roundCount = questions.length / QUESTIONS_PER_ROUND;
+        const yourAnswers = quiz.your_answers.answers.map(a => a.answer);
+        const opponentAnswers = questions.map(q => {
+            const stats = q.stats;
+            let opponentAnswer = 0;
+            let maxPercent = stats.correct_answer_percent;
+            if (maxPercent < stats.wrong1_answer_percent) {
+                opponentAnswer = 1;
+                maxPercent = stats.wrong1_answer_percent;
+            }
+            if (maxPercent < stats.wrong2_answer_percent) {
+                opponentAnswer = 2;
+                maxPercent = stats.wrong2_answer_percent;
+            }
+            if (maxPercent < stats.wrong3_answer_percent) {
+                opponentAnswer = 3;
+                maxPercent = stats.wrong3_answer_percent;
+            }
+            return opponentAnswer;
+        });
+        for (let i = 0; i < roundCount; i++) {
+            result.push({
+                category: null,
+                opponentAnswers: opponentAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
+                yourAnswers: yourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
+            });
+        }
+        return result;
+    },
+);
+
 // Routing
 export const mainViewSelector = createSelector(
     isPlayingSelector,
     selectedGameCategoryIndex,
     selectedGameSelector,
+    selectedQuizSelector,
     showCreateNewGameSelector,
     showProfileSelector,
-    (isPlaying, categoryIndex, game, showCreateNewGame, showProfile) => {
+    (isPlaying, categoryIndex, game, quiz, showCreateNewGame, showProfile) => {
         if (showCreateNewGame) {
             return MainView.CREATE_GAME;
         }
         if (showProfile) {
             return MainView.PROFILE;
         }
-        if (!game || game.game_id == null) {
+        if (game && game.game_id != null) {
+            if (!game.your_turn || !isPlaying) {
+                return MainView.GAME;
+            }
+            if (categoryIndex == null) {
+                return MainView.SELECT_CATEGORY;
+            }
+            return MainView.INTERROGATION;
+        } else if (quiz) {
+            return MainView.QUIZ;
+        } else {
             return MainView.START;
         }
-        if (!game.your_turn || !isPlaying) {
-            return MainView.GAME;
-        }
-        if (categoryIndex == null) {
-            return MainView.SELECT_CATEGORY;
-        }
-        return MainView.INTERROGATION;
     },
 );
