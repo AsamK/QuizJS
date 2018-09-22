@@ -29,13 +29,6 @@ export const selectGame = (gameId: number | null): IAppAction => ({
     type: SELECT_GAME,
 });
 
-export const SELECT_QUIZ = 'SELECT_QUIZ';
-
-export const selectQuiz = (quizId: string | null): IAppAction => ({
-    quizId,
-    type: SELECT_QUIZ,
-});
-
 export const START_PLAYING = 'START_PLAYING';
 
 export const startPlaying = (gameId: number, timestamp: number): IAppAction => ({
@@ -82,4 +75,43 @@ export const FINISH_ROUND = 'FINISH_ROUND';
 export const finishRound = (gameId: number): IAppAction => ({
     gameId,
     type: FINISH_ROUND,
+});
+
+export const SELECT_QUIZ = 'SELECT_QUIZ';
+
+export const selectQuiz = (quizId: string | null): IAppAction => ({
+    quizId,
+    type: SELECT_QUIZ,
+});
+
+export const START_PLAYING_QUIZ = 'START_PLAYING_QUIZ';
+
+export const startPlayingQuiz = (quizId: string, timestamp: number): IAppAction => ({
+    quizId,
+    timestamp,
+    type: START_PLAYING_QUIZ,
+});
+
+export const SELECT_ANSWER_QUIZ = 'SELECT_ANSWER_QUIZ';
+
+export const selectAnswerQuiz = (quizId: string, answerIndex: number, timestamp: number): IAppAction => ({
+    answerIndex,
+    quizId,
+    timestamp,
+    type: SELECT_ANSWER_QUIZ,
+});
+
+export const NEXT_QUESTION_QUIZ = 'NEXT_QUESTION_QUIZ';
+
+export const nextQuestionQuiz = (quizId: string, timestamp: number): IAppAction => ({
+    quizId,
+    timestamp,
+    type: NEXT_QUESTION_QUIZ,
+});
+
+export const FINISH_ROUND_QUIZ = 'FINISH_ROUND_QUIZ';
+
+export const finishRoundQuiz = (quizId: string): IAppAction => ({
+    quizId,
+    type: FINISH_ROUND_QUIZ,
 });

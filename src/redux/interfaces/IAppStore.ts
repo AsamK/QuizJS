@@ -4,6 +4,7 @@ import { IGame } from './IGame';
 import { IOpponent } from './IOpponent';
 import { IQuestion } from './IQuestion';
 import { IQuiz } from './IQuiz';
+import { IQuizAnswer } from './IQuizAnswer';
 import { IUser } from './IUser';
 
 export interface IAppStore {
@@ -33,6 +34,13 @@ export interface IGameState {
     answeredTimestamp: number | null;
 }
 
+export interface IQuizState {
+    current_answers_length: number;
+    pendingAnswers: IQuizAnswer[];
+    firstShownTimestamp: number | null;
+    answeredTimestamp: number | null;
+}
+
 export interface IStoreUi {
     showCreateNewGame: boolean;
     showProfile: boolean;
@@ -41,5 +49,6 @@ export interface IStoreUi {
     isPlaying: boolean;
     showAnswer: boolean;
     gameState: Map<number, IGameState>;
+    quizState: Map<string, IQuizState>;
     loggedIn: boolean;
 }

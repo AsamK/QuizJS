@@ -1,6 +1,6 @@
-import { IApiQuizAnswer } from '../../api/IApiQuiz';
 import { IDateRange } from '../../api/IDateRange';
 import { Color, IsoDate } from '../../api/types';
+import { IQuizAnswer } from './IQuizAnswer';
 
 export interface IQuiz {
     quiz_id: string;
@@ -18,7 +18,7 @@ export interface IQuiz {
     quiz_sponsor: null;
     your_answers: {
         give_up: boolean,
-        answers: IApiQuizAnswer[],
+        answers: IQuizAnswer[],
         finish_date: IsoDate,
     };
     your_ranking: number;

@@ -15,11 +15,12 @@ import './App.css';
 import CategorySelection from './CategorySelection';
 import CreateUser from './CreateUser';
 import Game from './Game';
-import Interrogation from './Interrogation';
+import GameInterrogation from './GameInterrogation';
 import Login from './Login';
 import NewGame from './NewGame';
 import Profile from './Profile';
 import QuizGame from './QuizGame';
+import QuizInterrogation from './QuizInterrogation';
 import Start from './Start';
 
 interface IAppStateProps {
@@ -101,8 +102,10 @@ class App extends React.Component<IAppProps, IAppState> {
         return <QuizGame />;
       case MainView.SELECT_CATEGORY:
         return <CategorySelection />;
-      case MainView.INTERROGATION:
-        return <Interrogation />;
+      case MainView.GAME_INTERROGATION:
+        return <GameInterrogation />;
+      case MainView.QUIZ_INTERROGATION:
+        return <QuizInterrogation />;
     }
     assertUnreachable(this.props.mainView);
   }

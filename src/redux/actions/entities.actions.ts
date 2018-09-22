@@ -1,6 +1,7 @@
 import { IApiBooleanResult } from '../../api/IApiBooleanResult';
 import { IApiGameResponse } from '../../api/IApiGameResponse';
 import { IApiGamesResponse } from '../../api/IApiGamesResponse';
+import { IApiQuizResponse } from '../../api/IApiQuizResponse';
 import { IApiStateResponse } from '../../api/IApiStateResponse';
 import { IApiUser } from '../../api/IApiUser';
 import { IApiUserSearchResponse } from '../../api/IApiUserSearchResponse';
@@ -175,6 +176,40 @@ export const loadGamesResponse = (response: IApiGamesResponse): IAppAction => ({
 
 export const loadGamesError = (e: any): IAppAction => ({
     type: LOAD_GAMES_ERROR,
+});
+
+export const LOAD_QUIZ_RESPONSE = 'LOAD_QUIZ_RESPONSE';
+export const LOAD_QUIZ_REQUEST = 'LOAD_QUIZ_REQUEST';
+export const LOAD_QUIZ_ERROR = 'LOAD_QUIZ_ERROR';
+
+export const loadQuizRequest = (): IAppAction => ({
+    type: LOAD_QUIZ_REQUEST,
+});
+
+export const loadQuizResponse = (response: IApiQuizResponse): IAppAction => ({
+    response,
+    type: LOAD_QUIZ_RESPONSE,
+});
+
+export const loadQuizError = (e: any): IAppAction => ({
+    type: LOAD_QUIZ_ERROR,
+});
+
+export const UPLOAD_QUIZ_ROUND_RESPONSE = 'UPLOAD_QUIZ_ROUND_RESPONSE';
+export const UPLOAD_QUIZ_ROUND_REQUEST = 'UPLOAD_QUIZ_ROUND_REQUEST';
+export const UPLOAD_QUIZ_ROUND_ERROR = 'UPLOAD_QUIZ_ROUND_ERROR';
+
+export const uploadQuizRoundRequest = (): IAppAction => ({
+    type: UPLOAD_QUIZ_ROUND_REQUEST,
+});
+
+export const uploadQuizRoundResponse = (response: IApiQuizResponse): IAppAction => ({
+    response,
+    type: UPLOAD_QUIZ_ROUND_RESPONSE,
+});
+
+export const uploadQuizRoundError = (e: any): IAppAction => ({
+    type: UPLOAD_QUIZ_ROUND_ERROR,
 });
 
 export const ADD_FRIEND_RESPONSE = 'ADD_FRIEND_RESPONSE';

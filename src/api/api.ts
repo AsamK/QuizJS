@@ -1,7 +1,10 @@
+import { toFormUrlencoded } from '../utils/utils';
 import { IApiBooleanResult } from './IApiBooleanResult';
 import { IApiGameResponse } from './IApiGameResponse';
 import { IApiGamesResponse } from './IApiGamesResponse';
 import { IApiPopup } from './IApiPopup';
+import { IApiQuizAnswer } from './IApiQuiz';
+import { IApiQuizResponse } from './IApiQuizResponse';
 import { IApiStateResponse } from './IApiStateResponse';
 import { IApiStats } from './IApiStats';
 import { IApiUser } from './IApiUser';
@@ -13,6 +16,7 @@ const CONTENT_TYPE_URLENCODED = 'application/x-www-form-urlencoded;charset=UTF-8
 export interface IRequestOptions {
     contentType?: string;
     body?: string;
+    queryParams?: { [key: string]: string };
 }
 
 export type BackendRequestFn = (method: 'GET' | 'POST', path: string, options: IRequestOptions) => Promise<Response>;
@@ -191,14 +195,36 @@ export function apiRequestUploadRound(
         .then(response => response.json());
 }
 
-export function apiRequestStats(requestFn: BackendRequestFn): Promise<IApiStats> {
-    return requestFn('GET', 'stats/my_stats', {}).then(response => response.json());
+export function apiRequestQuiz(
+    requestFn: BackendRequestFn,
+    quizId: string,
+): Promise<IApiQuizResponse> {
+    return requestFn('GET', 'quizzes/', {
+        queryParams: { quiz_id: quizId },
+    })
+        .then(response => response.json());
 }
 
-function toFormUrlencoded(form: { [key: string]: string }): string {
-    return Object.keys(form)
-        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(form[key]))
-        .join('&');
+export function apiRequestUploadQuizRound(
+    requestFn: BackendRequestFn,
+    quizId: string,
+    answers: IApiQuizAnswer[],
+    giveUp = false,
+): Promise<IApiQuizResponse> {
+    const body = toFormUrlencoded({
+        answer_dicts: JSON.stringify(answers),
+        give_up: giveUp ? '1' : '0',
+    });
+    return requestFn('POST', 'quizzes/my_answers', {
+        body,
+        contentType: CONTENT_TYPE_URLENCODED,
+        queryParams: { quiz_id: quizId },
+    })
+        .then(response => response.json());
+}
+
+export function apiRequestStats(requestFn: BackendRequestFn): Promise<IApiStats> {
+    return requestFn('GET', 'stats/my_stats', {}).then(response => response.json());
 }
 
 function getPasswordHash(passwordSalt: string, password: string): string {

@@ -29,8 +29,18 @@ export function getRandomOrder(length: number): number[] {
     return result;
 }
 
+export function toFormUrlencoded(form: { [key: string]: string }): string {
+    return Object.keys(form)
+        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(form[key]))
+        .join('&');
+}
+
 export function createProxiedRequestFn(proxyUrl: string, targetHost: string, cookie?: string): BackendRequestFn {
-    return (method: 'GET' | 'POST', path: string, { contentType, body }: IRequestOptions) => {
+    return (method: 'GET' | 'POST', path: string, { contentType, body, queryParams }: IRequestOptions) => {
+        if (queryParams) {
+            path += '?' + toFormUrlencoded(queryParams);
+        }
+
         const headers = new Headers([
             ['Target-Host', targetHost],
             ['Target-Path', path],

@@ -3,7 +3,8 @@ export const enum MainView {
     START,
     GAME,
     QUIZ,
-    INTERROGATION,
+    GAME_INTERROGATION,
+    QUIZ_INTERROGATION,
     SELECT_CATEGORY,
     PROFILE,
 }

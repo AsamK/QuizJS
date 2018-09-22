@@ -2,7 +2,7 @@ import { IApiGame } from '../../api/IApiGame';
 import { IApiQuestion } from '../../api/IApiQuestion';
 import { IApiQuiz } from '../../api/IApiQuiz';
 import { IApiQuizQuestion } from '../../api/IApiQuizQuestion';
-import { ADD_FRIEND_RESPONSE, APP_DATA_RESPONSE, CREATE_GAME_RESPONSE, DECLINE_GAME_RESPONSE, FIND_USER_ERROR, FIND_USER_RESPONSE, GIVE_UP_GAME_RESPONSE, LOAD_GAME_RESPONSE, LOAD_GAMES_RESPONSE, LOGIN_RESPONSE, REMOVE_FRIEND_RESPONSE, UPDATE_USER_RESPONSE, UPLOAD_ROUND_RESPONSE } from '../actions/entities.actions';
+import { ADD_FRIEND_RESPONSE, APP_DATA_RESPONSE, CREATE_GAME_RESPONSE, DECLINE_GAME_RESPONSE, FIND_USER_ERROR, FIND_USER_RESPONSE, GIVE_UP_GAME_RESPONSE, LOAD_GAME_RESPONSE, LOAD_GAMES_RESPONSE, LOAD_QUIZ_RESPONSE, LOGIN_RESPONSE, REMOVE_FRIEND_RESPONSE, UPDATE_USER_RESPONSE, UPLOAD_QUIZ_ROUND_RESPONSE, UPLOAD_ROUND_RESPONSE } from '../actions/entities.actions';
 import { IAppAction } from '../interfaces/IAppAction';
 import { ICategory } from '../interfaces/ICategory';
 import { IGame } from '../interfaces/IGame';
@@ -315,18 +315,6 @@ export function categories(state: Map<number, ICategory> = new Map(), action: IA
                     result.set(question.cat_id, question.category);
                 });
             });
-            action.response.user.quizzes.forEach(quiz => {
-                quiz.questions.forEach(question => {
-                    if (state.has(question.category.cat_id) || (result && result.has(question.category.cat_id))) {
-                        // Categories don't change, so we don't have to update here
-                        return;
-                    }
-                    if (!result) {
-                        result = new Map(state);
-                    }
-                    result.set(question.category.cat_id, question.category);
-                });
-            });
             return result || state;
         }
         case CREATE_GAME_RESPONSE:
@@ -379,7 +367,15 @@ const mapApiQuizToQuiz = (quiz: IApiQuiz): IQuiz => ({
     quiz_id: quiz.quiz_id,
     quiz_sponsor: quiz.quiz_sponsor,
     save_aggregated_stats: quiz.save_aggregated_stats,
-    your_answers: quiz.your_answers,
+    your_answers: {
+        answers: quiz.your_answers.answers.map(a => ({
+            answer: a.answer,
+            time: a.time,
+            timestamp: new Date(a.timestamp).getTime(),
+        })),
+        finish_date: quiz.your_answers.finish_date,
+        give_up: quiz.your_answers.give_up,
+    },
     your_ranking: quiz.your_ranking,
 });
 
@@ -389,6 +385,11 @@ export function quizzes(state: IQuiz[] = [], action: IAppAction): typeof state {
         case LOGIN_RESPONSE: {
             return action.response.user.quizzes
                 .map(mapApiQuizToQuiz);
+        }
+        case UPLOAD_QUIZ_ROUND_RESPONSE:
+        case LOAD_QUIZ_RESPONSE: {
+            const newQuiz = mapApiQuizToQuiz(action.response.quiz);
+            return immutableReplaceAtPositionOrAppend(state, state.findIndex(q => q.quiz_id === newQuiz.quiz_id), newQuiz);
         }
         default:
             return state;

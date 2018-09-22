@@ -1,4 +1,5 @@
-import { IGameState } from './interfaces/IAppStore';
+import { IGameState, IQuizState } from './interfaces/IAppStore';
+import { IQuestion } from './interfaces/IQuestion';
 
 export function getGameStateOrDefault(state: Map<number, IGameState>, gameId?: number | null): IGameState {
     const s = gameId == null ? null : state.get(gameId);
@@ -18,6 +19,43 @@ export function getDefaultGameState(): IGameState {
         pendingQuestionTypes: [],
         selectedCategoryIndex: null,
     };
+}
+
+export function getQuizStateOrDefault(state: Map<string, IQuizState>, quizId?: string | null): IQuizState {
+    const s = quizId == null ? null : state.get(quizId);
+    if (s) {
+        return s;
+    }
+
+    return getDefaultQuizState();
+}
+
+export function getDefaultQuizState(): IQuizState {
+    return {
+        answeredTimestamp: null,
+        current_answers_length: 0,
+        firstShownTimestamp: null,
+        pendingAnswers: [],
+    };
+}
+
+export function getOpponentAnswerIndexByPercentage(question: IQuestion): number {
+    const stats = question.stats;
+    let opponentAnswer = 0;
+    let maxPercent = stats.correct_answer_percent;
+    if (maxPercent < stats.wrong1_answer_percent) {
+        opponentAnswer = 1;
+        maxPercent = stats.wrong1_answer_percent;
+    }
+    if (maxPercent < stats.wrong2_answer_percent) {
+        opponentAnswer = 2;
+        maxPercent = stats.wrong2_answer_percent;
+    }
+    if (maxPercent < stats.wrong3_answer_percent) {
+        opponentAnswer = 3;
+        maxPercent = stats.wrong3_answer_percent;
+    }
+    return opponentAnswer;
 }
 
 export function immutableRemoveAtPosition<T>(array: T[], index: number): T[] {

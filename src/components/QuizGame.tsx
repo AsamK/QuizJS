@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { selectQuiz } from '../redux/actions/ui.actions';
+import { selectQuiz, startPlayingQuiz } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IGameRoundState } from '../redux/interfaces/IGameRoundState';
 import { IQuiz } from '../redux/interfaces/IQuiz';
@@ -66,7 +66,7 @@ const mapStateToProps = (state: IAppStore): IQuizGameStateProps => {
 const mapDispatchToProps = (dispatch: AppThunkDispatch): IQuizGameDispatchProps => {
     return {
         onBack: () => dispatch(selectQuiz(null)),
-        onPlay: gameId => { /**/ },
+        onPlay: quizId => dispatch(startPlayingQuiz(quizId, Date.now())),
     };
 };
 

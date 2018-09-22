@@ -1,12 +1,12 @@
 import { createSelector } from 'reselect';
 
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND } from '../../consts';
-import { IAppStore, IGameState } from '../interfaces/IAppStore';
+import { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
 import { ICategory } from '../interfaces/ICategory';
 import { IGameRoundState } from '../interfaces/IGameRoundState';
 import { IQuestion } from '../interfaces/IQuestion';
 import { MainView } from '../MainView';
-import { getGameStateOrDefault } from '../utils';
+import { getGameStateOrDefault, getOpponentAnswerIndexByPercentage, getQuizStateOrDefault } from '../utils';
 import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, questionsSelector, quizQuestionsSelector, quizzesSelector } from './entities.selectors';
 
 const uiSelector = (state: IAppStore) => state.ui;
@@ -236,34 +236,68 @@ export const selectedQuizQuestionsSelector = createSelector(
     },
 );
 
+export const quizIdToQuizStateSelector = createSelector(uiSelector, ui => ui.quizState);
+
+export const selectedQuizStateSelector = createSelector(quizIdToQuizStateSelector, selectedQuizIdSelector,
+    (map, gameId): IQuizState => {
+        return getQuizStateOrDefault(map, gameId);
+    },
+);
+
+export const quizRoundIndexSelector = createSelector(selectedQuizSelector, selectedQuizStateSelector, showAnswerSelector,
+    (quiz, quizState, showAnswer) => {
+        if (quiz == null) {
+            return null;
+        }
+
+        const answersLength = quiz.your_answers.answers.length + quizState.pendingAnswers.length;
+        return Math.trunc((answersLength - (showAnswer ? 1 : 0)) / QUESTIONS_PER_ROUND);
+    },
+);
+
+const quizQuestionRoundOffsetSelector = createSelector(quizRoundIndexSelector,
+    roundIndex => roundIndex == null ? null : roundIndex * QUESTIONS_PER_ROUND,
+);
+
+export const selectedQuizQuestionIndexSelector = createSelector(
+    quizQuestionRoundOffsetSelector,
+    selectedQuizStateSelector,
+    showAnswerSelector,
+    (questionRoundOffset, quizState, showAnswer) => {
+        if (questionRoundOffset == null) {
+            return null;
+        }
+        return questionRoundOffset +
+            ((quizState.pendingAnswers.length - (showAnswer ? 1 : 0)) % QUESTIONS_PER_ROUND);
+    },
+);
+
+export const selectedQuizQuestionSelector = createSelector(
+    selectedQuizQuestionIndexSelector,
+    selectedQuizQuestionsSelector,
+    (questionIndex, questions) => {
+        if (questionIndex == null || questions == null) {
+            return null;
+        }
+
+        return questions[questionIndex] || null;
+    },
+);
+
 export const selectedQuizRoundStateSelector = createSelector(
     selectedQuizSelector,
+    selectedQuizStateSelector,
     selectedQuizQuestionsSelector,
     categoriesSelector,
-    (quiz, questions, categories): IGameRoundState[] => {
+    (quiz, quizState, questions, categories): IGameRoundState[] => {
         if (!quiz || !questions) {
             return [];
         }
         const result = [];
         const roundCount = questions.length / QUESTIONS_PER_ROUND;
-        const yourAnswers = quiz.your_answers.answers.map(a => a.answer);
+        const yourAnswers = [...quiz.your_answers.answers, ...quizState.pendingAnswers].map(a => a.answer);
         const opponentAnswers = questions.map(q => {
-            const stats = q.stats;
-            let opponentAnswer = 0;
-            let maxPercent = stats.correct_answer_percent;
-            if (maxPercent < stats.wrong1_answer_percent) {
-                opponentAnswer = 1;
-                maxPercent = stats.wrong1_answer_percent;
-            }
-            if (maxPercent < stats.wrong2_answer_percent) {
-                opponentAnswer = 2;
-                maxPercent = stats.wrong2_answer_percent;
-            }
-            if (maxPercent < stats.wrong3_answer_percent) {
-                opponentAnswer = 3;
-                maxPercent = stats.wrong3_answer_percent;
-            }
-            return opponentAnswer;
+            return getOpponentAnswerIndexByPercentage(q);
         });
         for (let i = 0; i < roundCount; i++) {
             result.push({
@@ -298,9 +332,12 @@ export const mainViewSelector = createSelector(
             if (categoryIndex == null) {
                 return MainView.SELECT_CATEGORY;
             }
-            return MainView.INTERROGATION;
+            return MainView.GAME_INTERROGATION;
         } else if (quiz) {
-            return MainView.QUIZ;
+            if (!isPlaying) {
+                return MainView.QUIZ;
+            }
+            return MainView.QUIZ_INTERROGATION;
         } else {
             return MainView.START;
         }

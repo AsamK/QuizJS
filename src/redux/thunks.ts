@@ -1,14 +1,14 @@
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDeclineGame, apiFindUser, apiGiveUpGame, apiLogin, apiRemoveFriend, apiRequestGames, apiRequestState, apiRequestUploadRound, apiUpdateUser, BackendRequestFn } from '../api/api';
+import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDeclineGame, apiFindUser, apiGiveUpGame, apiLogin, apiRemoveFriend, apiRequestGames, apiRequestQuiz, apiRequestState, apiRequestUploadQuizRound, apiRequestUploadRound, apiUpdateUser, BackendRequestFn } from '../api/api';
 import { QuestionType } from '../api/IApiGame';
 import { IApiPopup } from '../api/IApiPopup';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND, STORAGE_KEY_COOKIE } from '../consts';
 import { createRequestFn, extraThunkArgument, QD_SERVER } from '../settings';
-import { addFriendError, addFriendRequest, addFriendResponse, createGameError, createGameRequest, createGameResponse, createUserError, createUserRequest, createUserResponse, declineGameError, declineGameRequest, declineGameResponse, findUserError, findUserRequest, findUserResponse, giveUpGameError, giveUpGameRequest, giveUpGameResponse, loadGamesError, loadGamesRequest, loadGamesResponse, loginError, loginRequest, loginResponse, removeFriendError, removeFriendRequest, removeFriendResponse, stateError, stateRequest, stateResponse, updateUserError, updateUserRequest, updateUserResponse, uploadRoundError, uploadRoundRequest, uploadRoundResponse } from './actions/entities.actions';
-import { finishRound, nextQuestion, selectAnswer, selectCategory } from './actions/ui.actions';
+import { addFriendError, addFriendRequest, addFriendResponse, createGameError, createGameRequest, createGameResponse, createUserError, createUserRequest, createUserResponse, declineGameError, declineGameRequest, declineGameResponse, findUserError, findUserRequest, findUserResponse, giveUpGameError, giveUpGameRequest, giveUpGameResponse, loadGamesError, loadGamesRequest, loadGamesResponse, loadQuizError, loadQuizRequest, loadQuizResponse, loginError, loginRequest, loginResponse, removeFriendError, removeFriendRequest, removeFriendResponse, stateError, stateRequest, stateResponse, updateUserError, updateUserRequest, updateUserResponse, uploadQuizRoundError, uploadQuizRoundRequest, uploadQuizRoundResponse, uploadRoundError, uploadRoundRequest, uploadRoundResponse } from './actions/entities.actions';
+import { finishRound, finishRoundQuiz, nextQuestion, nextQuestionQuiz, selectAnswer, selectAnswerQuiz, selectCategory } from './actions/ui.actions';
 import { IAppAction } from './interfaces/IAppAction';
 import { IAppStore } from './interfaces/IAppStore';
-import { selectedGameIdSelector, selectedGameQuestionSelector, selectedGameQuestionsSelector, selectedGameSelector, selectedGameStateSelector, showAnswerSelector } from './selectors/ui.selectors';
+import { selectedGameIdSelector, selectedGameQuestionSelector, selectedGameQuestionsSelector, selectedGameSelector, selectedGameStateSelector, selectedQuizIdSelector, selectedQuizQuestionsSelector, selectedQuizSelector, selectedQuizStateSelector, showAnswerSelector } from './selectors/ui.selectors';
 
 export interface IExtraArgument {
     requestFn: BackendRequestFn;
@@ -86,6 +86,17 @@ export function loadGame(gameId: number): AppThunkAction {
                 dispatch(loadGamesResponse(state));
             }))
             .catch(e => dispatch(loadGamesError(e)));
+    };
+}
+
+export function loadQuiz(quizId: string): AppThunkAction {
+    return (dispatch, getState, { requestFn }) => {
+        dispatch(loadQuizRequest());
+        apiRequestQuiz(requestFn, quizId)
+            .then(requestHandleHelper(dispatch, state => {
+                dispatch(loadQuizResponse(state));
+            }))
+            .catch(e => dispatch(loadQuizError(e)));
     };
 }
 
@@ -227,6 +238,7 @@ export function selectAnswerForSelectedGame(answerIndex: number): AppThunkAction
         dispatch(selectAnswer(gameId, answerIndex, questionType, Date.now()));
     };
 }
+
 export function nextQuestionSelectedGame(): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
         const state = getState();
@@ -248,6 +260,63 @@ export function nextQuestionSelectedGame(): AppThunkAction {
         } else {
             dispatch(nextQuestion(gameId, Date.now()));
         }
+    };
+}
+
+export function uploadRoundForSelectedQuiz(): AppThunkAction {
+    return (dispatch, getState, { requestFn }) => {
+        const state = getState();
+        const quiz = selectedQuizSelector(state);
+        if (!showAnswerSelector(state) || quiz == null) {
+            return;
+        }
+
+        const gameState = selectedQuizStateSelector(state);
+        dispatch(uploadQuizRoundRequest());
+        apiRequestUploadQuizRound(requestFn, quiz.quiz_id,
+            [...quiz.your_answers.answers, ...gameState.pendingAnswers].map(a => ({
+                answer: a.answer,
+                time: a.time,
+                timestamp: new Date(a.timestamp).toISOString(),
+            })))
+            .then(requestHandleHelper(dispatch, res => {
+                dispatch(uploadQuizRoundResponse(res));
+            }))
+            .catch(e => dispatch(uploadQuizRoundError(e)));
+    };
+}
+
+export function nextQuestionSelectedQuiz(): AppThunkAction {
+    return (dispatch, getState, { requestFn }) => {
+        const state = getState();
+        const quizId = selectedQuizIdSelector(state);
+        const quiz = selectedQuizSelector(state);
+        const questions = selectedQuizQuestionsSelector(state);
+        if (!showAnswerSelector(state) || quizId == null || quiz == null || questions == null) {
+            return;
+        }
+
+        const quizState = selectedQuizStateSelector(state);
+
+        if (QUESTIONS_PER_ROUND <= quizState.pendingAnswers.length) {
+            dispatch(uploadRoundForSelectedQuiz());
+            dispatch(finishRoundQuiz(quizId));
+        } else if (quizState.pendingAnswers.length % QUESTIONS_PER_ROUND === 0) {
+            dispatch(finishRoundQuiz(quizId));
+        } else {
+            dispatch(nextQuestionQuiz(quizId, Date.now()));
+        }
+    };
+}
+export function selectAnswerForSelectedQuiz(answerIndex: number): AppThunkAction {
+    return (dispatch, getState, { requestFn }) => {
+        const state = getState();
+        const quizId = selectedQuizIdSelector(state);
+        if (showAnswerSelector(state) || quizId == null) {
+            return;
+        }
+
+        dispatch(selectAnswerQuiz(quizId, answerIndex, Date.now()));
     };
 }
 
