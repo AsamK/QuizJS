@@ -59,13 +59,13 @@ export class Game extends React.PureComponent<IGameProps> {
                 <div className="qd-game_points">{yourCorrectAnswers} - {opponentCorrectAnswers}</div>
                 <div className="qd-game_user"><Avatar avatarCode={game.opponent.avatar_code} />{game.opponent.name}</div>
             </div>
-            <GameRounds gameRound={gameRound}/>
+            <GameRounds gameRound={gameRound} />
             <div className="qd-game_footer">
                 {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP && game.state !== GameState.ELAPSED ? null :
                     <button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}
                     >Nochmal</button>
                 }
-                {game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED ? null :
+                {game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED && game.state !== GameState.NEW_RANDOM_GAME ? null :
                     <button
                         className="qd-game_give-up"
                         onClick={() => {
@@ -80,7 +80,9 @@ export class Game extends React.PureComponent<IGameProps> {
                 <button
                     className="qd-game_play"
                     onClick={() => onPlay(game.game_id)}
-                    disabled={!game.your_turn || (game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED)}
+                    disabled={!game.your_turn || (game.state !== GameState.ACTIVE
+                        && game.state !== GameState.REQUESTED
+                        && game.state !== GameState.NEW_RANDOM_GAME)}
                 >Spielen</button>
                 {
                     isFriend ?
