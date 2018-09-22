@@ -18,7 +18,6 @@
         "max-empty-lines": 1,
         "media-feature-colon-space-after": "always",
         "media-feature-colon-space-before": "never",
-        "no-empty-source": true,
         "no-eol-whitespace": true,
         "no-extra-semicolons": true,
         "no-missing-end-of-source-newline": true,
