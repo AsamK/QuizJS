@@ -9,7 +9,7 @@ interface IQuestionProps {
 }
 
 const Question = ({ question, imageUrl, onClick }: IQuestionProps) => {
-    return <div className="qd-question"
+    return <div className={imageUrl ? 'qd-question with-image' : 'qd-question'}
         onClick={onClick}
     >
         <span className="qd-question_text">{question}</span>
