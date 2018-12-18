@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect, Provider } from 'react-redux';
-import { Store } from 'redux';
+import { connect } from 'react-redux';
 
 import { STORAGE_KEY_COOKIE } from '../consts';
 import { cookieLoaded } from '../redux/actions/ui.actions';
-import { IAppAction } from '../redux/interfaces/IAppAction';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { MainView } from '../redux/MainView';
 import { loggedInSelector, mainViewSelector } from '../redux/selectors/ui.selectors';
@@ -34,7 +32,6 @@ interface IAppDispatchProps {
 }
 
 interface IAppProps extends IAppStateProps, IAppDispatchProps {
-  store: Store<IAppStore, IAppAction>;
 }
 
 interface IAppState {
@@ -76,11 +73,9 @@ class App extends React.Component<IAppProps, IAppState> {
       </>;
     }
     return (
-      <Provider store={this.props.store}>
-        <div className="qd-app">
-          {content}
-        </div>
-      </Provider>
+      <div className="qd-app">
+        {content}
+      </div>
     );
   }
 

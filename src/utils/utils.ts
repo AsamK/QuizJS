@@ -36,7 +36,7 @@ export function toFormUrlencoded(form: { [key: string]: string }): string {
 }
 
 export function createProxiedRequestFn(proxyUrl: string, targetHost: string, cookie?: string): BackendRequestFn {
-    return (method: 'GET' | 'POST', path: string, { contentType, body, queryParams }: IRequestOptions) => {
+    return (method: 'GET' | 'POST', path: string, { contentType, body, queryParams }: IRequestOptions): Promise<Response> => {
         if (queryParams) {
             path += '?' + toFormUrlencoded(queryParams);
         }

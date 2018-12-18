@@ -3,6 +3,7 @@ import OfflinePluginRuntime from 'offline-plugin/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { hot } from 'react-hot-loader';
+import { Provider } from 'react-redux';
 import { applyMiddleware, compose, createStore, Middleware } from 'redux';
 import freeze from 'redux-freeze';
 import thunkMiddleware from 'redux-thunk';
@@ -38,10 +39,14 @@ const store = createStore<IAppStore, IAppAction, { dispatch: AppThunkDispatch },
   ),
 );
 
-const HotloadableApp = process.env.NODE_ENV !== 'production' ? hot(module)(App) : App;
+const ReduxApp = () => <Provider store={store}>
+  <App />
+</Provider>;
+
+const HotloadableApp = process.env.NODE_ENV !== 'production' ? hot(module)(ReduxApp) : ReduxApp;
 
 ReactDOM.render(
-  <HotloadableApp store={store} />,
+  <HotloadableApp />,
   document.getElementById('content'),
 );
 
