@@ -10,6 +10,7 @@ import thunkMiddleware from 'redux-thunk';
 
 import App from './components/App';
 import './index.css';
+import { initialGameState, initialQuizState } from './redux/actions/ui.actions';
 import { IAppAction } from './redux/interfaces/IAppAction';
 import { IAppStore } from './redux/interfaces/IAppStore';
 import { rootReducer } from './redux/reducers';
@@ -38,6 +39,40 @@ const store = createStore<IAppStore, IAppAction, { dispatch: AppThunkDispatch },
     ),
   ),
 );
+
+const gameStateString = localStorage.getItem('gameState');
+if (gameStateString !== null) {
+  const gameStates = JSON.parse(gameStateString);
+  store.dispatch(initialGameState(gameStates));
+}
+
+const quizStateString = localStorage.getItem('quizState');
+if (quizStateString !== null) {
+  const quizStates = JSON.parse(quizStateString);
+  store.dispatch(initialQuizState(quizStates));
+}
+
+store.subscribe((() => {
+  let previousState = store.getState().ui.gameState;
+  return () => {
+    const newState = store.getState().ui.gameState;
+    if (previousState !== newState) {
+      localStorage.setItem('gameState', JSON.stringify(Array.from(newState.entries())));
+      previousState = newState;
+    }
+  };
+})());
+
+store.subscribe((() => {
+  let previousState = store.getState().ui.quizState;
+  return () => {
+    const newState = store.getState().ui.quizState;
+    if (previousState !== newState) {
+      localStorage.setItem('quizState', JSON.stringify(Array.from(newState.entries())));
+      previousState = newState;
+    }
+  };
+})());
 
 const ReduxApp = () => <Provider store={store}>
   <App />

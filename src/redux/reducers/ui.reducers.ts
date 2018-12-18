@@ -1,5 +1,5 @@
 import { APP_DATA_RESPONSE, CREATE_GAME_REQUEST, CREATE_USER_RESPONSE, DECLINE_GAME_RESPONSE, LOAD_GAME_RESPONSE, LOAD_GAMES_RESPONSE, LOAD_QUIZ_RESPONSE, LOGIN_RESPONSE, UPLOAD_QUIZ_ROUND_RESPONSE, UPLOAD_ROUND_RESPONSE } from '../actions/entities.actions';
-import { COOKIE_LOADED, FINISH_ROUND, FINISH_ROUND_QUIZ, NEXT_QUESTION, NEXT_QUESTION_QUIZ, SELECT_ANSWER, SELECT_ANSWER_QUIZ, SELECT_CATEGORY, SELECT_GAME, SELECT_QUIZ, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, START_PLAYING_QUIZ, STOP_PLAYING } from '../actions/ui.actions';
+import { COOKIE_LOADED, FINISH_ROUND, FINISH_ROUND_QUIZ, INITIAL_GAME_STATE, INITIAL_QUIZ_STATE, NEXT_QUESTION, NEXT_QUESTION_QUIZ, SELECT_ANSWER, SELECT_ANSWER_QUIZ, SELECT_CATEGORY, SELECT_GAME, SELECT_QUIZ, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, START_PLAYING_QUIZ, STOP_PLAYING } from '../actions/ui.actions';
 import { IAppAction } from '../interfaces/IAppAction';
 import { IGameState, IQuizState } from '../interfaces/IAppStore';
 import { getDefaultGameState, getDefaultQuizState, getGameStateOrDefault, getQuizStateOrDefault } from '../utils';
@@ -94,6 +94,9 @@ export function showAnswer(state = false, action: IAppAction): typeof state {
 
 export function gameState(state: Map<number, IGameState> = new Map(), action: IAppAction): typeof state {
     switch (action.type) {
+        case INITIAL_GAME_STATE: {
+            return new Map(action.gameStates);
+        }
         case SELECT_CATEGORY: {
             const newState = new Map(state);
             newState.set(action.gameId, {
@@ -184,6 +187,9 @@ export function gameState(state: Map<number, IGameState> = new Map(), action: IA
 
 export function quizState(state: Map<string, IQuizState> = new Map(), action: IAppAction): typeof state {
     switch (action.type) {
+        case INITIAL_QUIZ_STATE: {
+            return new Map(action.quizStates);
+        }
         case SELECT_ANSWER_QUIZ: {
             const newState = new Map(state);
             const prev = getQuizStateOrDefault(state, action.quizId);

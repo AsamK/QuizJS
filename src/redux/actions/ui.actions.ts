@@ -1,5 +1,6 @@
 import { QuestionType } from '../../api/IApiGame';
 import { IAppAction } from '../interfaces/IAppAction';
+import { IGameState, IQuizState } from '../interfaces/IAppStore';
 
 export const COOKIE_LOADED = 'COOKIE_LOADED';
 
@@ -114,4 +115,18 @@ export const FINISH_ROUND_QUIZ = 'FINISH_ROUND_QUIZ';
 export const finishRoundQuiz = (quizId: string): IAppAction => ({
     quizId,
     type: FINISH_ROUND_QUIZ,
+});
+
+export const INITIAL_GAME_STATE = 'INITIAL_GAME_STATE';
+
+export const initialGameState = (gameStates: [[number, IGameState]]): IAppAction => ({
+    gameStates,
+    type: INITIAL_GAME_STATE,
+});
+
+export const INITIAL_QUIZ_STATE = 'INITIAL_QUIZ_STATE';
+
+export const initialQuizState = (quizStates: [[string, IQuizState]]): IAppAction => ({
+    quizStates,
+    type: INITIAL_QUIZ_STATE,
 });
