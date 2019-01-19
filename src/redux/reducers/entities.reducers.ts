@@ -2,8 +2,8 @@ import { IApiGame } from '../../api/IApiGame';
 import { IApiQuestion } from '../../api/IApiQuestion';
 import { IApiQuiz } from '../../api/IApiQuiz';
 import { IApiQuizQuestion } from '../../api/IApiQuizQuestion';
-import { ADD_FRIEND_RESPONSE, APP_DATA_RESPONSE, CREATE_GAME_RESPONSE, DECLINE_GAME_RESPONSE, FIND_USER_ERROR, FIND_USER_RESPONSE, GIVE_UP_GAME_RESPONSE, LOAD_GAME_RESPONSE, LOAD_GAMES_RESPONSE, LOAD_QUIZ_RESPONSE, LOGIN_RESPONSE, REMOVE_FRIEND_RESPONSE, UPDATE_USER_RESPONSE, UPLOAD_QUIZ_ROUND_RESPONSE, UPLOAD_ROUND_RESPONSE } from '../actions/entities.actions';
-import { IAppAction } from '../interfaces/IAppAction';
+import { addFriendAction, appDataAction, createGameAction, declineGameAction, findUserAction, giveUpGameAction, loadGameAction, loadGamesAction, loadQuizAction, loginAction, removeFriendAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
+import { AppAction } from '../interfaces/AppAction';
 import { ICategory } from '../interfaces/ICategory';
 import { IGame } from '../interfaces/IGame';
 import { IOpponent } from '../interfaces/IOpponent';
@@ -12,12 +12,12 @@ import { IQuiz } from '../interfaces/IQuiz';
 import { IUser } from '../interfaces/IUser';
 import { immutableModifyAtPosition, immutableReplaceAtPositionOrAppend } from '../utils';
 
-export function user(state: IUser | null = null, action: IAppAction): typeof state {
+export function user(state: IUser | null = null, action: AppAction): typeof state {
     switch (action.type) {
-        case APP_DATA_RESPONSE:
-        case LOGIN_RESPONSE:
+        case appDataAction.RESPONSE:
+        case loginAction.RESPONSE:
             return action.response.user;
-        case UPDATE_USER_RESPONSE:
+        case updateUserAction.RESPONSE:
             if (!state) {
                 return state;
             }
@@ -31,18 +31,18 @@ export function user(state: IUser | null = null, action: IAppAction): typeof sta
     }
 }
 
-export function friends(state: IUser[] = [], action: IAppAction): typeof state {
+export function friends(state: IUser[] = [], action: AppAction): typeof state {
     switch (action.type) {
-        case APP_DATA_RESPONSE:
-        case LOGIN_RESPONSE:
+        case appDataAction.RESPONSE:
+        case loginAction.RESPONSE:
             const userFriends = action.response.user.friends;
             if (!userFriends) {
                 return state;
             }
 
             return userFriends;
-        case ADD_FRIEND_RESPONSE:
-            if (state.find(f => f.user_id === action.userId)) {
+        case addFriendAction.RESPONSE: {
+            if (state.find(f => f.user_id === action.requestInfo.id)) {
                 // Prevent dupliate entry
                 return state;
             }
@@ -54,27 +54,28 @@ export function friends(state: IUser[] = [], action: IAppAction): typeof state {
                     board_game_player: false,
                     email: null,
                     enough_questions: true,
-                    name: action.name,
+                    name: action.requestInfo.name,
                     only_chat_with_friends: false,
                     q_reviewer: 0,
                     qc: false,
                     show_gift: false,
-                    user_id: action.userId,
+                    user_id: action.requestInfo.id,
                 },
             ];
-        case REMOVE_FRIEND_RESPONSE: {
-            return state.filter(f => f.user_id !== action.userId);
+        }
+        case removeFriendAction.RESPONSE: {
+            return state.filter(f => f.user_id !== action.response.removed_id);
         }
         default:
             return state;
     }
 }
 
-export function foundUser(state: IOpponent | null = null, action: IAppAction): typeof state {
+export function foundUser(state: IOpponent | null = null, action: AppAction): typeof state {
     switch (action.type) {
-        case FIND_USER_RESPONSE:
+        case findUserAction.RESPONSE:
             return action.response.qdOpponent;
-        case FIND_USER_ERROR:
+        case findUserAction.ERROR:
             return null;
         default:
             return state;
@@ -100,22 +101,22 @@ const mapApiGameToGame = (game: IApiGame): IGame => ({
     your_turn: game.your_turn,
 });
 
-export function games(state: IGame[] = [], action: IAppAction): typeof state {
+export function games(state: IGame[] = [], action: AppAction): typeof state {
     switch (action.type) {
-        case APP_DATA_RESPONSE:
-        case LOGIN_RESPONSE: {
+        case appDataAction.RESPONSE:
+        case loginAction.RESPONSE: {
             return action.response.user.games
                 .map(mapApiGameToGame);
         }
-        case CREATE_GAME_RESPONSE:
-        case LOAD_GAME_RESPONSE:
-        case GIVE_UP_GAME_RESPONSE:
-        case UPLOAD_ROUND_RESPONSE: {
+        case createGameAction.RESPONSE:
+        case loadGameAction.RESPONSE:
+        case giveUpGameAction.RESPONSE:
+        case uploadRoundAction.RESPONSE: {
             const game = action.response.game;
             const index = state.findIndex(g => g.game_id === game.game_id);
             return immutableReplaceAtPositionOrAppend(state, index, mapApiGameToGame(game));
         }
-        case LOAD_GAMES_RESPONSE: {
+        case loadGamesAction.RESPONSE: {
             let newState = state;
             action.response.games.forEach(game => {
                 const index = newState.findIndex(g => g.game_id === game.game_id);
@@ -129,11 +130,11 @@ export function games(state: IGame[] = [], action: IAppAction): typeof state {
             });
             return newState;
         }
-        case DECLINE_GAME_RESPONSE: {
+        case declineGameAction.RESPONSE: {
             if (!action.response.t) {
                 return state;
             }
-            return state.filter(g => g.game_id !== action.gameId);
+            return state.filter(g => g.game_id !== action.requestInfo.id);
         }
 
         default:
@@ -141,9 +142,9 @@ export function games(state: IGame[] = [], action: IAppAction): typeof state {
     }
 }
 
-export function gameQuestions(state: Map<number, number[]> = new Map(), action: IAppAction): typeof state {
+export function gameQuestions(state: Map<number, number[]> = new Map(), action: AppAction): typeof state {
     switch (action.type) {
-        case APP_DATA_RESPONSE: {
+        case appDataAction.RESPONSE: {
             let result: typeof state | undefined;
             action.response.user.games
                 .forEach(game => {
@@ -157,9 +158,9 @@ export function gameQuestions(state: Map<number, number[]> = new Map(), action: 
                 });
             return result || state;
         }
-        case CREATE_GAME_RESPONSE:
-        case LOAD_GAME_RESPONSE:
-        case UPLOAD_ROUND_RESPONSE: {
+        case createGameAction.RESPONSE:
+        case loadGameAction.RESPONSE:
+        case uploadRoundAction.RESPONSE: {
             const game = action.response.game;
             if (game.questions.length === 0) {
                 return state;
@@ -168,7 +169,7 @@ export function gameQuestions(state: Map<number, number[]> = new Map(), action: 
             result.set(game.game_id, game.questions.map(q => q.q_id));
             return result;
         }
-        case LOAD_GAMES_RESPONSE: {
+        case loadGamesAction.RESPONSE: {
             let result: typeof state | undefined;
             action.response.games
                 .forEach(game => {
@@ -187,9 +188,9 @@ export function gameQuestions(state: Map<number, number[]> = new Map(), action: 
     }
 }
 
-export function gameImageQuestions(state: Map<number, Map<number, number>> = new Map(), action: IAppAction): typeof state {
+export function gameImageQuestions(state: Map<number, Map<number, number>> = new Map(), action: AppAction): typeof state {
     switch (action.type) {
-        case APP_DATA_RESPONSE: {
+        case appDataAction.RESPONSE: {
             let result: typeof state | undefined;
             action.response.user.games
                 .forEach(game => {
@@ -203,9 +204,9 @@ export function gameImageQuestions(state: Map<number, Map<number, number>> = new
                 });
             return result || state;
         }
-        case CREATE_GAME_RESPONSE:
-        case LOAD_GAME_RESPONSE:
-        case UPLOAD_ROUND_RESPONSE: {
+        case createGameAction.RESPONSE:
+        case loadGameAction.RESPONSE:
+        case uploadRoundAction.RESPONSE: {
             const game = action.response.game;
             if (game.image_questions.length === 0) {
                 return state;
@@ -214,7 +215,7 @@ export function gameImageQuestions(state: Map<number, Map<number, number>> = new
             result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map()));
             return result;
         }
-        case LOAD_GAMES_RESPONSE: {
+        case loadGamesAction.RESPONSE: {
             let result: typeof state | undefined;
             action.response.games
                 .forEach(game => {
@@ -247,9 +248,9 @@ const mapApiQuestionToQuestion = (question: IApiQuestion): IQuestion => ({
     wrong3: question.wrong3,
 });
 
-export function questions(state: Map<number, IQuestion> = new Map(), action: IAppAction): typeof state {
+export function questions(state: Map<number, IQuestion> = new Map(), action: AppAction): typeof state {
     switch (action.type) {
-        case APP_DATA_RESPONSE: {
+        case appDataAction.RESPONSE: {
             let result: typeof state | undefined;
             const questionHandlerFn = (question: IApiQuestion) => {
                 if (!result) {
@@ -263,9 +264,9 @@ export function questions(state: Map<number, IQuestion> = new Map(), action: IAp
             });
             return result || state;
         }
-        case CREATE_GAME_RESPONSE:
-        case LOAD_GAME_RESPONSE:
-        case UPLOAD_ROUND_RESPONSE: {
+        case createGameAction.RESPONSE:
+        case loadGameAction.RESPONSE:
+        case uploadRoundAction.RESPONSE: {
             const game = action.response.game;
             if (game.questions.length === 0) {
                 return state;
@@ -280,7 +281,7 @@ export function questions(state: Map<number, IQuestion> = new Map(), action: IAp
             });
             return result;
         }
-        case LOAD_GAMES_RESPONSE: {
+        case loadGamesAction.RESPONSE: {
             let result: typeof state | undefined;
             action.response.games.forEach(game => {
                 const questionHandlerFn = (question: IApiQuestion) => {
@@ -299,9 +300,9 @@ export function questions(state: Map<number, IQuestion> = new Map(), action: IAp
     }
 }
 
-export function categories(state: Map<number, ICategory> = new Map(), action: IAppAction): typeof state {
+export function categories(state: Map<number, ICategory> = new Map(), action: AppAction): typeof state {
     switch (action.type) {
-        case APP_DATA_RESPONSE: {
+        case appDataAction.RESPONSE: {
             let result: typeof state | undefined;
             action.response.user.games.forEach(game => {
                 game.questions.forEach(question => {
@@ -317,9 +318,9 @@ export function categories(state: Map<number, ICategory> = new Map(), action: IA
             });
             return result || state;
         }
-        case CREATE_GAME_RESPONSE:
-        case LOAD_GAME_RESPONSE:
-        case UPLOAD_ROUND_RESPONSE: {
+        case createGameAction.RESPONSE:
+        case loadGameAction.RESPONSE:
+        case uploadRoundAction.RESPONSE: {
             const game = action.response.game;
             if (game.questions.length === 0) {
                 return state;
@@ -337,7 +338,7 @@ export function categories(state: Map<number, ICategory> = new Map(), action: IA
             });
             return result || state;
         }
-        case LOAD_GAMES_RESPONSE: {
+        case loadGamesAction.RESPONSE: {
             let result: typeof state | undefined;
             action.response.games.forEach(game => {
                 game.questions.forEach(question => {
@@ -379,15 +380,15 @@ const mapApiQuizToQuiz = (quiz: IApiQuiz): IQuiz => ({
     your_ranking: quiz.your_ranking,
 });
 
-export function quizzes(state: IQuiz[] = [], action: IAppAction): typeof state {
+export function quizzes(state: IQuiz[] = [], action: AppAction): typeof state {
     switch (action.type) {
-        case APP_DATA_RESPONSE:
-        case LOGIN_RESPONSE: {
+        case appDataAction.RESPONSE:
+        case loginAction.RESPONSE: {
             return action.response.user.quizzes
                 .map(mapApiQuizToQuiz);
         }
-        case UPLOAD_QUIZ_ROUND_RESPONSE:
-        case LOAD_QUIZ_RESPONSE: {
+        case uploadQuizRoundAction.RESPONSE:
+        case loadQuizAction.RESPONSE: {
             const newQuiz = mapApiQuizToQuiz(action.response.quiz);
             return immutableReplaceAtPositionOrAppend(state, state.findIndex(q => q.quiz_id === newQuiz.quiz_id), newQuiz);
         }
@@ -408,10 +409,10 @@ const mapApiQuizQuestionToQuestion = (question: IApiQuizQuestion): IQuestion => 
     wrong3: question.wrong3,
 });
 
-export function quizQuestions(state: Map<number, IQuestion> = new Map(), action: IAppAction): typeof state {
+export function quizQuestions(state: Map<number, IQuestion> = new Map(), action: AppAction): typeof state {
     switch (action.type) {
-        case APP_DATA_RESPONSE:
-        case LOGIN_RESPONSE: {
+        case appDataAction.RESPONSE:
+        case loginAction.RESPONSE: {
             let result: typeof state | undefined;
             const questionHandlerFn = (question: IApiQuizQuestion) => {
                 if (!result) {

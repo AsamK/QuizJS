@@ -11,7 +11,7 @@ import thunkMiddleware from 'redux-thunk';
 import App from './components/App';
 import './index.css';
 import { initialGameState, initialQuizState } from './redux/actions/ui.actions';
-import { IAppAction } from './redux/interfaces/IAppAction';
+import { AppAction } from './redux/interfaces/AppAction';
 import { IAppStore } from './redux/interfaces/IAppStore';
 import { rootReducer } from './redux/reducers';
 import { AppThunkDispatch } from './redux/thunks';
@@ -31,7 +31,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const composeEnhancers = (process.env.NODE_ENV !== 'production' &&
   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
-const store = createStore<IAppStore, IAppAction, { dispatch: AppThunkDispatch }, {}>(
+const store = createStore<IAppStore, AppAction, { dispatch: AppThunkDispatch }, {}>(
   rootReducer,
   composeEnhancers(
     applyMiddleware(

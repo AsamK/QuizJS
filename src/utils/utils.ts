@@ -1,4 +1,4 @@
-import { BackendRequestFn, IRequestOptions } from '../api/api';
+import { BackendRequestFn } from '../api/api';
 
 export function shuffleArray<T>(array: T[], targetIndices: number[]): typeof array {
     const n = array.length;
@@ -36,7 +36,7 @@ export function toFormUrlencoded(form: { [key: string]: string }): string {
 }
 
 export function createProxiedRequestFn(proxyUrl: string, targetHost: string, cookie?: string): BackendRequestFn {
-    return (method: 'GET' | 'POST', path: string, { contentType, body, queryParams }: IRequestOptions): Promise<Response> => {
+    return async (method, path, { contentType, body, queryParams }): Promise<Response> => {
         if (queryParams) {
             path += '?' + toFormUrlencoded(queryParams);
         }
@@ -52,12 +52,18 @@ export function createProxiedRequestFn(proxyUrl: string, targetHost: string, coo
             headers.set('Content-Type', contentType);
         }
 
-        return fetch(proxyUrl, {
+        const response = await fetch(proxyUrl, {
             body,
             headers,
             method,
             mode: 'cors',
         });
+
+        if (response.status < 200 || response.status >= 300) {
+            return Promise.reject(response);
+        }
+
+        return response;
     };
 }
 
