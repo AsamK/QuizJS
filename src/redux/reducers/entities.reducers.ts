@@ -3,6 +3,7 @@ import { IApiQuestion } from '../../api/IApiQuestion';
 import { IApiQuiz } from '../../api/IApiQuiz';
 import { IApiQuizQuestion } from '../../api/IApiQuizQuestion';
 import { addFriendAction, appDataAction, createGameAction, declineGameAction, findUserAction, giveUpGameAction, loadGameAction, loadGamesAction, loadQuizAction, loginAction, removeFriendAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
+import { getNextLoadingState, LoadingState } from '../actions/requests.utils';
 import { AppAction } from '../interfaces/AppAction';
 import { ICategory } from '../interfaces/ICategory';
 import { IGame } from '../interfaces/IGame';
@@ -11,6 +12,19 @@ import { IQuestion } from '../interfaces/IQuestion';
 import { IQuiz } from '../interfaces/IQuiz';
 import { IUser } from '../interfaces/IUser';
 import { immutableModifyAtPosition, immutableReplaceAtPositionOrAppend } from '../utils';
+
+export function loadingStates(state: { [requestId: string]: LoadingState } = {}, action: AppAction): typeof state {
+    if ('requestActionType' in action && 'requestId' in action) {
+        const item = state[action.requestId];
+        const nextState = getNextLoadingState(item, action.requestActionType);
+
+        return {
+            ...state,
+            [action.requestId]: nextState,
+        };
+    }
+    return state;
+}
 
 export function user(state: IUser | null = null, action: AppAction): typeof state {
     switch (action.type) {

@@ -1,4 +1,5 @@
 import { QuestionType } from '../../api/IApiGame';
+import { LoadingState } from '../actions/requests.utils';
 import { ICategory } from './ICategory';
 import { IGame } from './IGame';
 import { IOpponent } from './IOpponent';
@@ -13,6 +14,7 @@ export interface IAppStore {
 }
 
 export interface IStoreEntities {
+    loadingStates: { [requestId: string]: LoadingState };
     categories: Map<number, ICategory>;
     friends: IUser[];
     user: IUser | null;

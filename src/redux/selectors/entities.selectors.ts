@@ -3,6 +3,8 @@ import { IAppStore } from '../interfaces/IAppStore';
 
 const entitiesSelector = (state: IAppStore) => state.entities;
 
+export const loadingSelector = createSelector(entitiesSelector, entities => entities.loadingStates);
+
 export const userSelector = createSelector(entitiesSelector, entities => entities.user);
 
 export const foundUserSelector = createSelector(entitiesSelector, entities => entities.foundUser);
