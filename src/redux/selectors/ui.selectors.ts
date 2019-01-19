@@ -1,13 +1,15 @@
 import { createSelector } from 'reselect';
 
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND } from '../../consts';
+import { uploadRoundAction } from '../actions/entities.actions';
+import { LoadingState } from '../actions/requests.utils';
 import { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
 import { ICategory } from '../interfaces/ICategory';
 import { IGameRoundState } from '../interfaces/IGameRoundState';
 import { IQuestion } from '../interfaces/IQuestion';
 import { MainView } from '../MainView';
 import { getGameStateOrDefault, getOpponentAnswerIndexByPercentage, getQuizStateOrDefault } from '../utils';
-import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, questionsSelector, quizQuestionsSelector, quizzesSelector } from './entities.selectors';
+import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, loadingSelector, questionsSelector, quizQuestionsSelector, quizzesSelector } from './entities.selectors';
 
 const uiSelector = (state: IAppStore) => state.ui;
 
@@ -342,4 +344,10 @@ export const mainViewSelector = createSelector(
             return MainView.START;
         }
     },
+);
+
+export const uploadRoundLoadingSelector = createSelector(loadingSelector, selectedGameIdSelector,
+    (loadingStates, gameId) => gameId == null
+        ? false
+        : uploadRoundAction.getLoadingState(loadingStates, gameId.toString()) === LoadingState.LOADING,
 );

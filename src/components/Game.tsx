@@ -8,7 +8,7 @@ import { IGame } from '../redux/interfaces/IGame';
 import { IGameRoundState } from '../redux/interfaces/IGameRoundState';
 import { IUser } from '../redux/interfaces/IUser';
 import { userSelector } from '../redux/selectors/entities.selectors';
-import { isSelectedGameWithFriendSelector, selectedGameIdSelector, selectedGameRoundStateSelector, selectedGameSelector } from '../redux/selectors/ui.selectors';
+import { isSelectedGameWithFriendSelector, selectedGameIdSelector, selectedGameRoundStateSelector, selectedGameSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
 import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend } from '../redux/thunks';
 import Avatar from './Avatar';
 import './Game.css';
@@ -19,6 +19,7 @@ interface IGameStateProps {
     gameId: number | null;
     gameRound: IGameRoundState[];
     isFriend: boolean;
+    isUploading: boolean;
     user: IUser | null;
 }
 
@@ -39,13 +40,13 @@ interface IGameProps extends IGameStateProps, IGameDispatchProps {
 export class Game extends React.PureComponent<IGameProps> {
 
     public componentDidMount(): void {
-        if (this.props.gameId != null) {
+        if (this.props.gameId != null && !this.props.isUploading) {
             this.props.requestGame(this.props.gameId);
         }
     }
 
     public render(): React.ReactElement<IGameProps> {
-        const { game, gameRound, isFriend, user,
+        const { game, gameRound, isFriend, isUploading, user,
             onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend } = this.props;
         if (!game) {
             return <div>'Loading game...'</div>;
@@ -78,9 +79,9 @@ export class Game extends React.PureComponent<IGameProps> {
                     >Aufgeben</button>
                 }
                 <button
-                    className="qd-game_play"
+                    className={'qd-game_play' + (isUploading ? ' qd-game_play_loading' : '')}
                     onClick={() => onPlay(game.game_id)}
-                    disabled={!game.your_turn || (game.state !== GameState.ACTIVE
+                    disabled={isUploading || !game.your_turn || (game.state !== GameState.ACTIVE
                         && game.state !== GameState.REQUESTED
                         && game.state !== GameState.NEW_RANDOM_GAME)}
                 >Spielen</button>
@@ -100,6 +101,7 @@ const mapStateToProps = (state: IAppStore): IGameStateProps => {
         gameId: selectedGameIdSelector(state),
         gameRound: selectedGameRoundStateSelector(state),
         isFriend: isSelectedGameWithFriendSelector(state),
+        isUploading: uploadRoundLoadingSelector(state),
         user: userSelector(state),
     };
 };

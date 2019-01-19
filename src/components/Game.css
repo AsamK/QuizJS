@@ -22,11 +22,20 @@
 }
 
 .qd-game_play {
-    background-color: rgba(0,225,0);
+    background-color: rgba(0, 225, 0);
     border: none;
     border-radius: 5px;
     color: white;
     height: 40px;
+}
+
+.qd-game_play_loading {
+    background-image: url(../spinner.svg);
+    background-position-y: center;
+    background-position-x: 5px;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-left: 26px;
 }
 
 .qd-game_play[disabled] {
