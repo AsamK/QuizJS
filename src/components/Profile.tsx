@@ -7,6 +7,7 @@ import { IUser } from '../redux/interfaces/IUser';
 import { friendsSelector, userSelector } from '../redux/selectors/entities.selectors';
 import { AppThunkDispatch, updateUser } from '../redux/thunks';
 import Avatar from './Avatar';
+import { Button } from './Button';
 import './Profile.css';
 
 interface IProfileStateProps {
@@ -52,7 +53,7 @@ class Profile extends React.Component<IProfileProps, IProfileState> {
             </div>,
         );
         return <div className="qd-profile">
-            <button onClick={onBack}>Zurück</button>
+            <Button onClick={onBack}>Zurück</Button>
             <h2>{user.name} ({user.user_id})</h2>
             <div className="qd-profile_avatar">Avatar: <Avatar avatarCode={user.avatar_code} /></div>
             {this.state.updatePassword ?
@@ -88,13 +89,13 @@ class Profile extends React.Component<IProfileProps, IProfileState> {
                         />
                     </label>
                     <input type="submit" value="Ändern" disabled={this.state.password !== this.state.password2} />
-                    <button type="reset" onClick={() => this.setState({ updatePassword: false })}>Abbrechen</button>
+                    <Button type="reset" onClick={() => this.setState({ updatePassword: false })}>Abbrechen</Button>
                 </form>
                 :
                 <>
                     <div className="qd-profile_email">Email: {user.email}</div>
                     <div className="qd-profile_password">Passwort: ***
-                        <button onClick={() => this.setState({ updatePassword: true })}>Ändern</button>
+                        <Button onClick={() => this.setState({ updatePassword: true })}>Ändern</Button>
                     </div>
                 </>
             }

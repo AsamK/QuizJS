@@ -9,6 +9,7 @@ import { foundUserSelector, friendsSelector } from '../redux/selectors/entities.
 import { AppThunkDispatch, createGame, createRandomGame, searchUser } from '../redux/thunks';
 import { debounce } from '../utils/utils';
 import Avatar from './Avatar';
+import { Button } from './Button';
 import './NewGame.css';
 
 interface INewGameStateProps {
@@ -40,10 +41,10 @@ class NewGame extends React.PureComponent<INewGameProps> {
             </div>,
         );
         return <div className="qd-new-game">
-            <button onClick={onBack}>Zurück</button>
-            <button
+            <Button className="qd-new-game_back" onClick={onBack}>Zurück</Button>
+            <Button
                 onClick={onRandomGame}
-            >Beliebiger Spieler</button>
+            >Beliebiger Spieler</Button>
             <div className="qd-new-game_search-user">
                 <label>Benutzer suchen:<input
                     onChange={e => this.onSearchUserDebounced(e.target.value)}

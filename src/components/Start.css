@@ -11,6 +11,10 @@
     font-weight: bolder;
 }
 
+.qd-start_new-game {
+    margin-top: 5px;
+}
+
 .qd-start_entry {
     align-items: center;
     background-color: lightblue;

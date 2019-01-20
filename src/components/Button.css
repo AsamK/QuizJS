@@ -1,0 +1,31 @@
+.qd-button {
+    background-color: #555;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    height: 30px;
+    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.2);
+}
+
+.qd-button_loading {
+    background-image: url(../spinner.svg);
+    background-position-y: center;
+    background-position-x: 5px;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-left: 26px;
+}
+
+.qd-button[disabled] {
+    background-color: #ddd;
+    color: #aaa;
+}
+
+.qd-button:not([disabled]):hover {
+    cursor: pointer;
+    filter: brightness(85%);
+}
+
+.qd-button:active {
+    filter: brightness(80%);
+}

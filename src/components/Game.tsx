@@ -11,6 +11,7 @@ import { userSelector } from '../redux/selectors/entities.selectors';
 import { isSelectedGameWithFriendSelector, selectedGameIdSelector, selectedGameRoundStateSelector, selectedGameSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
 import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend } from '../redux/thunks';
 import Avatar from './Avatar';
+import { Button } from './Button';
 import './Game.css';
 import GameRounds from './GameRounds';
 
@@ -54,7 +55,7 @@ export class Game extends React.PureComponent<IGameProps> {
         const yourCorrectAnswers = gameRound.reduce((sum, r) => sum + r.yourAnswers.filter(a => a === 0).length, 0);
         const opponentCorrectAnswers = gameRound.reduce((sum, r) => sum + r.opponentAnswers.filter(a => a === 0).length, 0);
         return <div>
-            <button onClick={onBack}>Zurück</button>
+            <Button onClick={onBack}>Zurück</Button>
             <div className="qd-game_header">
                 <div className="qd-game_user"><Avatar avatarCode={user ? user.avatar_code : null} /> Ich</div>
                 <div className="qd-game_points">{yourCorrectAnswers} - {opponentCorrectAnswers}</div>
@@ -63,11 +64,11 @@ export class Game extends React.PureComponent<IGameProps> {
             <GameRounds gameRound={gameRound} />
             <div className="qd-game_footer">
                 {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP && game.state !== GameState.ELAPSED ? null :
-                    <button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}
-                    >Nochmal</button>
+                    <Button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}
+                    >Nochmal</Button>
                 }
                 {game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED && game.state !== GameState.NEW_RANDOM_GAME ? null :
-                    <button
+                    <Button
                         className="qd-game_give-up"
                         onClick={() => {
                             if (game.state === GameState.REQUESTED && game.your_turn) {
@@ -76,19 +77,22 @@ export class Game extends React.PureComponent<IGameProps> {
                                 onGiveUp(game.game_id);
                             }
                         }}
-                    >Aufgeben</button>
+                    >Aufgeben</Button>
                 }
-                <button
-                    className={'qd-game_play' + (isUploading ? ' qd-game_play_loading' : '')}
+                <Button
+                    className={'qd-game_play'}
+                    showLoadingIndicator={isUploading}
                     onClick={() => onPlay(game.game_id)}
                     disabled={isUploading || !game.your_turn || (game.state !== GameState.ACTIVE
                         && game.state !== GameState.REQUESTED
                         && game.state !== GameState.NEW_RANDOM_GAME)}
-                >Spielen</button>
+                >Spielen</Button>
                 {
-                    isFriend ?
-                        <button onClick={() => onRemoveFriend(game.opponent.user_id)}>-Freund</button> :
-                        <button onClick={() => onAddFriend(game.opponent.user_id, game.opponent.name)}>+Freund</button>
+                    isFriend
+                        ? <Button onClick={() => onRemoveFriend(game.opponent.user_id)}
+                        >-Freund</Button>
+                        : <Button onClick={() => onAddFriend(game.opponent.user_id, game.opponent.name)}
+                        >+Freund</Button>
                 }
             </div>
         </div >;

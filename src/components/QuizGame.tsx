@@ -9,6 +9,7 @@ import { userSelector } from '../redux/selectors/entities.selectors';
 import { selectedQuizRoundStateSelector, selectedQuizSelector } from '../redux/selectors/ui.selectors';
 import { AppThunkDispatch } from '../redux/thunks';
 import Avatar from './Avatar';
+import { Button } from './Button';
 import GameRounds from './GameRounds';
 import './QuizGame.css';
 
@@ -37,7 +38,7 @@ class QuizGame extends React.PureComponent<IQuizGameProps> {
             return <div></div>;
         }
         return <div>
-            <button onClick={onBack}>Zurück</button>
+            <Button onClick={onBack}>Zurück</Button>
             <div className="qd-quiz-game_header">
                 <div className="qd-quiz-game_user"><Avatar avatarCode={user ? user.avatar_code : null} /> Ich</div>
                 <div className="qd-quiz-game_points">{yourCorrectAnswers} - {opponentCorrectAnswers}</div>
@@ -45,11 +46,11 @@ class QuizGame extends React.PureComponent<IQuizGameProps> {
             </div>
             <GameRounds gameRound={gameRound} />
             <div className="qd-quiz-game_footer">
-                <button
+                <Button
                     className="qd-quiz-game_play"
                     onClick={() => onPlay(quiz.quiz_id)}
                     disabled={quiz.your_answers.finish_date != null}
-                >Spielen</button>
+                >Spielen</Button>
             </div>
         </div >;
     }

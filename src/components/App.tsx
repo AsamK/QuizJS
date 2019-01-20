@@ -10,6 +10,7 @@ import { AppThunkDispatch, loadData, login } from '../redux/thunks';
 import { createRequestFn, extraThunkArgument, QD_SERVER } from '../settings';
 import { assertUnreachable } from '../utils/utils';
 import './App.css';
+import { Button } from './Button';
 import CategorySelection from './CategorySelection';
 import CreateUser from './CreateUser';
 import Game from './Game';
@@ -61,14 +62,14 @@ class App extends React.Component<IAppProps, IAppState> {
 
     if (!this.props.loggedIn) {
       content = this.state.createNewAccount ? <div><CreateUser
-      /><button onClick={() => this.setState({ createNewAccount: false })}>Bestehendes Konto verwenden</button></div> :
+      /><Button onClick={() => this.setState({ createNewAccount: false })}>Bestehendes Konto verwenden</Button></div> :
         <div><Login onLogin={(name, password) => {
           this.props.login(name, password);
-        }} /><button onClick={() => this.setState({ createNewAccount: true })}>Neues Konto erstellen</button></div>;
+        }} /><Button onClick={() => this.setState({ createNewAccount: true })}>Neues Konto erstellen</Button></div>;
     } else {
       content = this.renderContent();
       content = <>
-        <button className="qd-app_refresh" onClick={this.refresh}>Refresh</button>
+        <Button className="qd-app_refresh" onClick={this.refresh}>Refresh</Button>
         {content}
       </>;
     }

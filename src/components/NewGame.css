@@ -1,3 +1,7 @@
+.qd-new-game_back {
+    margin-right: 5px;
+}
+
 .qd-new-game label {
     font-weight: bolder;
 }
@@ -13,4 +17,6 @@
 .qd-new-game_search-user {
     display: flex;
     flex-direction: column;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }

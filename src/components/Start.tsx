@@ -10,6 +10,7 @@ import { IUser } from '../redux/interfaces/IUser';
 import { gamesSelector, quizzesSelector, userSelector } from '../redux/selectors/entities.selectors';
 import { AppThunkDispatch } from '../redux/thunks';
 import Avatar from './Avatar';
+import { Button } from './Button';
 import './Start.css';
 import { Time } from './Time';
 
@@ -127,7 +128,7 @@ function Start({ games, user, quizzes, onGameSelected, onQuizSelected,
     return <div className="qd-start">
         Eingeloggt als: <span onClick={onShowProfile}>{!user ? 'Unbekannt' : user.name + ' <' + (user.email || '') + '>'}</span>
         <div className="qd-start_new-game">
-            <button onClick={onNewGame}>Neues Spiel starten</button>
+            <Button onClick={onNewGame}>Neues Spiel starten</Button>
         </div>
         <div className="qd-start_running">
             {runningQuizElements}

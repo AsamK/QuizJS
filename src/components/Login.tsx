@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Button } from './Button';
 import './Login.css';
 
 interface ILoginProps {
@@ -33,7 +34,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
                     value={password}
                     onChange={e => this.setState({ password: e.target.value })}
                 /></label>
-                <button type="submit">Login</button>
+                <Button type="submit">Login</Button>
             </form>
         </div>;
     }

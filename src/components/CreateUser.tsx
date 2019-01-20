@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { AppThunkDispatch, createUser } from '../redux/thunks';
+import { Button } from './Button';
 import './CreateUser.css';
 
 interface ICreateUserStateProps {
@@ -52,7 +53,7 @@ class CreateUser extends React.Component<ICreateUserProps, ICreateUserState> {
                     value={password2}
                     onChange={e => this.setState({ password2: e.target.value })}
                 /></label>
-                <button type="submit" disabled={!password || password !== password2}>Erstellen</button>
+                <Button type="submit" disabled={!password || password !== password2}>Erstellen</Button>
             </form>
         </div>;
     }
