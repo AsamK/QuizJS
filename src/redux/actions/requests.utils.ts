@@ -91,8 +91,8 @@ export class ActionType<
         };
     }
 
-    public getLoadingState(state: { [requestId: string]: LoadingState }, extraRequestId?: string): LoadingState {
-        const id = this.REQUEST + (extraRequestId || '');
+    public getLoadingState(state: { [requestId: string]: LoadingState }, extraRequestId?: string | number): LoadingState {
+        const id = this.REQUEST + (extraRequestId ? extraRequestId.toString() : '');
         return state[id] || LoadingState.INITIAL;
     }
 }

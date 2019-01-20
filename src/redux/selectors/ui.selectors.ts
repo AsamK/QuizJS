@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND } from '../../consts';
-import { uploadRoundAction } from '../actions/entities.actions';
+import { addFriendAction, createGameAction, declineGameAction, giveUpGameAction, removeFriendAction, uploadRoundAction } from '../actions/entities.actions';
 import { LoadingState } from '../actions/requests.utils';
 import { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
 import { ICategory } from '../interfaces/ICategory';
@@ -69,6 +69,43 @@ export const isSelectedGameWithFriendSelector = createSelector(selectedGameSelec
             return false;
         }
         return !!friends.find(f => f.user_id === game.opponent.user_id);
+    },
+);
+
+export const selectedGameAddFriendLoadingSelector = createSelector(selectedGameSelector, loadingSelector,
+    (game, loadingStates): boolean => {
+        if (!game) {
+            return false;
+        }
+        return addFriendAction.getLoadingState(loadingStates, game.opponent.user_id) === LoadingState.LOADING;
+    },
+);
+
+export const selectedGameRemoveFriendLoadingSelector = createSelector(selectedGameSelector, loadingSelector,
+    (game, loadingStates): boolean => {
+        if (!game) {
+            return false;
+        }
+        return removeFriendAction.getLoadingState(loadingStates, game.opponent.user_id) === LoadingState.LOADING;
+    },
+);
+
+export const selectedGameCreateLoadingSelector = createSelector(selectedGameSelector, loadingSelector,
+    (game, loadingStates): boolean => {
+        if (!game) {
+            return false;
+        }
+        return createGameAction.getLoadingState(loadingStates, game.opponent.user_id) === LoadingState.LOADING;
+    },
+);
+
+export const selectedGameGiveUpLoadingSelector = createSelector(selectedGameSelector, loadingSelector,
+    (game, loadingStates): boolean => {
+        if (!game) {
+            return false;
+        }
+        return declineGameAction.getLoadingState(loadingStates, game.game_id) === LoadingState.LOADING
+            || giveUpGameAction.getLoadingState(loadingStates, game.game_id) === LoadingState.LOADING;
     },
 );
 

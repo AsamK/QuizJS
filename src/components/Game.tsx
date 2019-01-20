@@ -8,7 +8,7 @@ import { IGame } from '../redux/interfaces/IGame';
 import { IGameRoundState } from '../redux/interfaces/IGameRoundState';
 import { IUser } from '../redux/interfaces/IUser';
 import { userSelector } from '../redux/selectors/entities.selectors';
-import { isSelectedGameWithFriendSelector, selectedGameIdSelector, selectedGameRoundStateSelector, selectedGameSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
+import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
 import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
@@ -19,7 +19,11 @@ interface IGameStateProps {
     game: IGame | null;
     gameId: number | null;
     gameRound: IGameRoundState[];
+    isAddingFriend: boolean;
+    isRemovingFriend: boolean;
     isFriend: boolean;
+    isGivingUp: boolean;
+    isStartingNewGame: boolean;
     isUploading: boolean;
     user: IUser | null;
 }
@@ -47,7 +51,7 @@ export class Game extends React.PureComponent<IGameProps> {
     }
 
     public render(): React.ReactElement<IGameProps> {
-        const { game, gameRound, isFriend, isUploading, user,
+        const { game, gameRound, isAddingFriend, isRemovingFriend, isFriend, isGivingUp, isStartingNewGame, isUploading, user,
             onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend } = this.props;
         if (!game) {
             return <div>'Loading game...'</div>;
@@ -65,11 +69,15 @@ export class Game extends React.PureComponent<IGameProps> {
             <div className="qd-game_footer">
                 {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP && game.state !== GameState.ELAPSED ? null :
                     <Button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}
+                        showLoadingIndicator={isStartingNewGame}
+                        disabled={isStartingNewGame}
                     >Nochmal</Button>
                 }
                 {game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED && game.state !== GameState.NEW_RANDOM_GAME ? null :
                     <Button
                         className="qd-game_give-up"
+                        showLoadingIndicator={isGivingUp}
+                        disabled={isGivingUp}
                         onClick={() => {
                             if (game.state === GameState.REQUESTED && game.your_turn) {
                                 onDeclineGame(game.game_id);
@@ -90,8 +98,12 @@ export class Game extends React.PureComponent<IGameProps> {
                 {
                     isFriend
                         ? <Button onClick={() => onRemoveFriend(game.opponent.user_id)}
+                            disabled={isRemovingFriend}
+                            showLoadingIndicator={isRemovingFriend}
                         >-Freund</Button>
                         : <Button onClick={() => onAddFriend(game.opponent.user_id, game.opponent.name)}
+                            disabled={isAddingFriend}
+                            showLoadingIndicator={isAddingFriend}
                         >+Freund</Button>
                 }
             </div>
@@ -104,7 +116,11 @@ const mapStateToProps = (state: IAppStore): IGameStateProps => {
         game: selectedGameSelector(state),
         gameId: selectedGameIdSelector(state),
         gameRound: selectedGameRoundStateSelector(state),
+        isAddingFriend: selectedGameAddFriendLoadingSelector(state),
         isFriend: isSelectedGameWithFriendSelector(state),
+        isGivingUp: selectedGameGiveUpLoadingSelector(state),
+        isRemovingFriend: selectedGameRemoveFriendLoadingSelector(state),
+        isStartingNewGame: selectedGameCreateLoadingSelector(state),
         isUploading: uploadRoundLoadingSelector(state),
         user: userSelector(state),
     };

@@ -1,9 +1,16 @@
 import { createSelector } from 'reselect';
+import { appDataAction } from '../actions/entities.actions';
+import { LoadingState } from '../actions/requests.utils';
 import { IAppStore } from '../interfaces/IAppStore';
 
 const entitiesSelector = (state: IAppStore) => state.entities;
 
 export const loadingSelector = createSelector(entitiesSelector, entities => entities.loadingStates);
+
+export const refreshLoadingSelector = createSelector(
+    loadingSelector,
+    loadingStates => appDataAction.getLoadingState(loadingStates) === LoadingState.LOADING,
+);
 
 export const userSelector = createSelector(entitiesSelector, entities => entities.user);
 

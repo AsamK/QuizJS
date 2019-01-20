@@ -5,6 +5,7 @@ import { STORAGE_KEY_COOKIE } from '../consts';
 import { cookieLoaded } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { MainView } from '../redux/MainView';
+import { refreshLoadingSelector } from '../redux/selectors/entities.selectors';
 import { loggedInSelector, mainViewSelector } from '../redux/selectors/ui.selectors';
 import { AppThunkDispatch, loadData, login } from '../redux/thunks';
 import { createRequestFn, extraThunkArgument, QD_SERVER } from '../settings';
@@ -23,9 +24,11 @@ import QuizInterrogation from './QuizInterrogation';
 import Start from './Start';
 
 interface IAppStateProps {
+  isRefreshing: boolean;
   mainView: MainView;
   loggedIn: boolean;
 }
+
 interface IAppDispatchProps {
   cookieLoaded: (cookie: string) => void;
   loadData: () => void;
@@ -69,7 +72,12 @@ class App extends React.Component<IAppProps, IAppState> {
     } else {
       content = this.renderContent();
       content = <>
-        <Button className="qd-app_refresh" onClick={this.refresh}>Refresh</Button>
+        <Button
+          className="qd-app_refresh"
+          onClick={this.refresh}
+          showLoadingIndicator={this.props.isRefreshing}
+          disabled={this.props.isRefreshing}
+        >Refresh</Button>
         {content}
       </>;
     }
@@ -109,6 +117,7 @@ class App extends React.Component<IAppProps, IAppState> {
 
 const mapStateToProps = (state: IAppStore): IAppStateProps => {
   return {
+    isRefreshing: refreshLoadingSelector(state),
     loggedIn: loggedInSelector(state),
     mainView: mainViewSelector(state),
   };

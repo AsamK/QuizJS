@@ -128,7 +128,8 @@ function Start({ games, user, quizzes, onGameSelected, onQuizSelected,
     return <div className="qd-start">
         Eingeloggt als: <span onClick={onShowProfile}>{!user ? 'Unbekannt' : user.name + ' <' + (user.email || '') + '>'}</span>
         <div className="qd-start_new-game">
-            <Button onClick={onNewGame}>Neues Spiel starten</Button>
+            <Button onClick={onNewGame}
+            >Neues Spiel starten</Button>
         </div>
         <div className="qd-start_running">
             {runningQuizElements}
