@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 
+import { GameState } from '../../api/IApiGame';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND } from '../../consts';
 import { addFriendAction, createGameAction, declineGameAction, giveUpGameAction, removeFriendAction, uploadRoundAction } from '../actions/entities.actions';
 import { LoadingState } from '../actions/requests.utils';
@@ -117,6 +118,19 @@ export const gameIdToGameStateSelector = createSelector(uiSelector, ui => ui.gam
 export const selectedGameStateSelector = createSelector(gameIdToGameStateSelector, selectedGameIdSelector,
     (map, gameId): IGameState => {
         return getGameStateOrDefault(map, gameId);
+    },
+);
+
+export const selectedGameExistsRunningGameWithPlayer = createSelector(selectedGameSelector, gamesSelector,
+    (game, games) => {
+        if (game !== null && games.findIndex(g =>
+            g.opponent.user_id === game.opponent.user_id &&
+            g.state !== GameState.FINISHED &&
+            g.state !== GameState.ELAPSED &&
+            g.state !== GameState.GAVE_UP) >= 0) {
+            return true;
+        }
+        return false;
     },
 );
 

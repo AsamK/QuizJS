@@ -8,7 +8,7 @@ import { IGame } from '../redux/interfaces/IGame';
 import { IGameRoundState } from '../redux/interfaces/IGameRoundState';
 import { IUser } from '../redux/interfaces/IUser';
 import { userSelector } from '../redux/selectors/entities.selectors';
-import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
+import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
 import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
@@ -16,6 +16,7 @@ import './Game.css';
 import GameRounds from './GameRounds';
 
 interface IGameStateProps {
+    againButtonEnabled: boolean;
     game: IGame | null;
     gameId: number | null;
     gameRound: IGameRoundState[];
@@ -51,8 +52,8 @@ export class Game extends React.PureComponent<IGameProps> {
     }
 
     public render(): React.ReactElement<IGameProps> {
-        const { game, gameRound, isAddingFriend, isRemovingFriend, isFriend, isGivingUp, isStartingNewGame, isUploading, user,
-            onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend } = this.props;
+        const { againButtonEnabled, game, gameRound, isAddingFriend, isRemovingFriend, isFriend, isGivingUp, isStartingNewGame, isUploading,
+            user, onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend } = this.props;
         if (!game) {
             return <div>'Loading game...'</div>;
         }
@@ -70,7 +71,7 @@ export class Game extends React.PureComponent<IGameProps> {
                 {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP && game.state !== GameState.ELAPSED ? null :
                     <Button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}
                         showLoadingIndicator={isStartingNewGame}
-                        disabled={isStartingNewGame}
+                        disabled={isStartingNewGame || againButtonEnabled}
                     >Nochmal</Button>
                 }
                 {game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED && game.state !== GameState.NEW_RANDOM_GAME ? null :
@@ -113,6 +114,7 @@ export class Game extends React.PureComponent<IGameProps> {
 
 const mapStateToProps = (state: IAppStore): IGameStateProps => {
     return {
+        againButtonEnabled: selectedGameExistsRunningGameWithPlayer(state),
         game: selectedGameSelector(state),
         gameId: selectedGameIdSelector(state),
         gameRound: selectedGameRoundStateSelector(state),
