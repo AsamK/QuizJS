@@ -56,7 +56,7 @@ function StartElement({ game, onGameSelected }: IStartElementProps): React.React
             }</div>
         </div>
         <div className="qd-start_entry_points">
-            {yourCorrect}-{opponentCorrect}
+            {yourCorrect} - {opponentCorrect}
         </div>
         <div className="qd-start_entry_time">
             {!game.timestamp ? null :

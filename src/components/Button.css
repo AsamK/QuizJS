@@ -26,6 +26,6 @@
     filter: brightness(85%);
 }
 
-.qd-button:active {
+.qd-button:not([disabled]):active {
     filter: brightness(80%);
 }

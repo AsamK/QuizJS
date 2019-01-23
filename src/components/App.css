@@ -8,6 +8,7 @@
 }
 
 .qd-app_refresh {
+    flex: none;
     margin-bottom: 1em;
 }
 
