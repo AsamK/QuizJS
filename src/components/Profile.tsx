@@ -21,89 +21,75 @@ interface IProfileDispatchProps {
 interface IProfileProps extends IProfileStateProps, IProfileDispatchProps {
 }
 
-interface IProfileState {
-    updatePassword: boolean;
-    email: string | null;
-    name: string | null;
-    password: string | null;
-    password2: string | null;
-}
+function Profile({ friends, user, onBack, onUpdateUser }: IProfileProps): React.ReactElement<IProfileProps> | null {
+    const [name, setName] = React.useState<string | null>(null);
+    const [email, setEmail] = React.useState<string | null>(null);
+    const [password, setPassword] = React.useState<string | null>(null);
+    const [password2, setPassword2] = React.useState<string | null>(null);
+    const [updatePassword, setUpdatePassword] = React.useState(false);
 
-class Profile extends React.Component<IProfileProps, IProfileState> {
-
-    public state = {
-        email: null,
-        name: null,
-        password: null,
-        password2: null,
-        updatePassword: false,
-    };
-
-    public render(): React.ReactChild | null {
-        const { friends, user, onBack, onUpdateUser } = this.props;
-        if (!user) {
-            return null;
-        }
-        const friendElements = friends.map(friend =>
-            <div
-                key={friend.user_id}
-                className="qd-profile_friend"
-            >
-                <Avatar avatarCode={friend.avatar_code} />{friend.name} &lt;{friend.email}&gt;
-            </div>,
-        );
-        return <div className="qd-profile">
-            <Button onClick={onBack}>Zurück</Button>
-            <h2>{user.name} ({user.user_id})</h2>
-            <div className="qd-profile_avatar">Avatar: <Avatar avatarCode={user.avatar_code} /></div>
-            {this.state.updatePassword ?
-                <form className="qd-profile_form" onSubmit={e => {
-                    const password = this.state.password;
-                    const { name, email } = this.state;
-                    onUpdateUser(name === null ? user.name : name, email === null ? user.email || '' : email, password);
-                    this.setState({ updatePassword: false });
-                    e.preventDefault();
-                }}>
-                    <label>Name:
-                        <input type="name"
-                            value={this.state.name != null ? this.state.name || '' : user.name || ''}
-                            onChange={e => this.setState({ name: e.target.value })}
-                        />
-                    </label>
-                    <label>Email:
-                        <input type="email"
-                            value={this.state.email != null ? this.state.email || '' : user.email || ''}
-                            onChange={e => this.setState({ email: e.target.value })}
-                        />
-                    </label>
-                    <label>Passwort:
-                            <input type="password"
-                            value={this.state.password || ''}
-                            onChange={e => this.setState({ password: e.target.value })}
-                        />
-                    </label>
-                    <label>Passwort wiederholen:
-                            <input type="password"
-                            value={this.state.password2 || ''}
-                            onChange={e => this.setState({ password2: e.target.value })}
-                        />
-                    </label>
-                    <input type="submit" value="Ändern" disabled={this.state.password !== this.state.password2} />
-                    <Button type="reset" onClick={() => this.setState({ updatePassword: false })}>Abbrechen</Button>
-                </form>
-                :
-                <>
-                    <div className="qd-profile_email">Email: {user.email}</div>
-                    <div className="qd-profile_password">Passwort: ***
-                        <Button onClick={() => this.setState({ updatePassword: true })}>Ändern</Button>
-                    </div>
-                </>
-            }
-            <div className="qd-profile_friends">Freunde:
-            {friendElements}
-            </div>
-        </div>;
+    if (!user) {
+        return null;
     }
+
+    const friendElements = friends.map(friend =>
+        <div
+            key={friend.user_id}
+            className="qd-profile_friend"
+        >
+            <Avatar avatarCode={friend.avatar_code} />{friend.name} &lt;{friend.email}&gt;
+            </div>,
+    );
+
+    return <div className="qd-profile">
+        <Button onClick={onBack}>Zurück</Button>
+        <h2>{user.name} ({user.user_id})</h2>
+        <div className="qd-profile_avatar">Avatar: <Avatar avatarCode={user.avatar_code} /></div>
+        {updatePassword ?
+            <form className="qd-profile_form" onSubmit={e => {
+                onUpdateUser(name === null ? user.name : name, email === null ? user.email || '' : email, password);
+                setUpdatePassword(false);
+                e.preventDefault();
+            }}>
+                <label>Name:
+                        <input type="name"
+                        value={name != null ? name || '' : user.name || ''}
+                        onChange={e => setName(e.target.value)}
+                    />
+                </label>
+                <label>Email:
+                        <input type="email"
+                        value={email != null ? email || '' : user.email || ''}
+                        onChange={e => setEmail(e.target.value)}
+                    />
+                </label>
+                <label>Passwort:
+                            <input type="password"
+                        value={password || ''}
+                        onChange={e => setPassword(e.target.value)}
+                    />
+                </label>
+                <label>Passwort wiederholen:
+                            <input type="password"
+                        value={password2 || ''}
+                        onChange={e => setPassword2(e.target.value)}
+                    />
+                </label>
+                <input type="submit" value="Ändern" disabled={password !== password2} />
+                <Button type="reset" onClick={() => setUpdatePassword(false)}>Abbrechen</Button>
+            </form>
+            :
+            <>
+                <div className="qd-profile_email">Email: {user.email}</div>
+                <div className="qd-profile_password">Passwort: ***
+                        <Button onClick={() => setUpdatePassword(true)}>Ändern</Button>
+                </div>
+            </>
+        }
+        <div className="qd-profile_friends">Freunde:
+            {friendElements}
+        </div>
+    </div>;
 }
 
 const mapStateToProps = (state: IAppStore): IProfileStateProps => {

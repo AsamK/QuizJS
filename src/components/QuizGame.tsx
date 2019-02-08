@@ -27,33 +27,28 @@ interface IQuizGameDispatchProps {
 interface IQuizGameProps extends IQuizGameStateProps, IQuizGameDispatchProps {
 }
 
-class QuizGame extends React.PureComponent<IQuizGameProps> {
-
-    public render(): React.ReactElement<IQuizGameProps> {
-        const { quiz, gameRound, user,
-            onBack, onPlay } = this.props;
-        const yourCorrectAnswers = gameRound.reduce((sum, r) => sum + r.yourAnswers.filter(a => a === 0).length, 0);
-        const opponentCorrectAnswers = gameRound.reduce((sum, r) => sum + r.opponentAnswers.filter(a => a === 0).length, 0);
-        if (!quiz) {
-            return <div></div>;
-        }
-        return <div>
-            <Button onClick={onBack}>Zurück</Button>
-            <div className="qd-quiz-game_header">
-                <div className="qd-quiz-game_user"><Avatar avatarCode={user ? user.avatar_code : null} /> Ich</div>
-                <div className="qd-quiz-game_points">{yourCorrectAnswers} - {opponentCorrectAnswers}</div>
-                <div className="qd-quiz-game_user">{quiz.name}</div>
-            </div>
-            <GameRounds gameRound={gameRound} />
-            <div className="qd-quiz-game_footer">
-                <Button
-                    className="qd-quiz-game_play"
-                    onClick={() => onPlay(quiz.quiz_id)}
-                    disabled={quiz.your_answers.finish_date != null}
-                >Spielen</Button>
-            </div>
-        </div >;
+function QuizGame({ quiz, gameRound, user, onBack, onPlay }: IQuizGameProps): React.ReactElement<IQuizGameProps> {
+    const yourCorrectAnswers = gameRound.reduce((sum, r) => sum + r.yourAnswers.filter(a => a === 0).length, 0);
+    const opponentCorrectAnswers = gameRound.reduce((sum, r) => sum + r.opponentAnswers.filter(a => a === 0).length, 0);
+    if (!quiz) {
+        return <div></div>;
     }
+    return <div>
+        <Button onClick={onBack}>Zurück</Button>
+        <div className="qd-quiz-game_header">
+            <div className="qd-quiz-game_user"><Avatar avatarCode={user ? user.avatar_code : null} /> Ich</div>
+            <div className="qd-quiz-game_points">{yourCorrectAnswers} - {opponentCorrectAnswers}</div>
+            <div className="qd-quiz-game_user">{quiz.name}</div>
+        </div>
+        <GameRounds gameRound={gameRound} />
+        <div className="qd-quiz-game_footer">
+            <Button
+                className="qd-quiz-game_play"
+                onClick={() => onPlay(quiz.quiz_id)}
+                disabled={quiz.your_answers.finish_date != null}
+            >Spielen</Button>
+        </div>
+    </div >;
 }
 
 const mapStateToProps = (state: IAppStore): IQuizGameStateProps => {

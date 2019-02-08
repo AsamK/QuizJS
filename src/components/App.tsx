@@ -24,111 +24,95 @@ import QuizInterrogation from './QuizInterrogation';
 import Start from './Start';
 
 interface IAppStateProps {
-  isRefreshing: boolean;
-  mainView: MainView;
-  loggedIn: boolean;
+    isRefreshing: boolean;
+    mainView: MainView;
+    loggedIn: boolean;
 }
 
 interface IAppDispatchProps {
-  cookieLoaded: (cookie: string) => void;
-  loadData: () => void;
-  login: (name: string, password: string) => void;
+    cookieLoaded: (cookie: string) => void;
+    loadData: () => void;
+    login: (name: string, password: string) => void;
 }
 
 interface IAppProps extends IAppStateProps, IAppDispatchProps {
 }
 
-interface IAppState {
-  createNewAccount: boolean;
-}
+function App(props: IAppProps): React.ReactElement<IAppProps> {
+    const [createNewAccount, setCreateNewAccount] = React.useState(false);
 
-class App extends React.Component<IAppProps, IAppState> {
-  public state: IAppState = {
-    createNewAccount: false,
-  };
+    React.useEffect(() => {
+        const cookie = localStorage.getItem(STORAGE_KEY_COOKIE);
+        if (cookie) {
+            props.cookieLoaded(cookie);
+            extraThunkArgument.requestFn = createRequestFn(QD_SERVER.host, cookie);
+            props.loadData();
+        }
+    }, []);
 
-  public constructor(props: IAppProps) {
-    super(props);
-  }
-
-  public componentDidMount(): void {
-    const cookie = localStorage.getItem(STORAGE_KEY_COOKIE);
-    if (cookie) {
-      this.props.cookieLoaded(cookie);
-      extraThunkArgument.requestFn = createRequestFn(QD_SERVER.host, cookie);
-      this.refresh();
-    }
-  }
-
-  public render(): React.ReactNode {
     let content;
 
-    if (!this.props.loggedIn) {
-      content = this.state.createNewAccount ? <div><CreateUser
-      /><Button onClick={() => this.setState({ createNewAccount: false })}>Bestehendes Konto verwenden</Button></div> :
-        <div><Login onLogin={(name, password) => {
-          this.props.login(name, password);
-        }} /><Button onClick={() => this.setState({ createNewAccount: true })}>Neues Konto erstellen</Button></div>;
+    if (!props.loggedIn) {
+        content = createNewAccount ? <div><CreateUser
+        /><Button onClick={() => setCreateNewAccount(false)}>Bestehendes Konto verwenden</Button></div> :
+            <div><Login onLogin={(name, password) => {
+                props.login(name, password);
+            }} /><Button onClick={() => setCreateNewAccount(true)}>Neues Konto erstellen</Button></div>;
     } else {
-      content = this.renderContent();
-      content = <>
-        <Button
-          className="qd-app_refresh"
-          onClick={this.refresh}
-          showLoadingIndicator={this.props.isRefreshing}
-          disabled={this.props.isRefreshing}
-        >Refresh</Button>
-        {content}
-      </>;
+        content = renderContent(props.mainView);
+        content = <>
+            <Button
+                className="qd-app_refresh"
+                onClick={props.loadData}
+                showLoadingIndicator={props.isRefreshing}
+                disabled={props.isRefreshing}
+            >Refresh</Button>
+            {content}
+        </>;
     }
     return (
-      <div className="qd-app">
-        {content}
-      </div>
+        <div className="qd-app">
+            {content}
+        </div>
     );
-  }
+}
 
-  private refresh = () => {
-    this.props.loadData();
-  };
-
-  private renderContent(): React.ReactNode {
-    switch (this.props.mainView) {
-      case MainView.CREATE_GAME:
-        return <NewGame />;
-      case MainView.PROFILE:
-        return <Profile />;
-      case MainView.START:
-        return <Start />;
-      case MainView.GAME:
-        return <Game />;
-      case MainView.QUIZ:
-        return <QuizGame />;
-      case MainView.SELECT_CATEGORY:
-        return <CategorySelection />;
-      case MainView.GAME_INTERROGATION:
-        return <GameInterrogation />;
-      case MainView.QUIZ_INTERROGATION:
-        return <QuizInterrogation />;
+function renderContent(mainView: MainView): React.ReactNode {
+    switch (mainView) {
+        case MainView.CREATE_GAME:
+            return <NewGame />;
+        case MainView.PROFILE:
+            return <Profile />;
+        case MainView.START:
+            return <Start />;
+        case MainView.GAME:
+            return <Game />;
+        case MainView.QUIZ:
+            return <QuizGame />;
+        case MainView.SELECT_CATEGORY:
+            return <CategorySelection />;
+        case MainView.GAME_INTERROGATION:
+            return <GameInterrogation />;
+        case MainView.QUIZ_INTERROGATION:
+            return <QuizInterrogation />;
     }
-    assertUnreachable(this.props.mainView);
-  }
+    assertUnreachable(mainView);
 }
 
 const mapStateToProps = (state: IAppStore): IAppStateProps => {
-  return {
-    isRefreshing: refreshLoadingSelector(state),
-    loggedIn: loggedInSelector(state),
-    mainView: mainViewSelector(state),
-  };
+    return {
+        isRefreshing: refreshLoadingSelector(state),
+        loggedIn: loggedInSelector(state),
+        mainView: mainViewSelector(state),
+    };
 };
 
 const mapDispatchToProps = (dispatch: AppThunkDispatch): IAppDispatchProps => {
-  return {
-    cookieLoaded: cookie => dispatch(cookieLoaded(cookie)),
-    loadData: () => dispatch(loadData()),
-    login: (name, password) => dispatch(login(name, password)),
-  };
+    return {
+        cookieLoaded: cookie => dispatch(cookieLoaded(cookie)),
+        loadData: () => dispatch(loadData()),
+        login: (name, password) => dispatch(login(name, password)),
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

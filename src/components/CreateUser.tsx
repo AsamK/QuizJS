@@ -15,48 +15,35 @@ interface ICreateUserDispatchProps {
 interface ICreateUserProps extends ICreateUserStateProps, ICreateUserDispatchProps {
 }
 
-interface ICreateUserState {
-    email: string;
-    name: string;
-    password: string;
-    password2: string;
-}
+function CreateUser({ onCreateUser }: ICreateUserProps): React.ReactElement<ICreateUserProps> {
+    const [name, setName] = React.useState('');
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [password2, setPassword2] = React.useState('');
 
-class CreateUser extends React.Component<ICreateUserProps, ICreateUserState> {
-    public state: ICreateUserState = {
-        email: '',
-        name: '',
-        password: '',
-        password2: '',
-    };
-
-    public render(): React.ReactNode {
-        const { name, email, password, password2 } = this.state;
-        const { onCreateUser } = this.props;
-        return <div className="qd-create-user">
-            <form
-                className="qd-create-user_form"
-                onSubmit={e => {
-                    onCreateUser(name, email, password);
-                    e.preventDefault();
-                }}
-            >
-                <label>Name: <input value={name} onChange={e => this.setState({ name: e.target.value })} /></label>
-                <label>E-Mail: <input value={email} onChange={e => this.setState({ email: e.target.value })} /></label>
-                <label>Password: <input
-                    type="password"
-                    value={password}
-                    onChange={e => this.setState({ password: e.target.value })}
-                /></label>
-                <label>Passwort wiederholen: <input
-                    type="password"
-                    value={password2}
-                    onChange={e => this.setState({ password2: e.target.value })}
-                /></label>
-                <Button type="submit" disabled={!password || password !== password2}>Erstellen</Button>
-            </form>
-        </div>;
-    }
+    return <div className="qd-create-user">
+        <form
+            className="qd-create-user_form"
+            onSubmit={e => {
+                onCreateUser(name, email, password);
+                e.preventDefault();
+            }}
+        >
+            <label>Name: <input value={name} onChange={e => setName(e.target.value)} /></label>
+            <label>E-Mail: <input value={email} onChange={e => setEmail(e.target.value)} /></label>
+            <label>Password: <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+            /></label>
+            <label>Passwort wiederholen: <input
+                type="password"
+                value={password2}
+                onChange={e => setPassword2(e.target.value)}
+            /></label>
+            <Button type="submit" disabled={!password || password !== password2}>Erstellen</Button>
+        </form>
+    </div>;
 }
 
 const mapStateToProps = (state: IAppStore): ICreateUserStateProps => {

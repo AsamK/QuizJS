@@ -8,58 +8,60 @@ export interface ITimeProps {
     showDays: boolean;
 }
 
-export class Time extends React.Component<ITimeProps> {
-    private timer?: number;
+export function Time(props: ITimeProps): React.ReactElement<ITimeProps> {
+    const [timerInterval, setTimerInterval] = React.useState<number | null>(null);
+    const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
-    public componentDidMount(): void {
-        this.timer = window.setInterval(this.tick, 1000);
-    }
-
-    public componentWillUnmount(): void {
-        if (this.timer) {
-            clearInterval(this.timer);
+    const timer = React.useRef<number | null>(null);
+    React.useEffect(() => {
+        function cleanUpTimer(): void {
+            if (timer.current != null) {
+                window.clearInterval(timer.current);
+                timer.current = null;
+            }
         }
-        this.timer = undefined;
-    }
 
-    public render(): React.ReactChild {
-        const { showSeconds, showDays, timestamp } = this.props;
-        let diff = new Date().valueOf() - new Date(timestamp).valueOf();
-        if (diff < 0) {
-            // Future date shouldn't happen
-            diff = 0;
-        }
-        let age;
-        let timerInterval;
-        const seconds = Math.trunc(diff / 1000);
-        const minutes = Math.trunc(seconds / 60);
-        const hours = Math.trunc(minutes / 60);
-        const days = Math.trunc(hours / 24);
-        if (days > 0 && showDays) {
-            age = days + 'd';
-            timerInterval = 1000 * 60 * 60;
-        } else if (hours > 0) {
-            age = hours + 'h';
-            timerInterval = 1000 * 60 * 15;
-        } else if (minutes > 0 || !showSeconds) {
-            age = minutes + 'min';
-            timerInterval = 1000 * 15;
+        if (timerInterval != null) {
+            timer.current = window.setInterval(forceUpdate, timerInterval);
         } else {
-            age = seconds + 's';
-            timerInterval = 1000;
+            cleanUpTimer();
         }
-        if (this.timer) {
-            clearInterval(this.timer);
-            this.timer = window.setInterval(this.tick, timerInterval);
-        }
-        return (
-            <div className="qd-time" title={new Date(timestamp).toString()}>
-                {age}
-            </div>
-        );
+
+        return cleanUpTimer;
+    }, [timerInterval]);
+
+    const { showSeconds, showDays, timestamp } = props;
+    let diff = new Date().valueOf() - new Date(timestamp).valueOf();
+    if (diff < 0) {
+        // Future date shouldn't happen
+        diff = 0;
+    }
+    let age;
+    const seconds = Math.trunc(diff / 1000);
+    const minutes = Math.trunc(seconds / 60);
+    const hours = Math.trunc(minutes / 60);
+    const days = Math.trunc(hours / 24);
+    let nextInterval;
+    if (days > 0 && showDays) {
+        age = days + 'd';
+        nextInterval = 1000 * 60 * 60;
+    } else if (hours > 0) {
+        age = hours + 'h';
+        nextInterval = 1000 * 60 * 15;
+    } else if (minutes > 0 || !showSeconds) {
+        age = minutes + 'min';
+        nextInterval = (1000 * 15);
+    } else {
+        age = seconds + 's';
+        nextInterval = 1000;
+    }
+    if (nextInterval !== timerInterval) {
+        setTimerInterval(nextInterval);
     }
 
-    private tick = () => {
-        this.forceUpdate();
-    };
+    return (
+        <div className="qd-time" title={new Date(timestamp).toString()}>
+            {age}
+        </div>
+    );
 }

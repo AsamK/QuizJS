@@ -26,45 +26,51 @@ interface INewGameDispatchProps {
 interface INewGameProps extends INewGameStateProps, INewGameDispatchProps {
 }
 
-class NewGame extends React.PureComponent<INewGameProps> {
-    private onSearchUserDebounced = debounce((name: string) => this.props.onSearchUser(name), 200);
+function NewGame(props: INewGameProps): React.ReactElement<INewGameProps> {
+    const { friends, foundUser, onBack, onCreateGame, onRandomGame, onSearchUser } = props;
 
-    public render(): React.ReactChild {
-        const { friends, foundUser, onBack, onCreateGame, onRandomGame } = this.props;
-        const friendElements = friends.map(friend =>
-            <div
-                key={friend.user_id}
-                className="qd-new-game_friend"
-                onClick={() => onCreateGame(friend.user_id)}
-            >
-                <Avatar avatarCode={friend.avatar_code} /> {friend.name} {friend.email}
-            </div>,
-        );
-        return <div className="qd-new-game">
-            <Button className="qd-new-game_back" onClick={onBack}>Zurück</Button>
-            <Button
-                onClick={onRandomGame}
-            >Beliebiger Spieler</Button>
-            <div className="qd-new-game_search-user">
-                <label>Benutzer suchen:<input
-                    onChange={e => this.onSearchUserDebounced(e.target.value)}
-                /></label>
-                {!foundUser ? null :
-                    <div
-                        key={foundUser.user_id}
-                        className="qd-new-game_user"
-                        onClick={() => onCreateGame(foundUser.user_id)}
-                    >
-                        <Avatar avatarCode={foundUser.avatar_code} /> {foundUser.name}
-                    </div>
-                }
-            </div>
-            <label>Freunde</label>
-            <div className="qd-new-game_friends">
-                {friendElements}
-            </div>
-        </div>;
-    }
+    const onSearchUserDebounced = React.useCallback(debounce(
+        (name: string) => onSearchUser(name)
+        , 200), [onSearchUser]);
+
+    const onSearchUserCallback = React.useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => onSearchUserDebounced(e.target.value),
+        [onSearchUser]);
+
+    const friendElements = React.useMemo(() => friends.map(friend =>
+        <div
+            key={friend.user_id}
+            className="qd-new-game_friend"
+            onClick={() => onCreateGame(friend.user_id)}
+        >
+            <Avatar avatarCode={friend.avatar_code} /> {friend.name} {friend.email}
+        </div>,
+    ), [friends, onCreateGame]);
+
+    return <div className="qd-new-game">
+        <Button className="qd-new-game_back" onClick={onBack}>Zurück</Button>
+        <Button
+            onClick={onRandomGame}
+        >Beliebiger Spieler</Button>
+        <div className="qd-new-game_search-user">
+            <label>Benutzer suchen:<input
+                onChange={onSearchUserCallback}
+            /></label>
+            {!foundUser ? null :
+                <div
+                    key={foundUser.user_id}
+                    className="qd-new-game_user"
+                    onClick={() => onCreateGame(foundUser.user_id)}
+                >
+                    <Avatar avatarCode={foundUser.avatar_code} /> {foundUser.name}
+                </div>
+            }
+        </div>
+        <label>Freunde</label>
+        <div className="qd-new-game_friends">
+            {friendElements}
+        </div>
+    </div>;
 }
 
 const mapStateToProps = (state: IAppStore): INewGameStateProps => ({
