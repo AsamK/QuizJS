@@ -17,6 +17,8 @@ export function getDefaultGameState(): IGameState {
         firstShownTimestamp: null,
         pendingAnswers: [],
         pendingQuestionTypes: [],
+        pendingSelectedAnswer: null,
+        pendingSelectedQuestionType: null,
         selectedCategoryIndex: null,
     };
 }

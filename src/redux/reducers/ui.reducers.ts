@@ -78,14 +78,10 @@ export function isPlaying(state = false, action: AppAction): typeof state {
 
 export function showAnswer(state = false, action: AppAction): typeof state {
     switch (action.type) {
-        case SELECT_GAME:
-        case NEXT_QUESTION:
-        case FINISH_ROUND:
         case SELECT_QUIZ:
         case NEXT_QUESTION_QUIZ:
         case FINISH_ROUND_QUIZ:
             return false;
-        case SELECT_ANSWER:
         case SELECT_ANSWER_QUIZ:
             return true;
         default:
@@ -114,18 +110,44 @@ export function gameState(state: Map<number, IGameState> = new Map(), action: Ap
             newState.set(action.gameId, {
                 ...prev,
                 answeredTimestamp: action.timestamp,
-                pendingAnswers: [...prev.pendingAnswers, action.answerIndex],
-                pendingQuestionTypes: [...prev.pendingQuestionTypes, action.questionType],
+                pendingSelectedAnswer: action.answerIndex,
+                pendingSelectedQuestionType: action.questionType,
             });
             return newState;
         }
         case NEXT_QUESTION: {
-            const newState = new Map(state);
             const prev = getGameStateOrDefault(state, action.gameId);
+            if (prev.pendingSelectedAnswer == null || prev.pendingSelectedQuestionType == null) {
+                console.error('Invalid state, next called while pendingSelectedAnswer was null');
+                return state;
+            }
+
+            const newState = new Map(state);
             newState.set(action.gameId, {
                 ...prev,
                 answeredTimestamp: null,
                 firstShownTimestamp: action.timestamp,
+                pendingAnswers: [...prev.pendingAnswers, prev.pendingSelectedAnswer],
+                pendingQuestionTypes: [...prev.pendingQuestionTypes, prev.pendingSelectedQuestionType],
+                pendingSelectedAnswer: null,
+                pendingSelectedQuestionType: null,
+            });
+            return newState;
+        }
+        case FINISH_ROUND: {
+            const prev = getGameStateOrDefault(state, action.gameId);
+            if (prev.pendingSelectedAnswer == null || prev.pendingSelectedQuestionType == null) {
+                console.error('Invalid state, finish called while pendingSelectedAnswer was null');
+                return state;
+            }
+
+            const newState = new Map(state);
+            newState.set(action.gameId, {
+                ...prev,
+                pendingAnswers: [...prev.pendingAnswers, prev.pendingSelectedAnswer],
+                pendingQuestionTypes: [...prev.pendingQuestionTypes, prev.pendingSelectedQuestionType],
+                pendingSelectedAnswer: null,
+                pendingSelectedQuestionType: null,
             });
             return newState;
         }

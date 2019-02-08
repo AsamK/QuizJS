@@ -34,6 +34,8 @@ export interface IGameState {
     selectedCategoryIndex: number | null;
     firstShownTimestamp: number | null;
     answeredTimestamp: number | null;
+    pendingSelectedAnswer: number | null;
+    pendingSelectedQuestionType: QuestionType | null;
 }
 
 export interface IQuizState {

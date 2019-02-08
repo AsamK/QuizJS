@@ -121,6 +121,23 @@ export const selectedGameStateSelector = createSelector(gameIdToGameStateSelecto
     },
 );
 
+export const selectedGameShouldUpload = createSelector(
+    selectedGameSelector,
+    selectedGameStateSelector,
+    selectedGameQuestionsSelector,
+    (game, gameState, questions) => {
+        if (game == null || gameState.pendingAnswers.length === 0) {
+            return false;
+        }
+
+        const questionsCount = questions == null ? QUESTIONS_PER_ROUND * 6 : questions.length;
+        const pendingAnswersLength = gameState.pendingAnswers.length + (gameState.pendingSelectedAnswer === null ? 0 : 1);
+
+        return game.opponent_answers.length + QUESTIONS_PER_ROUND <= game.your_answers.length + pendingAnswersLength ||
+            game.your_answers.length + pendingAnswersLength >= questionsCount / CATEGORIES_PER_ROUND;
+    },
+);
+
 export const selectedGameExistsRunningGameWithPlayer = createSelector(selectedGameSelector, gamesSelector,
     (game, games) => {
         if (game !== null && games.findIndex(g =>
@@ -134,13 +151,20 @@ export const selectedGameExistsRunningGameWithPlayer = createSelector(selectedGa
     },
 );
 
-export const roundIndexSelector = createSelector(selectedGameSelector, selectedGameStateSelector, showAnswerSelector,
-    (game, gameState, showAnswer) => {
-        if (game == null) {
-            return null;
+export const selectedGameYourAnswersIncludingPendingSelector = createSelector(
+    selectedGameSelector,
+    selectedGameStateSelector,
+    (game, gameState): number[] => {
+        if (!game) {
+            return [];
         }
+        return [...game.your_answers, ...gameState.pendingAnswers];
+    },
+);
 
-        return Math.trunc((game.your_answers.length + gameState.pendingAnswers.length - (showAnswer ? 1 : 0)) / QUESTIONS_PER_ROUND);
+export const roundIndexSelector = createSelector(selectedGameYourAnswersIncludingPendingSelector,
+    yourAnswers => {
+        return Math.trunc(yourAnswers.length / QUESTIONS_PER_ROUND);
     },
 );
 
@@ -179,14 +203,9 @@ export const selectedGameCategoriesForSelectionSelector = createSelector(
 );
 
 export const selectedGameQuestionIndexForAnswersSelector = createSelector(
-    roundIndexSelector,
-    selectedGameStateSelector,
-    showAnswerSelector,
-    (roundIndex, gameState, showAnswer) => {
-        if (roundIndex == null) {
-            return null;
-        }
-        return roundIndex * QUESTIONS_PER_ROUND + ((gameState.pendingAnswers.length - (showAnswer ? 1 : 0)) % QUESTIONS_PER_ROUND);
+    selectedGameYourAnswersIncludingPendingSelector,
+    (yourAnswers): number => {
+        return yourAnswers.length % QUESTIONS_PER_ROUND;
     },
 );
 
@@ -194,13 +213,12 @@ export const selectedGameQuestionIndexSelector = createSelector(
     questionRoundOffsetSelector,
     selectedGameCategoryIndex,
     selectedGameStateSelector,
-    showAnswerSelector,
-    (questionRoundOffset, categoryIndex, gameState, showAnswer) => {
+    (questionRoundOffset, categoryIndex, gameState) => {
         if (questionRoundOffset == null || categoryIndex == null) {
             return null;
         }
         return questionRoundOffset + categoryIndex * QUESTIONS_PER_ROUND +
-            ((gameState.pendingAnswers.length - (showAnswer ? 1 : 0)) % QUESTIONS_PER_ROUND);
+            (gameState.pendingAnswers.length % QUESTIONS_PER_ROUND);
     },
 );
 
@@ -230,9 +248,10 @@ export const selectedGameCategory = createSelector(
 export const selectedGameRoundStateSelector = createSelector(
     selectedGameSelector,
     selectedGameStateSelector,
+    selectedGameYourAnswersIncludingPendingSelector,
     selectedGameQuestionsSelector,
     categoriesSelector,
-    (game, gameState, questions, categories): IGameRoundState[] => {
+    (game, gameState, yourAnswers, questions, categories): IGameRoundState[] => {
         if (!game) {
             return [];
         }
@@ -243,7 +262,6 @@ export const selectedGameRoundStateSelector = createSelector(
         const roundCount = !questions
             ? Math.max(catChoices.length, 6)
             : Math.ceil(questions.length / QUESTIONS_PER_ROUND / CATEGORIES_PER_ROUND);
-        const yourAnswers = [...game.your_answers, ...gameState.pendingAnswers];
         for (let i = 0; i < roundCount; i++) {
             const catId = !questions || catChoices.length <= i ? null :
                 questions[i * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND + catChoices[i] * CATEGORIES_PER_ROUND].cat_id;
@@ -297,13 +315,11 @@ export const selectedQuizStateSelector = createSelector(quizIdToQuizStateSelecto
     },
 );
 
-export const quizRoundIndexSelector = createSelector(selectedQuizSelector, selectedQuizStateSelector, showAnswerSelector,
-    (quiz, quizState, showAnswer) => {
-        if (quiz == null) {
-            return null;
-        }
-
-        const answersLength = quiz.your_answers.answers.length + quizState.pendingAnswers.length;
+export const quizRoundIndexSelector = createSelector(
+    selectedGameYourAnswersIncludingPendingSelector,
+    showAnswerSelector,
+    (yourAnswers, showAnswer) => {
+        const answersLength = yourAnswers.length;
         return Math.trunc((answersLength - (showAnswer ? 1 : 0)) / QUESTIONS_PER_ROUND);
     },
 );
@@ -341,8 +357,7 @@ export const selectedQuizRoundStateSelector = createSelector(
     selectedQuizSelector,
     selectedQuizStateSelector,
     selectedQuizQuestionsSelector,
-    categoriesSelector,
-    (quiz, quizState, questions, categories): IGameRoundState[] => {
+    (quiz, quizState, questions): IGameRoundState[] => {
         if (!quiz || !questions) {
             return [];
         }

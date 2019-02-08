@@ -218,20 +218,29 @@ export function giveUpGame(gameId: number): AppThunkAction {
     };
 }
 
-function uploadRoundForSelectedGame(): AppThunkAction {
+export function uploadRoundForSelectedGame(): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
         const state = getState();
         const game = selectedGameSelector(state);
         const questions = selectedGameQuestionsSelector(state);
-        if (!showAnswerSelector(state) || game == null || questions == null) {
+        if (game == null || questions == null) {
             return;
         }
 
         const gameState = selectedGameStateSelector(state);
+
+        const pendingAnswers = gameState.pendingSelectedAnswer === null
+            ? gameState.pendingAnswers
+            : [...gameState.pendingAnswers, gameState.pendingSelectedAnswer];
+
+        const pendingQuestionTypes = gameState.pendingSelectedQuestionType === null
+            ? gameState.pendingQuestionTypes
+            : [...gameState.pendingQuestionTypes, gameState.pendingSelectedQuestionType];
+
         handleRequest(
             dispatch,
             () => apiRequestUploadRound(requestFn, game.game_id, 0, gameState.selectedCategoryIndex || 0,
-                [...game.your_answers, ...gameState.pendingAnswers], [...game.your_question_types, ...gameState.pendingQuestionTypes]),
+                [...game.your_answers, ...pendingAnswers], [...game.your_question_types, ...pendingQuestionTypes]),
             uploadRoundAction,
             { id: game.game_id },
         );
@@ -252,7 +261,8 @@ export function selectAnswerForSelectedGame(answerIndex: number): AppThunkAction
     return (dispatch, getState, { requestFn }) => {
         const state = getState();
         const gameId = selectedGameIdSelector(state);
-        if (showAnswerSelector(state) || gameId == null) {
+        const gameState = selectedGameStateSelector(state);
+        if (gameState.pendingSelectedAnswer != null || gameId == null) {
             return;
         }
 
@@ -268,17 +278,18 @@ export function nextQuestionSelectedGame(): AppThunkAction {
         const gameId = selectedGameIdSelector(state);
         const game = selectedGameSelector(state);
         const questions = selectedGameQuestionsSelector(state);
-        if (!showAnswerSelector(state) || gameId == null || game == null || questions == null) {
+        const gameState = selectedGameStateSelector(state);
+        if (gameState.pendingSelectedAnswer == null || gameId == null || game == null || questions == null) {
             return;
         }
 
-        const gameState = selectedGameStateSelector(state);
+        const pendingAnswersLength = gameState.pendingAnswers.length + 1;
 
-        if (game.opponent_answers.length + QUESTIONS_PER_ROUND <= game.your_answers.length + gameState.pendingAnswers.length ||
-            game.your_answers.length + gameState.pendingAnswers.length >= questions.length / CATEGORIES_PER_ROUND) {
+        if (game.opponent_answers.length + QUESTIONS_PER_ROUND <= game.your_answers.length + pendingAnswersLength ||
+            game.your_answers.length + pendingAnswersLength >= questions.length / CATEGORIES_PER_ROUND) {
             dispatch(uploadRoundForSelectedGame());
             dispatch(finishRound(gameId));
-        } else if (gameState.pendingAnswers.length % QUESTIONS_PER_ROUND === 0) {
+        } else if (pendingAnswersLength % QUESTIONS_PER_ROUND === 0) {
             dispatch(finishRound(gameId));
         } else {
             dispatch(nextQuestion(gameId, Date.now()));

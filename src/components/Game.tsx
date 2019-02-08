@@ -8,8 +8,8 @@ import { IGame } from '../redux/interfaces/IGame';
 import { IGameRoundState } from '../redux/interfaces/IGameRoundState';
 import { IUser } from '../redux/interfaces/IUser';
 import { userSelector } from '../redux/selectors/entities.selectors';
-import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
-import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend } from '../redux/thunks';
+import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, selectedGameShouldUpload, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
+import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend, uploadRoundForSelectedGame } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './Game.css';
@@ -26,6 +26,7 @@ interface IGameStateProps {
     isGivingUp: boolean;
     isStartingNewGame: boolean;
     isUploading: boolean;
+    shouldUpload: boolean;
     user: IUser | null;
 }
 
@@ -38,6 +39,7 @@ interface IGameDispatchProps {
     onPlay: (gameId: number) => void;
     onRemoveFriend: (userId: string) => void;
     requestGame: (gameId: number) => void;
+    uploadGameState: () => void;
 }
 
 interface IGameProps extends IGameStateProps, IGameDispatchProps {
@@ -53,7 +55,8 @@ export class Game extends React.PureComponent<IGameProps> {
 
     public render(): React.ReactElement<IGameProps> {
         const { againButtonEnabled, game, gameRound, isAddingFriend, isRemovingFriend, isFriend, isGivingUp, isStartingNewGame, isUploading,
-            user, onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend } = this.props;
+            user, onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend, shouldUpload,
+            uploadGameState } = this.props;
         if (!game) {
             return <div>'Loading game...'</div>;
         }
@@ -88,14 +91,23 @@ export class Game extends React.PureComponent<IGameProps> {
                         }}
                     >Aufgeben</Button>
                 }
-                <Button
-                    className={'qd-game_play'}
-                    showLoadingIndicator={isUploading}
-                    onClick={() => onPlay(game.game_id)}
-                    disabled={isUploading || !game.your_turn || (game.state !== GameState.ACTIVE
-                        && game.state !== GameState.REQUESTED
-                        && game.state !== GameState.NEW_RANDOM_GAME)}
-                >Spielen</Button>
+                {
+                    shouldUpload
+                        ? <Button
+                            className={'qd-game_play'}
+                            showLoadingIndicator={isUploading}
+                            onClick={() => uploadGameState()}
+                            disabled={isUploading}
+                        >Upload</Button>
+                        : <Button
+                            className={'qd-game_play'}
+                            showLoadingIndicator={isUploading}
+                            onClick={() => onPlay(game.game_id)}
+                            disabled={isUploading || !game.your_turn || (game.state !== GameState.ACTIVE
+                                && game.state !== GameState.REQUESTED
+                                && game.state !== GameState.NEW_RANDOM_GAME)}
+                        >Spielen</Button>
+                }
                 {
                     isFriend
                         ? <Button onClick={() => onRemoveFriend(game.opponent.user_id)}
@@ -124,6 +136,7 @@ const mapStateToProps = (state: IAppStore): IGameStateProps => {
         isRemovingFriend: selectedGameRemoveFriendLoadingSelector(state),
         isStartingNewGame: selectedGameCreateLoadingSelector(state),
         isUploading: uploadRoundLoadingSelector(state),
+        shouldUpload: selectedGameShouldUpload(state),
         user: userSelector(state),
     };
 };
@@ -138,6 +151,7 @@ const mapDispatchToProps = (dispatch: AppThunkDispatch): IGameDispatchProps => {
         onPlay: gameId => dispatch(startPlaying(gameId, Date.now())),
         onRemoveFriend: userId => dispatch(removeFriend(userId)),
         requestGame: gameId => dispatch(loadGame(gameId)),
+        uploadGameState: () => dispatch(uploadRoundForSelectedGame()),
     };
 };
 
