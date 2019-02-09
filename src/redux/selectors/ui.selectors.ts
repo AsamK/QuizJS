@@ -204,8 +204,9 @@ export const selectedGameCategoriesForSelectionSelector = createSelector(
 
 export const selectedGameQuestionIndexForAnswersSelector = createSelector(
     selectedGameYourAnswersIncludingPendingSelector,
-    (yourAnswers): number => {
-        return yourAnswers.length % QUESTIONS_PER_ROUND;
+    selectedGameStateSelector,
+    (yourAnswers, gameState): number => {
+        return yourAnswers.length + (gameState.pendingSelectedAnswer === null ? 0 : 1) % QUESTIONS_PER_ROUND;
     },
 );
 
