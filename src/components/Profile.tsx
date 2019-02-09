@@ -52,25 +52,28 @@ function Profile({ friends, user, onBack, onUpdateUser }: IProfileProps): React.
                 e.preventDefault();
             }}>
                 <label>Name:
-                        <input type="name"
+                    <input type="name"
+                        autoComplete="username"
                         value={name != null ? name || '' : user.name || ''}
                         onChange={e => setName(e.target.value)}
                     />
                 </label>
                 <label>Email:
-                        <input type="email"
+                    <input type="email"
                         value={email != null ? email || '' : user.email || ''}
                         onChange={e => setEmail(e.target.value)}
                     />
                 </label>
                 <label>Passwort:
-                            <input type="password"
+                    <input type="password"
+                        autoComplete="new-password"
                         value={password || ''}
                         onChange={e => setPassword(e.target.value)}
                     />
                 </label>
                 <label>Passwort wiederholen:
-                            <input type="password"
+                    <input type="password"
+                        autoComplete="new-password"
                         value={password2 || ''}
                         onChange={e => setPassword2(e.target.value)}
                     />

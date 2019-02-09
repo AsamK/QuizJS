@@ -18,9 +18,10 @@ function Login({ onLogin }: ILoginProps): React.ReactElement<ILoginProps> {
                 onLogin(name, password);
                 e.preventDefault();
             }}>
-            <label>Name: <input value={name} onChange={e => setName(e.target.value)} /></label>
+            <label>Name: <input value={name} autoComplete="username" onChange={e => setName(e.target.value)} /></label>
             <label>Passwort: <input
                 type="password"
+                autoComplete="current-password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
             /></label>

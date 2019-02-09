@@ -29,15 +29,17 @@ function CreateUser({ onCreateUser }: ICreateUserProps): React.ReactElement<ICre
                 e.preventDefault();
             }}
         >
-            <label>Name: <input value={name} onChange={e => setName(e.target.value)} /></label>
-            <label>E-Mail: <input value={email} onChange={e => setEmail(e.target.value)} /></label>
+            <label>Name: <input value={name} autoComplete="username" onChange={e => setName(e.target.value)} /></label>
+            <label>E-Mail: <input value={email} type="email" autoComplete="email" onChange={e => setEmail(e.target.value)} /></label>
             <label>Password: <input
                 type="password"
+                autoComplete="new-password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
             /></label>
             <label>Passwort wiederholen: <input
                 type="password"
+                autoComplete="new-password"
                 value={password2}
                 onChange={e => setPassword2(e.target.value)}
             /></label>
