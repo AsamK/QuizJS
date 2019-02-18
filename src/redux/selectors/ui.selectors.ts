@@ -206,7 +206,7 @@ export const selectedGameQuestionIndexForAnswersSelector = createSelector(
     selectedGameYourAnswersIncludingPendingSelector,
     selectedGameStateSelector,
     (yourAnswers, gameState): number => {
-        return yourAnswers.length + (gameState.pendingSelectedAnswer === null ? 0 : 1) % QUESTIONS_PER_ROUND;
+        return yourAnswers.length - 1 + (gameState.pendingSelectedAnswer === null ? 0 : 1);
     },
 );
 
