@@ -8,7 +8,7 @@ interface IButtonProps {
     children: React.ReactNode;
     className?: string;
     onClick?: () => void;
-    type?: string;
+    type?: 'button' | 'submit' | 'reset';
 }
 
 export const Button = ({

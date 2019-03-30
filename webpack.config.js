@@ -106,7 +106,7 @@ module.exports = function (env, argv) {
             ]),
             ...(isProduction ?
                 [
-                    new CleanWebpackPlugin(['dist']),
+                    new CleanWebpackPlugin(),
                     new MiniCssExtractPlugin({
                         filename: '[name].css',
                         chunkFilename: '[name].[contenthash].css'
