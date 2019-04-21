@@ -8,6 +8,7 @@ import { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
 import { ICategory } from '../interfaces/ICategory';
 import { IGameRoundState } from '../interfaces/IGameRoundState';
 import { IQuestion } from '../interfaces/IQuestion';
+import { IQuizAnswer } from '../interfaces/IQuizAnswer';
 import { MainView } from '../MainView';
 import { getGameStateOrDefault, getOpponentAnswerIndexByPercentage, getQuizStateOrDefault } from '../utils';
 import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, loadingSelector, questionsSelector, quizQuestionsSelector, quizzesSelector } from './entities.selectors';
@@ -315,9 +316,19 @@ export const selectedQuizStateSelector = createSelector(quizIdToQuizStateSelecto
         return getQuizStateOrDefault(map, gameId);
     },
 );
+export const selectedQuizYourAnswersIncludingPendingSelector = createSelector(
+    selectedQuizSelector,
+    selectedQuizStateSelector,
+    (quiz, quizState): IQuizAnswer[] => {
+        if (!quiz) {
+            return [];
+        }
+        return [...quiz.your_answers.answers, ...quizState.pendingAnswers];
+    },
+);
 
 export const quizRoundIndexSelector = createSelector(
-    selectedGameYourAnswersIncludingPendingSelector,
+    selectedQuizYourAnswersIncludingPendingSelector,
     showAnswerSelector,
     (yourAnswers, showAnswer) => {
         const answersLength = yourAnswers.length;
