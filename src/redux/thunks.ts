@@ -3,13 +3,14 @@ import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDec
 import { QuestionType } from '../api/IApiGame';
 import { IApiPopup } from '../api/IApiPopup';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND, STORAGE_KEY_COOKIE } from '../consts';
-import { createRequestFn, extraThunkArgument, QD_SERVER } from '../settings';
+import { createRequestFn, QD_SERVER } from '../settings';
 import { addFriendAction, appDataAction, createGameAction, createUserAction, declineGameAction, findUserAction, giveUpGameAction, loadGamesAction, loadQuizAction, loginAction, removeFriendAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from './actions/entities.actions';
 import { ActionType } from './actions/requests.utils';
 import { finishRound, finishRoundQuiz, nextQuestion, nextQuestionQuiz, selectAnswer, selectAnswerQuiz, selectCategory } from './actions/ui.actions';
 import { AppAction } from './interfaces/AppAction';
 import { IAppStore } from './interfaces/IAppStore';
 import { selectedGameIdSelector, selectedGameQuestionSelector, selectedGameQuestionsSelector, selectedGameSelector, selectedGameStateSelector, selectedQuizIdSelector, selectedQuizQuestionsSelector, selectedQuizSelector, selectedQuizStateSelector, showAnswerSelector } from './selectors/ui.selectors';
+import { extraThunkArgument } from './store';
 
 export interface IExtraArgument {
     requestFn: BackendRequestFn;

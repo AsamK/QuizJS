@@ -14,8 +14,8 @@ import { initialGameState, initialQuizState } from './redux/actions/ui.actions';
 import { AppAction } from './redux/interfaces/AppAction';
 import { IAppStore } from './redux/interfaces/IAppStore';
 import { rootReducer } from './redux/reducers';
+import { extraThunkArgument } from './redux/store';
 import { AppThunkDispatch } from './redux/thunks';
-import { extraThunkArgument } from './settings';
 
 import 'map.prototype.tojson'; // TODO only import for development
 
