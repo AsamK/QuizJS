@@ -10,7 +10,7 @@ import { IMessage } from '../redux/interfaces/IMessage';
 import { IUser } from '../redux/interfaces/IUser';
 import { userSelector } from '../redux/selectors/entities.selectors';
 import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameMessagesSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, selectedGameShouldUpload, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
-import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend, uploadRoundForSelectedGame } from '../redux/thunks';
+import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend, sendMessageForGame, uploadRoundForSelectedGame } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './Game.css';
@@ -42,6 +42,7 @@ interface IGameDispatchProps {
     onPlay: (gameId: number) => void;
     onRemoveFriend: (userId: string) => void;
     requestGame: (gameId: number) => void;
+    sendMessage: (gameId: number, message: string) => void;
     uploadGameState: () => void;
 }
 
@@ -49,7 +50,7 @@ interface IGameProps extends IGameStateProps, IGameDispatchProps {
 }
 
 function Game({ againButtonEnabled, game, gameId, gameRound, isAddingFriend, isRemovingFriend, isFriend, isGivingUp, isStartingNewGame,
-    isUploading, user, onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend, shouldUpload, messages,
+    isUploading, user, onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend, shouldUpload, messages, sendMessage,
     uploadGameState, requestGame }: IGameProps): React.ReactElement<IGameProps> {
 
     React.useEffect(() => {
@@ -121,7 +122,8 @@ function Game({ againButtonEnabled, game, gameId, gameRound, isAddingFriend, isR
                     >+Freund</Button>
             }
         </div>
-        <Messages messages={messages} ownUserId={user?.user_id ?? ''} />
+        Nachrichten:
+        <Messages messages={messages} ownUserId={user?.user_id ?? ''} sendMessage={message => sendMessage(game.game_id, message)} />
     </div >;
 }
 
@@ -153,6 +155,7 @@ const mapDispatchToProps = (dispatch: AppThunkDispatch): IGameDispatchProps => {
         onPlay: gameId => dispatch(startPlaying(gameId, Date.now())),
         onRemoveFriend: userId => dispatch(removeFriend(userId)),
         requestGame: gameId => dispatch(loadGame(gameId)),
+        sendMessage: (gameId, message) => dispatch(sendMessageForGame(gameId, message)),
         uploadGameState: () => dispatch(uploadRoundForSelectedGame()),
     };
 };

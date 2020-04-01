@@ -1,3 +1,7 @@
 .qd-messaging .self {
     text-align: right;
 }
+
+.qd-messaging_time {
+    color: gray;
+}

@@ -5,6 +5,7 @@ import { IApiGamesResponse } from './IApiGamesResponse';
 import { IApiPopup } from './IApiPopup';
 import { IApiQuizAnswer } from './IApiQuiz';
 import { IApiQuizResponse } from './IApiQuizResponse';
+import { IApiSendMessageResponse } from './IApiSendMessageResponse';
 import { IApiStateResponse } from './IApiStateResponse';
 import { IApiStats } from './IApiStats';
 import { IApiUser } from './IApiUser';
@@ -149,6 +150,15 @@ export function apiGiveUpGame(requestFn: BackendRequestFn, gameId: number): Prom
         game_id: String(gameId),
     });
     return requestFn('POST', 'games/give_up', { body, contentType: CONTENT_TYPE_URLENCODED })
+        .then(response => response.json());
+}
+
+export function apiSendMessage(requestFn: BackendRequestFn, gameId: number, text: string): Promise<IApiSendMessageResponse> {
+    const body = toFormUrlencoded({
+        game_id: String(gameId),
+        text,
+    });
+    return requestFn('POST', 'games/send_message', { body, contentType: CONTENT_TYPE_URLENCODED })
         .then(response => response.json());
 }
 

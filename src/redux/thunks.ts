@@ -1,11 +1,11 @@
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDeclineGame, apiFindUser, apiGiveUpGame, apiLogin, apiRemoveFriend, apiRequestGames, apiRequestQuiz, apiRequestState, apiRequestUploadQuizRound, apiRequestUploadRound, apiUpdateUser, BackendRequestFn } from '../api/api';
+import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDeclineGame, apiFindUser, apiGiveUpGame, apiLogin, apiRemoveFriend, apiRequestGames, apiRequestQuiz, apiRequestState, apiRequestUploadQuizRound, apiRequestUploadRound, apiSendMessage, apiUpdateUser, BackendRequestFn } from '../api/api';
 import { QuestionType } from '../api/IApiGame';
 import { IApiPopup } from '../api/IApiPopup';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND, STORAGE_KEY_COOKIE } from '../consts';
 import { createRequestFn, QD_SERVER } from '../settings';
-import { addFriendAction, appDataAction, createGameAction, createUserAction, declineGameAction, findUserAction, giveUpGameAction, loadGamesAction, loadQuizAction, loginAction, removeFriendAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from './actions/entities.actions';
+import { addFriendAction, appDataAction, createGameAction, createUserAction, declineGameAction, findUserAction, giveUpGameAction, loadGamesAction, loadQuizAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from './actions/entities.actions';
 import { ActionType } from './actions/requests.utils';
 import { finishRound, finishRoundQuiz, nextQuestion, nextQuestionQuiz, selectAnswer, selectAnswerQuiz, selectCategory } from './actions/ui.actions';
 import { AppAction } from './interfaces/AppAction';
@@ -216,6 +216,17 @@ export function giveUpGame(gameId: number): AppThunkAction {
             () => apiGiveUpGame(requestFn, gameId),
             giveUpGameAction,
             { id: gameId },
+        );
+    };
+}
+
+export function sendMessageForGame(gameId: number, message: string): AppThunkAction {
+    return (dispatch, getState, { requestFn }) => {
+        handleRequest(
+            dispatch,
+            () => apiSendMessage(requestFn, gameId, message),
+            sendGameMessageAction,
+            { id: gameId, message },
         );
     };
 }

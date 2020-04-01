@@ -3,7 +3,7 @@ import { IApiMessage } from '../../api/IApiMessage';
 import { IApiQuestion } from '../../api/IApiQuestion';
 import { IApiQuiz } from '../../api/IApiQuiz';
 import { IApiQuizQuestion } from '../../api/IApiQuizQuestion';
-import { addFriendAction, appDataAction, createGameAction, declineGameAction, findUserAction, giveUpGameAction, loadGameAction, loadGamesAction, loadQuizAction, loginAction, removeFriendAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
+import { addFriendAction, appDataAction, createGameAction, declineGameAction, findUserAction, giveUpGameAction, loadGameAction, loadGamesAction, loadQuizAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
 import { getNextLoadingState, LoadingState } from '../actions/requests.utils';
 import { AppAction } from '../interfaces/AppAction';
 import { ICategory } from '../interfaces/ICategory';
@@ -491,6 +491,16 @@ export function messages(state: IMessage[] = [], action: AppAction): typeof stat
                     }
                     newState.push(mapApiMessageToMessage(message));
                 }
+            }
+            return newState;
+        }
+        case sendGameMessageAction.RESPONSE: {
+            const newState = [...state];
+            for (const message of action.response.m) {
+                if (state.findIndex(m => m.id === message.id) > -1) {
+                    continue;
+                }
+                newState.push(mapApiMessageToMessage(message));
             }
             return newState;
         }

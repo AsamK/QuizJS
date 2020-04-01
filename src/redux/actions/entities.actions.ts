@@ -3,6 +3,7 @@ import { IApiGameResponse } from '../../api/IApiGameResponse';
 import { IApiGamesResponse } from '../../api/IApiGamesResponse';
 import { IApiPopup } from '../../api/IApiPopup';
 import { IApiQuizResponse } from '../../api/IApiQuizResponse';
+import { IApiSendMessageResponse } from '../../api/IApiSendMessageResponse';
 import { IApiStateResponse } from '../../api/IApiStateResponse';
 import { IApiUser } from '../../api/IApiUser';
 import { IApiUserSearchResponse } from '../../api/IApiUserSearchResponse';
@@ -35,6 +36,11 @@ export const declineGameAction = new ActionType
 export const giveUpGameAction = new ActionType
     <'GIVE_UP_GAME_REQUEST', 'GIVE_UP_GAME_RESPONSE', 'GIVE_UP_GAME_ERROR', IApiGameResponse, IApiPopup, { id: number }>
     ('GIVE_UP_GAME_REQUEST', 'GIVE_UP_GAME_RESPONSE', 'GIVE_UP_GAME_ERROR');
+
+export const sendGameMessageAction = new ActionType
+    <'SEND_GAME_MESSAGE_REQUEST', 'SEND_GAME_MESSAGE_RESPONSE', 'SEND_GAME_MESSAGE_ERROR',
+        IApiSendMessageResponse, IApiPopup, { id: number, message: string }>
+    ('SEND_GAME_MESSAGE_REQUEST', 'SEND_GAME_MESSAGE_RESPONSE', 'SEND_GAME_MESSAGE_ERROR');
 
 export const uploadRoundAction = new ActionType
     <'UPLOAD_ROUND_REQUEST', 'UPLOAD_ROUND_RESPONSE', 'UPLOAD_ROUND_ERROR', IApiGameResponse, IApiPopup, { id: number }>
