@@ -1,4 +1,5 @@
 import { IApiImageQuestion } from './IApiImageQuestion';
+import { IApiMessage } from './IApiMessage';
 import { IApiOpponent } from './IApiOpponent';
 import { IApiQuestion } from './IApiQuestion';
 
@@ -27,7 +28,7 @@ export interface IApiGame {
     is_image_question_disabled: boolean;
     mutual: null;
     elapsed_min: number;
-    messages: [];
+    messages: IApiMessage[];
     state: GameState;
     mode: 0;
     your_turn: boolean;

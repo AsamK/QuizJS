@@ -2,6 +2,7 @@ import { QuestionType } from '../../api/IApiGame';
 import { LoadingState } from '../actions/requests.utils';
 import { ICategory } from './ICategory';
 import { IGame } from './IGame';
+import { IMessage } from './IMessage';
 import { IOpponent } from './IOpponent';
 import { IQuestion } from './IQuestion';
 import { IQuiz } from './IQuiz';
@@ -23,6 +24,7 @@ export interface IStoreEntities {
     games: IGame[];
     questions: Map<number, IQuestion>;
     gameImageQuestions: Map<number, Map<number, number>>;
+    messages: IMessage[];
     quizzes: IQuiz[];
     quizQuestions: Map<number, IQuestion>;
 }

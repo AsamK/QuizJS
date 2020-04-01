@@ -31,3 +31,5 @@ export const categoriesSelector = createSelector(entitiesSelector, entities => e
 export const quizzesSelector = createSelector(entitiesSelector, entities => entities.quizzes);
 
 export const quizQuestionsSelector = createSelector(entitiesSelector, entities => entities.quizQuestions);
+
+export const messagesSelector = createSelector(entitiesSelector, entities => entities.messages);

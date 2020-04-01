@@ -1,4 +1,5 @@
 import { IApiGame } from '../../api/IApiGame';
+import { IApiMessage } from '../../api/IApiMessage';
 import { IApiQuestion } from '../../api/IApiQuestion';
 import { IApiQuiz } from '../../api/IApiQuiz';
 import { IApiQuizQuestion } from '../../api/IApiQuizQuestion';
@@ -7,6 +8,7 @@ import { getNextLoadingState, LoadingState } from '../actions/requests.utils';
 import { AppAction } from '../interfaces/AppAction';
 import { ICategory } from '../interfaces/ICategory';
 import { IGame } from '../interfaces/IGame';
+import { IMessage } from '../interfaces/IMessage';
 import { IOpponent } from '../interfaces/IOpponent';
 import { IQuestion } from '../interfaces/IQuestion';
 import { IQuiz } from '../interfaces/IQuiz';
@@ -438,6 +440,59 @@ export function quizQuestions(state: Map<number, IQuestion> = new Map(), action:
                 quiz.questions.forEach(questionHandlerFn);
             });
             return result || state;
+        }
+        default:
+            return state;
+    }
+}
+
+const mapApiMessageToMessage = (message: IApiMessage): IMessage => ({
+    created_at: message.created_at,
+    from: String(message.from),
+    to: String(message.to),
+    id: message.id,
+    text: message.text,
+});
+
+export function messages(state: IMessage[] = [], action: AppAction): typeof state {
+    switch (action.type) {
+        case appDataAction.RESPONSE:
+        case loginAction.RESPONSE: {
+            const newState = [...state];
+            for (const game of action.response.user.games) {
+                for (const message of game.messages) {
+                    if (state.findIndex(m => m.id === message.id) > -1) {
+                        continue;
+                    }
+                    newState.push(mapApiMessageToMessage(message));
+                }
+            }
+            return newState;
+        }
+        case createGameAction.RESPONSE:
+        case giveUpGameAction.RESPONSE:
+        case uploadRoundAction.RESPONSE:
+        case loadGameAction.RESPONSE: {
+            const newState = [...state];
+            for (const message of action.response.game.messages) {
+                if (state.findIndex(m => m.id === message.id) > -1) {
+                    continue;
+                }
+                newState.push(mapApiMessageToMessage(message));
+            }
+            return newState;
+        }
+        case loadGamesAction.RESPONSE: {
+            const newState = [...state];
+            for (const game of action.response.games) {
+                for (const message of game.messages) {
+                    if (state.findIndex(m => m.id === message.id) > -1) {
+                        continue;
+                    }
+                    newState.push(mapApiMessageToMessage(message));
+                }
+            }
+            return newState;
         }
         default:
             return state;

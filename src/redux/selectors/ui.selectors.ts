@@ -7,11 +7,12 @@ import { LoadingState } from '../actions/requests.utils';
 import { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
 import { ICategory } from '../interfaces/ICategory';
 import { IGameRoundState } from '../interfaces/IGameRoundState';
+import { IMessage } from '../interfaces/IMessage';
 import { IQuestion } from '../interfaces/IQuestion';
 import { IQuizAnswer } from '../interfaces/IQuizAnswer';
 import { MainView } from '../MainView';
 import { getGameStateOrDefault, getOpponentAnswerIndexByPercentage, getQuizStateOrDefault } from '../utils';
-import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, loadingSelector, questionsSelector, quizQuestionsSelector, quizzesSelector } from './entities.selectors';
+import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, loadingSelector, messagesSelector, questionsSelector, quizQuestionsSelector, quizzesSelector } from './entities.selectors';
 
 const uiSelector = (state: IAppStore) => state.ui;
 
@@ -275,6 +276,18 @@ export const selectedGameRoundStateSelector = createSelector(
         }
         return result;
     },
+);
+
+export const selectedGameMessagesSelector = createSelector(
+    selectedGameSelector,
+    messagesSelector,
+    (game, messages): IMessage[] => {
+        if (!game) {
+            return [];
+        }
+        const opponentId = game.opponent.user_id;
+        return messages.filter(m => m.from === opponentId || m.to === opponentId);
+    }
 );
 
 export const selectedQuizIdSelector = createSelector(uiSelector, ui => ui.selectedQuizId);
