@@ -11,6 +11,7 @@ import thunkMiddleware from 'redux-thunk';
 
 import App from './components/App';
 import './index.css';
+import { initialMessages } from './redux/actions/entities.actions';
 import { initialGameState, initialQuizState } from './redux/actions/ui.actions';
 import { AppAction } from './redux/interfaces/AppAction';
 import { IAppStore } from './redux/interfaces/IAppStore';
@@ -51,12 +52,29 @@ if (quizStateString !== null) {
   store.dispatch(initialQuizState(quizStates));
 }
 
+const messagesString = localStorage.getItem('gameMessages');
+if (messagesString !== null) {
+  const messages = JSON.parse(messagesString);
+  store.dispatch(initialMessages(messages));
+}
+
 store.subscribe((() => {
   let previousState = store.getState().ui.gameState;
   return () => {
     const newState = store.getState().ui.gameState;
     if (previousState !== newState) {
       localStorage.setItem('gameState', JSON.stringify(Array.from(newState.entries())));
+      previousState = newState;
+    }
+  };
+})());
+
+store.subscribe((() => {
+  let previousState = store.getState().entities.messages;
+  return () => {
+    const newState = store.getState().entities.messages;
+    if (previousState !== newState) {
+      localStorage.setItem('gameMessages', JSON.stringify(newState));
       previousState = newState;
     }
   };

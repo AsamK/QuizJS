@@ -7,7 +7,17 @@ import { IApiSendMessageResponse } from '../../api/IApiSendMessageResponse';
 import { IApiStateResponse } from '../../api/IApiStateResponse';
 import { IApiUser } from '../../api/IApiUser';
 import { IApiUserSearchResponse } from '../../api/IApiUserSearchResponse';
+import { AppAction } from '../interfaces/AppAction';
+import { IMessage } from '../interfaces/IMessage';
 import { ActionType } from './requests.utils';
+
+export const INITIAL_MESSAGES = 'INITIAL_MESSAGES';
+
+export const initialMessages = (messages: IMessage[]): AppAction => ({
+    messages,
+    type: INITIAL_MESSAGES,
+});
+
 
 export const createUserAction = new ActionType
     <'CREATE_USER_REQUEST', 'CREATE_USER_RESPONSE', 'CREATE_USER_ERROR', IApiStateResponse, IApiPopup>
