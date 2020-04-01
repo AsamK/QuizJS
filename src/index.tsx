@@ -1,3 +1,4 @@
+import 'map.prototype.tojson'; // TODO only import for development
 import 'normalize.css';
 import OfflinePluginRuntime from 'offline-plugin/runtime';
 import React from 'react';
@@ -16,8 +17,6 @@ import { IAppStore } from './redux/interfaces/IAppStore';
 import { rootReducer } from './redux/reducers';
 import { extraThunkArgument } from './redux/store';
 import { AppThunkDispatch } from './redux/thunks';
-
-import 'map.prototype.tojson'; // TODO only import for development
 
 const reduxMiddlewares: Middleware[] = [
   thunkMiddleware.withExtraArgument(extraThunkArgument), // lets us use dispatch() functions

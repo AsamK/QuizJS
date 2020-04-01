@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+
 import { selectQuiz, startPlayingQuiz } from '../redux/actions/ui.actions';
 import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IGameRoundState } from '../redux/interfaces/IGameRoundState';

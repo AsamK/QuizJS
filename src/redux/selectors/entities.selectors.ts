@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+
 import { appDataAction } from '../actions/entities.actions';
 import { LoadingState } from '../actions/requests.utils';
 import { IAppStore } from '../interfaces/IAppStore';
