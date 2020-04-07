@@ -2,6 +2,7 @@ import { toFormUrlencoded } from '../utils/utils';
 import { IApiBooleanResult } from './IApiBooleanResult';
 import { IApiGameResponse } from './IApiGameResponse';
 import { IApiGamesResponse } from './IApiGamesResponse';
+import { IApiGameStats } from './IApiGameStats';
 import { IApiOpponent } from './IApiOpponent';
 import { IApiPopup } from './IApiPopup';
 import { IApiQuizAnswer } from './IApiQuiz';
@@ -320,6 +321,10 @@ export function apiRequestTopListRating(
 
 export function apiRequestStats(requestFn: BackendRequestFn): Promise<IApiStats> {
     return requestFn('GET', 'stats/my_stats', {}).then(response => response.json());
+}
+
+export function apiRequestGameStats(requestFn: BackendRequestFn): Promise<IApiGameStats> {
+    return requestFn('GET', 'stats/my_game_stats', {}).then(response => response.json());
 }
 
 function getPasswordHash(passwordSalt: string, password: string): string {

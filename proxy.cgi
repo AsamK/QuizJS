@@ -25,7 +25,7 @@ if host == 'qkgermany.feoquizserver.com':
 	method = os.environ.get('REQUEST_METHOD')
 
 	path = os.environ.get('HTTP_TARGET_PATH', '')
-	content_type = os.environ.get('CONTENT_TYPE', 'application/octet-stream')
+	content_type = os.environ.get('CONTENT_TYPE', None)
 
 	cookie = os.environ.get('HTTP_X_COOKIE', None)
 	device_type = os.environ.get('HTTP_DT', None)
