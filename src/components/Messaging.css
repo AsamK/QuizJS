@@ -2,6 +2,16 @@
     text-align: right;
 }
 
+.qd-messaging_send {
+    display: flex;
+}
+
+.qd-messaging_text {
+    flex: auto;
+    margin-right: 10px;
+    width: 0;
+}
+
 .qd-messaging_time {
     color: gray;
 }

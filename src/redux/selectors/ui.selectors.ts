@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 
 import { GameState } from '../../api/IApiGame';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND } from '../../consts';
-import { addFriendAction, createGameAction, declineGameAction, giveUpGameAction, removeFriendAction, uploadRoundAction } from '../actions/entities.actions';
+import { addFriendAction, createGameAction, declineGameAction, giveUpGameAction, removeFriendAction, sendGameMessageAction, uploadRoundAction } from '../actions/entities.actions';
 import { LoadingState } from '../actions/requests.utils';
 import { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
 import { ICategory } from '../interfaces/ICategory';
@@ -288,6 +288,12 @@ export const selectedGameMessagesSelector = createSelector(
         const opponentId = game.opponent.user_id;
         return messages.filter(m => m.from === opponentId || m.to === opponentId);
     }
+);
+
+export const sendMessageLoadingSelector = createSelector(loadingSelector, selectedGameIdSelector,
+    (loadingStates, gameId) => gameId == null
+        ? false
+        : sendGameMessageAction.getLoadingState(loadingStates, gameId.toString()) === LoadingState.LOADING,
 );
 
 export const selectedQuizIdSelector = createSelector(uiSelector, ui => ui.selectedQuizId);
