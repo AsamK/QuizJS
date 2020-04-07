@@ -2,6 +2,7 @@ import { toFormUrlencoded } from '../utils/utils';
 import { IApiBooleanResult } from './IApiBooleanResult';
 import { IApiGameResponse } from './IApiGameResponse';
 import { IApiGamesResponse } from './IApiGamesResponse';
+import { IApiOpponent } from './IApiOpponent';
 import { IApiPopup } from './IApiPopup';
 import { IApiQuizAnswer } from './IApiQuiz';
 import { IApiQuizResponse } from './IApiQuizResponse';
@@ -229,6 +230,90 @@ export function apiRequestUploadQuizRound(
         body,
         contentType: CONTENT_TYPE_URLENCODED,
         queryParams: { quiz_id: quizId },
+    })
+        .then(response => response.json());
+}
+export interface IApiDailyChallengeQuestion {
+    type: 'text';
+    revision: string;
+    revision_id: number;
+    question: string;
+    wrong1: string;
+    wrong2: string;
+    wrong3: string;
+    correct: string;
+    image: null;
+    created: string; // 2018-07-06T13:02:52.000000+00:00
+    locale: string; // "de_DE"
+}
+
+export interface IApiDailyChallengeResponse {
+    todaysChallenge: {
+        locale: string, // de-DE
+        challengeDate: string, // "2019-01-20",
+        questions: {
+            id: number,
+            name: string,
+            color: string,
+            questions: IApiDailyChallengeQuestion[],
+        }[],
+    };
+    tomorrowsCategory: {
+        id: number,
+        name: string,
+        color: string,
+    };
+}
+
+export function apiRequestDailyChallenge(
+    requestFn: BackendRequestFn,
+    challengeSize: number,
+): Promise<IApiDailyChallengeResponse> {
+    return requestFn('GET', 'games/dailyChallenge', {
+        queryParams: { challengeSize: challengeSize.toString() },
+    })
+        .then(response => response.json());
+}
+
+export interface IApiDailyChallengeUploadResponse {
+    locale: string; // de-DE
+    friendTopList: IApiRatingUser[];
+    maxScore: number;
+    topList: IApiRatingUser[];
+}
+
+export function apiUploadDailyChallenge(
+    requestFn: BackendRequestFn,
+    score: number,
+): Promise<IApiDailyChallengeUploadResponse> {
+    const body = toFormUrlencoded({
+        facebook_ids: '[]',
+        score: score.toString(),
+    });
+    return requestFn('POST', 'games/submitBlitzGame', {
+        body,
+        contentType: CONTENT_TYPE_URLENCODED,
+    })
+        .then(response => response.json());
+}
+
+export interface IApiRatingUser extends IApiOpponent {
+    score: number;
+}
+
+export interface IApiTopListRatingResponse {
+    users: IApiRatingUser[];
+}
+
+export function apiRequestTopListRating(
+    requestFn: BackendRequestFn,
+    mode = 2,
+): Promise<IApiTopListRatingResponse> {
+    return requestFn('GET', 'users/top_list_rating', {
+        queryParams: {
+            fids: '[]',
+            mode: mode.toString(),
+        },
     })
         .then(response => response.json());
 }
