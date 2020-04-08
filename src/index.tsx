@@ -19,6 +19,33 @@ import { rootReducer } from './redux/reducers';
 import { extraThunkArgument } from './redux/store';
 import { AppThunkDispatch } from './redux/thunks';
 
+if (process.env.NODE_ENV === 'production') {
+  OfflinePluginRuntime.install({
+    onUpdating: () => {
+      // do something
+    },
+    // tslint:disable-next-line:object-literal-sort-keys
+    onUpdateReady: () => {
+      // Tells to new SW to take control immediately
+      OfflinePluginRuntime.applyUpdate();
+    },
+    onUpdated: () => {
+      // Reload the webpage to load into the new version
+      // TODO: show an update notification with button, or reload on user navigation
+      window.location.reload();
+    },
+    onUpdateFailed: () => {
+      // do something
+    },
+  });
+
+  document.addEventListener('visibilitychange', e => {
+    if (!document.hidden) {
+      OfflinePluginRuntime.update();
+    }
+  });
+}
+
 const reduxMiddlewares: Middleware[] = [
   thunkMiddleware.withExtraArgument(extraThunkArgument), // lets us use dispatch() functions
 ];
@@ -101,24 +128,3 @@ ReactDOM.render(
   <HotloadableApp />,
   document.getElementById('content'),
 );
-
-if (process.env.NODE_ENV === 'production') {
-  OfflinePluginRuntime.install({
-    onUpdating: () => {
-      // do something
-    },
-    // tslint:disable-next-line:object-literal-sort-keys
-    onUpdateReady: () => {
-      // Tells to new SW to take control immediately
-      OfflinePluginRuntime.applyUpdate();
-    },
-    onUpdated: () => {
-      // Reload the webpage to load into the new version
-      // TODO: show an update notification with button, or reload on user navigation
-      window.location.reload();
-    },
-    onUpdateFailed: () => {
-      // do something
-    },
-  });
-}
