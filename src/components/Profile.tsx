@@ -37,13 +37,14 @@ function Profile({ friends, user, onBack, onUpdateUser }: IProfileProps): React.
             key={friend.user_id}
             className="qd-profile_friend"
         >
-            <Avatar avatarCode={friend.avatar_code} />{friend.name} &lt;{friend.email}&gt;
-            </div>,
+            <Avatar avatarCode={friend.avatar_code} />{friend.name}<span className="qd-profile_friend-email">{friend.email}</span>
+        </div>,
     );
 
     return <div className="qd-profile">
         <Button onClick={onBack}>Zurück</Button>
-        <h2>{user.name} ({user.user_id})</h2>
+        <h2>{user.name}</h2>
+        <div className="qd-profile_user-id">Benutzer ID: {user.user_id}</div>
         <div className="qd-profile_avatar">Avatar: <Avatar avatarCode={user.avatar_code} /></div>
         {updatePassword ?
             <form className="qd-profile_form" onSubmit={e => {
@@ -78,7 +79,7 @@ function Profile({ friends, user, onBack, onUpdateUser }: IProfileProps): React.
                         onChange={e => setPassword2(e.target.value)}
                     />
                 </label>
-                <input type="submit" value="Ändern" disabled={password !== password2} />
+                <Button type="submit" disabled={password !== password2}>Ändern</Button>
                 <Button type="reset" onClick={() => setUpdatePassword(false)}>Abbrechen</Button>
             </form>
             :
@@ -89,7 +90,8 @@ function Profile({ friends, user, onBack, onUpdateUser }: IProfileProps): React.
                 </div>
             </>
         }
-        <div className="qd-profile_friends">Freunde:
+        <h3>Freunde:</h3>
+        <div className="qd-profile_friends">
             {friendElements}
         </div>
     </div>;

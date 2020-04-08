@@ -126,7 +126,9 @@ function Start({ games, user, quizzes, onGameSelected, onQuizSelected,
         .map(quiz =>
             <StartQuizElement key={quiz.quiz_id} quiz={quiz} onQuizSelected={onQuizSelected} />);
     return <div className="qd-start">
-        Eingeloggt als: <span onClick={onShowProfile}>{!user ? 'Unbekannt' : user.name + ' <' + (user.email || '') + '>'}</span>
+        Eingeloggt als: <span onClick={onShowProfile}>
+            {user == null ? null : <Avatar avatarCode={user.avatar_code} />}{!user ? 'Unbekannt' : user.name}
+        </span>
         <div className="qd-start_new-game">
             <Button onClick={onNewGame}
             >Neues Spiel starten</Button>
