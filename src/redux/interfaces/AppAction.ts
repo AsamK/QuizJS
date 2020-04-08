@@ -1,5 +1,5 @@
 import { QuestionType } from '../../api/IApiGame';
-import { addFriendAction, appDataAction, createGameAction, createUserAction, declineGameAction, findUserAction, giveUpGameAction, INITIAL_MESSAGES, loadGameAction, loadGamesAction, loadQuizAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
+import { addFriendAction, appDataAction, createGameAction, createUserAction, declineGameAction, findUserAction, giveUpGameAction, INITIAL_MESSAGES, loadGameAction, loadGamesAction, loadGameStatsAction, loadQuizAction, loadStatsAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
 import { COOKIE_LOADED, FINISH_ROUND, FINISH_ROUND_QUIZ, INITIAL_GAME_STATE, INITIAL_QUIZ_STATE, NEXT_QUESTION, NEXT_QUESTION_QUIZ, SELECT_ANSWER, SELECT_ANSWER_QUIZ, SELECT_CATEGORY, SELECT_GAME, SELECT_QUIZ, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, START_PLAYING_QUIZ, STOP_PLAYING } from '../actions/ui.actions';
 import { IGameState, IQuizState } from './IAppStore';
 import { IMessage } from './IMessage';
@@ -40,6 +40,8 @@ type AppBackendAction =
     typeof findUserAction.ALL_ACTIONS_ONLY_TYPE |
     typeof addFriendAction.ALL_ACTIONS_ONLY_TYPE |
     typeof removeFriendAction.ALL_ACTIONS_ONLY_TYPE |
+    typeof loadStatsAction.ALL_ACTIONS_ONLY_TYPE |
+    typeof loadGameStatsAction.ALL_ACTIONS_ONLY_TYPE |
     never;
 
 export type AppAction =

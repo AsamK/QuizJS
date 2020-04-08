@@ -1,0 +1,45 @@
+.qd-friend-statistics_friend {
+    align-items: center;
+    background-color: lightsteelblue;
+    border-radius: 5px;
+    display: flex;
+    margin: 5px 0;
+}
+
+.qd-friend-statistics_name {
+    flex: auto;
+}
+
+.qd-friend-statistics_stats {
+    display: flex;
+}
+
+.qd-friend-statistics_won {
+    background-color: green;
+    border-radius: 5px;
+    color: white;
+    margin: 5px;
+    min-width: 30px;
+    padding: 5px;
+    text-align: center;
+}
+
+.qd-friend-statistics_tied {
+    background-color: blue;
+    border-radius: 5px;
+    color: white;
+    margin: 5px;
+    min-width: 30px;
+    padding: 5px;
+    text-align: center;
+}
+
+.qd-friend-statistics_lost {
+    background-color: red;
+    border-radius: 5px;
+    color: white;
+    margin: 5px;
+    min-width: 30px;
+    padding: 5px;
+    text-align: center;
+}

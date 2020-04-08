@@ -1,9 +1,11 @@
 import { IApiGame } from '../../api/IApiGame';
+import { IApiGameStats } from '../../api/IApiGameStats';
 import { IApiMessage } from '../../api/IApiMessage';
 import { IApiQuestion } from '../../api/IApiQuestion';
 import { IApiQuiz } from '../../api/IApiQuiz';
 import { IApiQuizQuestion } from '../../api/IApiQuizQuestion';
-import { addFriendAction, appDataAction, createGameAction, declineGameAction, findUserAction, giveUpGameAction, INITIAL_MESSAGES, loadGameAction, loadGamesAction, loadQuizAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
+import { IApiStats } from '../../api/IApiStats';
+import { addFriendAction, appDataAction, createGameAction, declineGameAction, findUserAction, giveUpGameAction, INITIAL_MESSAGES, loadGameAction, loadGamesAction, loadGameStatsAction, loadQuizAction, loadStatsAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
 import { getNextLoadingState, LoadingState } from '../actions/requests.utils';
 import { AppAction } from '../interfaces/AppAction';
 import { ICategory } from '../interfaces/ICategory';
@@ -506,6 +508,24 @@ export function messages(state: IMessage[] = [], action: AppAction): typeof stat
             }
             return newState;
         }
+        default:
+            return state;
+    }
+}
+
+export function userStats(state: IApiStats | null = null, action: AppAction): typeof state {
+    switch (action.type) {
+        case loadStatsAction.RESPONSE:
+            return action.response;
+        default:
+            return state;
+    }
+}
+
+export function friendStats(state: IApiGameStats | null = null, action: AppAction): typeof state {
+    switch (action.type) {
+        case loadGameStatsAction.RESPONSE:
+            return action.response;
         default:
             return state;
     }

@@ -8,7 +8,9 @@ import { friendsSelector, userSelector } from '../redux/selectors/entities.selec
 import { AppThunkDispatch, updateUser } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
+import { FriendStatistics } from './FriendStatistics';
 import './Profile.css';
+import { UserStatistics } from './UserStatistics';
 
 interface IProfileStateProps {
     user: IUser | null;
@@ -94,6 +96,10 @@ function Profile({ friends, user, onBack, onUpdateUser }: IProfileProps): React.
         <div className="qd-profile_friends">
             {friendElements}
         </div>
+        <h3>Deine Statistiken:</h3>
+        <UserStatistics />
+        <h3>Statistiken gegen Freunde:</h3>
+        <FriendStatistics />
     </div>;
 }
 

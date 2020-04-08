@@ -1,4 +1,6 @@
 import { QuestionType } from '../../api/IApiGame';
+import { IApiGameStats } from '../../api/IApiGameStats';
+import { IApiStats } from '../../api/IApiStats';
 import { LoadingState } from '../actions/requests.utils';
 import { ICategory } from './ICategory';
 import { IGame } from './IGame';
@@ -27,6 +29,8 @@ export interface IStoreEntities {
     messages: IMessage[];
     quizzes: IQuiz[];
     quizQuestions: Map<number, IQuestion>;
+    userStats: IApiStats | null;
+    friendStats: IApiGameStats | null;
 }
 
 export interface IGameState {

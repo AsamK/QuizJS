@@ -1,10 +1,12 @@
 import { IApiBooleanResult } from '../../api/IApiBooleanResult';
 import { IApiGameResponse } from '../../api/IApiGameResponse';
 import { IApiGamesResponse } from '../../api/IApiGamesResponse';
+import { IApiGameStats } from '../../api/IApiGameStats';
 import { IApiPopup } from '../../api/IApiPopup';
 import { IApiQuizResponse } from '../../api/IApiQuizResponse';
 import { IApiSendMessageResponse } from '../../api/IApiSendMessageResponse';
 import { IApiStateResponse } from '../../api/IApiStateResponse';
+import { IApiStats } from '../../api/IApiStats';
 import { IApiUser } from '../../api/IApiUser';
 import { IApiUserSearchResponse } from '../../api/IApiUserSearchResponse';
 import { AppAction } from '../interfaces/AppAction';
@@ -83,3 +85,11 @@ export const addFriendAction = new ActionType
 export const removeFriendAction = new ActionType
     <'REMOVE_FRIEND_REQUEST', 'REMOVE_FRIEND_RESPONSE', 'REMOVE_FRIEND_ERROR', { removed_id: string }, IApiPopup, { id: string }>
     ('REMOVE_FRIEND_REQUEST', 'REMOVE_FRIEND_RESPONSE', 'REMOVE_FRIEND_ERROR');
+
+export const loadStatsAction = new ActionType
+    <'LOAD_STATS_REQUEST', 'LOAD_STATS_RESPONSE', 'LOAD_STATS_ERROR', IApiStats, IApiPopup>
+    ('LOAD_STATS_REQUEST', 'LOAD_STATS_RESPONSE', 'LOAD_STATS_ERROR');
+
+export const loadGameStatsAction = new ActionType
+    <'LOAD_GAME_STATS_REQUEST', 'LOAD_GAME_STATS_RESPONSE', 'LOAD_GAME_STATS_ERROR', IApiGameStats, IApiPopup>
+    ('LOAD_GAME_STATS_REQUEST', 'LOAD_GAME_STATS_RESPONSE', 'LOAD_GAME_STATS_ERROR');
