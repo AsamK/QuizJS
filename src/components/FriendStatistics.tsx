@@ -5,11 +5,12 @@ import { friendStatsSelector } from '../redux/selectors/entities.selectors';
 import { loadFriendStats } from '../redux/thunks';
 import Avatar from './Avatar';
 import './FriendStatistics.css';
+import { useRefresh } from './utils';
 
 export function FriendStatistics(): React.ReactElement {
     const stats = useSelector(friendStatsSelector);
     const dispatch = useDispatch();
-    React.useEffect(() => { dispatch(loadFriendStats()); }, []);
+    useRefresh(() => { dispatch(loadFriendStats()); }, []);
 
     if (stats == null) {
         return <div>Loading</div>;

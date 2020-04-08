@@ -23,6 +23,7 @@ import Profile from './Profile';
 import QuizGame from './QuizGame';
 import QuizInterrogation from './QuizInterrogation';
 import Start from './Start';
+import { useRefresh } from './utils';
 
 interface IAppStateProps {
     isRefreshing: boolean;
@@ -47,9 +48,10 @@ function App(props: IAppProps): React.ReactElement<IAppProps> {
         if (cookie) {
             props.cookieLoaded(cookie);
             extraThunkArgument.requestFn = createRequestFn(QD_SERVER.host, cookie);
-            props.loadData();
         }
     }, []);
+
+    useRefresh(() => { props.loadData(); }, []);
 
     let content;
 
