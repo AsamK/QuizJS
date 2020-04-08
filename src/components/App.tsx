@@ -1,16 +1,14 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { STORAGE_KEY_COOKIE } from '../consts';
 import { cookieLoaded } from '../redux/actions/ui.actions';
-import { IAppStore } from '../redux/interfaces/IAppStore';
 import { MainView } from '../redux/MainView';
 import { refreshLoadingSelector } from '../redux/selectors/entities.selectors';
 import { loggedInSelector, mainViewSelector } from '../redux/selectors/ui.selectors';
 import { extraThunkArgument } from '../redux/store';
-import { AppThunkDispatch, loadData, login } from '../redux/thunks';
+import { loadData, login } from '../redux/thunks';
 import { createRequestFn, QD_SERVER } from '../settings';
-import { assertUnreachable } from '../utils/utils';
 import './App.css';
 import { Button } from './Button';
 import CategorySelection from './CategorySelection';
@@ -25,50 +23,41 @@ import QuizInterrogation from './QuizInterrogation';
 import Start from './Start';
 import { useRefresh } from './utils';
 
-interface IAppStateProps {
-    isRefreshing: boolean;
-    mainView: MainView;
-    loggedIn: boolean;
-}
+function App(): React.ReactElement {
+    const isRefreshing = useSelector(refreshLoadingSelector);
+    const loggedIn = useSelector(loggedInSelector);
+    const mainView = useSelector(mainViewSelector);
 
-interface IAppDispatchProps {
-    cookieLoaded: (cookie: string) => void;
-    loadData: () => void;
-    login: (name: string, password: string) => void;
-}
+    const dispatch = useDispatch();
 
-interface IAppProps extends IAppStateProps, IAppDispatchProps {
-}
-
-function App(props: IAppProps): React.ReactElement<IAppProps> {
     const [createNewAccount, setCreateNewAccount] = React.useState(false);
 
     React.useEffect(() => {
         const cookie = localStorage.getItem(STORAGE_KEY_COOKIE);
         if (cookie) {
-            props.cookieLoaded(cookie);
+            dispatch(cookieLoaded(cookie));
             extraThunkArgument.requestFn = createRequestFn(QD_SERVER.host, cookie);
         }
     }, []);
 
-    useRefresh(() => { props.loadData(); }, []);
+    useRefresh(() => { dispatch(loadData()); }, []);
 
     let content;
 
-    if (!props.loggedIn) {
+    if (!loggedIn) {
         content = createNewAccount ? <div><CreateUser
         /><Button onClick={() => setCreateNewAccount(false)}>Bestehendes Konto verwenden</Button></div> :
             <div><Login onLogin={(name, password) => {
-                props.login(name, password);
+                dispatch(login(name, password));
             }} /><Button onClick={() => setCreateNewAccount(true)}>Neues Konto erstellen</Button></div>;
     } else {
-        content = renderContent(props.mainView);
+        content = renderContent(mainView);
         content = <>
             <Button
                 className="qd-app_refresh"
-                onClick={props.loadData}
-                showLoadingIndicator={props.isRefreshing}
-                disabled={props.isRefreshing}
+                onClick={() => dispatch(loadData())}
+                showLoadingIndicator={isRefreshing}
+                disabled={isRefreshing}
             >Refresh</Button>
             {content}
         </>;
@@ -99,23 +88,6 @@ function renderContent(mainView: MainView): React.ReactNode {
         case MainView.QUIZ_INTERROGATION:
             return <QuizInterrogation />;
     }
-    assertUnreachable(mainView);
 }
 
-const mapStateToProps = (state: IAppStore): IAppStateProps => {
-    return {
-        isRefreshing: refreshLoadingSelector(state),
-        loggedIn: loggedInSelector(state),
-        mainView: mainViewSelector(state),
-    };
-};
-
-const mapDispatchToProps = (dispatch: AppThunkDispatch): IAppDispatchProps => {
-    return {
-        cookieLoaded: cookie => dispatch(cookieLoaded(cookie)),
-        loadData: () => dispatch(loadData()),
-        login: (name, password) => dispatch(login(name, password)),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

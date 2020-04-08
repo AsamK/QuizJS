@@ -1,33 +1,24 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { IApiOpponent } from '../api/IApiOpponent';
 import { showCreateNewGame } from '../redux/actions/ui.actions';
-import { IAppStore } from '../redux/interfaces/IAppStore';
-import { IUser } from '../redux/interfaces/IUser';
 import { foundUserSelector, friendsSelector } from '../redux/selectors/entities.selectors';
-import { AppThunkDispatch, createGame, createRandomGame, searchUser } from '../redux/thunks';
+import { createGame, createRandomGame, searchUser } from '../redux/thunks';
 import { debounce } from '../utils/utils';
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './NewGame.css';
 
-interface INewGameStateProps {
-    foundUser: IApiOpponent | null;
-    friends: IUser[];
-}
-interface INewGameDispatchProps {
-    onBack: () => void;
-    onCreateGame: (userId: string) => void;
-    onRandomGame: () => void;
-    onSearchUser: (name: string) => void;
-}
+function NewGame(): React.ReactElement {
+    const foundUser = useSelector(foundUserSelector);
+    const friends = useSelector(friendsSelector);
 
-interface INewGameProps extends INewGameStateProps, INewGameDispatchProps {
-}
+    const dispatch = useDispatch();
 
-function NewGame(props: INewGameProps): React.ReactElement<INewGameProps> {
-    const { friends, foundUser, onBack, onCreateGame, onRandomGame, onSearchUser } = props;
+    const onBack = React.useCallback(() => dispatch(showCreateNewGame(false)), [dispatch]);
+    const onCreateGame = React.useCallback(userId => dispatch(createGame(userId)), [dispatch]);
+    const onRandomGame = React.useCallback(() => dispatch(createRandomGame()), [dispatch]);
+    const onSearchUser = React.useCallback(name => dispatch(searchUser(name)), [dispatch]);
 
     const onSearchUserDebounced = React.useCallback(debounce(
         (name: string) => onSearchUser(name)
@@ -35,7 +26,7 @@ function NewGame(props: INewGameProps): React.ReactElement<INewGameProps> {
 
     const onSearchUserCallback = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => onSearchUserDebounced(e.target.value),
-        [onSearchUser]);
+        [onSearchUserDebounced]);
 
     const friendElements = React.useMemo(() => friends.map(friend =>
         <div
@@ -73,18 +64,4 @@ function NewGame(props: INewGameProps): React.ReactElement<INewGameProps> {
     </div>;
 }
 
-const mapStateToProps = (state: IAppStore): INewGameStateProps => ({
-    foundUser: foundUserSelector(state),
-    friends: friendsSelector(state),
-});
-
-const mapDispatchToProps = (dispatch: AppThunkDispatch): INewGameDispatchProps => {
-    return {
-        onBack: () => dispatch(showCreateNewGame(false)),
-        onCreateGame: userId => dispatch(createGame(userId)),
-        onRandomGame: () => dispatch(createRandomGame()),
-        onSearchUser: name => dispatch(searchUser(name)),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(NewGame);
+export default NewGame;

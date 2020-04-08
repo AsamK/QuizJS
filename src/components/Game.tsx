@@ -1,64 +1,50 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { GameState } from '../api/IApiGame';
 import { selectGame, startPlaying } from '../redux/actions/ui.actions';
-import { IAppStore } from '../redux/interfaces/IAppStore';
-import { IGame } from '../redux/interfaces/IGame';
-import { IGameRoundState } from '../redux/interfaces/IGameRoundState';
-import { IMessage } from '../redux/interfaces/IMessage';
-import { IUser } from '../redux/interfaces/IUser';
 import { userSelector } from '../redux/selectors/entities.selectors';
 import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameMessagesSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, selectedGameShouldUpload, sendMessageLoadingSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
-import { addFriend, AppThunkDispatch, createGame, declineGame, giveUpGame, loadGame, removeFriend, sendMessageForGame, uploadRoundForSelectedGame } from '../redux/thunks';
+import { addFriend, createGame, declineGame, giveUpGame, loadGame, removeFriend, sendMessageForGame, uploadRoundForSelectedGame } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './Game.css';
 import GameRounds from './GameRounds';
 import { Messaging } from './Messaging';
 
-interface IGameStateProps {
-    againButtonEnabled: boolean;
-    game: IGame | null;
-    gameId: number | null;
-    gameRound: IGameRoundState[];
-    isAddingFriend: boolean;
-    isRemovingFriend: boolean;
-    isFriend: boolean;
-    isGivingUp: boolean;
-    isSendingMessage: boolean;
-    isStartingNewGame: boolean;
-    isUploading: boolean;
-    messages: IMessage[];
-    shouldUpload: boolean;
-    user: IUser | null;
-}
+function Game(): React.ReactElement {
+    const againButtonEnabled = useSelector(selectedGameExistsRunningGameWithPlayer);
+    const game = useSelector(selectedGameSelector);
+    const currentGameId = useSelector(selectedGameIdSelector);
+    const gameRound = useSelector(selectedGameRoundStateSelector);
+    const isAddingFriend = useSelector(selectedGameAddFriendLoadingSelector);
+    const isFriend = useSelector(isSelectedGameWithFriendSelector);
+    const isGivingUp = useSelector(selectedGameGiveUpLoadingSelector);
+    const isRemovingFriend = useSelector(selectedGameRemoveFriendLoadingSelector);
+    const isSendingMessage = useSelector(sendMessageLoadingSelector);
+    const isStartingNewGame = useSelector(selectedGameCreateLoadingSelector);
+    const isUploading = useSelector(uploadRoundLoadingSelector);
+    const messages = useSelector(selectedGameMessagesSelector);
+    const shouldUpload = useSelector(selectedGameShouldUpload);
+    const user = useSelector(userSelector);
 
-interface IGameDispatchProps {
-    onAddFriend: (userId: string, name: string) => void;
-    onBack: () => void;
-    onDeclineGame: (gameId: number) => void;
-    onGiveUp: (gameId: number) => void;
-    onNewGame: (userId: string) => void;
-    onPlay: (gameId: number) => void;
-    onRemoveFriend: (userId: string) => void;
-    requestGame: (gameId: number) => void;
-    sendMessage: (gameId: number, message: string) => void;
-    uploadGameState: () => void;
-}
-
-interface IGameProps extends IGameStateProps, IGameDispatchProps {
-}
-
-function Game({ againButtonEnabled, game, gameId, gameRound, isAddingFriend, isRemovingFriend, isFriend, isGivingUp, isStartingNewGame,
-    isUploading, user, onBack, onDeclineGame, onPlay, onNewGame, onGiveUp, onAddFriend, onRemoveFriend, shouldUpload, messages, sendMessage,
-    isSendingMessage, uploadGameState, requestGame }: IGameProps): React.ReactElement<IGameProps> {
+    const dispatch = useDispatch();
+    const onAddFriend = React.useCallback((userId, name) => dispatch(addFriend(userId, name)), [dispatch]);
+    const onBack = React.useCallback(() => dispatch(selectGame(null)), [dispatch]);
+    const onDeclineGame = React.useCallback(gameId => dispatch(declineGame(gameId)), [dispatch]);
+    const onGiveUp = React.useCallback(gameId => dispatch(giveUpGame(gameId)), [dispatch]);
+    const onNewGame = React.useCallback(userId => dispatch(createGame(userId)), [dispatch]);
+    const onPlay = React.useCallback(gameId => dispatch(startPlaying(gameId, Date.now())), [dispatch]);
+    const onRemoveFriend = React.useCallback(userId => dispatch(removeFriend(userId)), [dispatch]);
+    const requestGame = React.useCallback(gameId => dispatch(loadGame(gameId)), [dispatch]);
+    const sendMessage = React.useCallback((gameId, message) => dispatch(sendMessageForGame(gameId, message)), [dispatch]);
+    const uploadGameState = React.useCallback(() => dispatch(uploadRoundForSelectedGame()), [dispatch]);
 
     React.useEffect(() => {
-        if (gameId != null && !isUploading) {
-            requestGame(gameId);
+        if (currentGameId != null && !isUploading) {
+            requestGame(currentGameId);
         }
-    }, [gameId]);
+    }, [currentGameId]);
 
     if (!game) {
         return <div>'Loading game...'</div>;
@@ -133,38 +119,4 @@ function Game({ againButtonEnabled, game, gameId, gameRound, isAddingFriend, isR
     </div >;
 }
 
-const mapStateToProps = (state: IAppStore): IGameStateProps => {
-    return {
-        againButtonEnabled: selectedGameExistsRunningGameWithPlayer(state),
-        game: selectedGameSelector(state),
-        gameId: selectedGameIdSelector(state),
-        gameRound: selectedGameRoundStateSelector(state),
-        isAddingFriend: selectedGameAddFriendLoadingSelector(state),
-        isFriend: isSelectedGameWithFriendSelector(state),
-        isGivingUp: selectedGameGiveUpLoadingSelector(state),
-        isRemovingFriend: selectedGameRemoveFriendLoadingSelector(state),
-        isSendingMessage: sendMessageLoadingSelector(state),
-        isStartingNewGame: selectedGameCreateLoadingSelector(state),
-        isUploading: uploadRoundLoadingSelector(state),
-        messages: selectedGameMessagesSelector(state),
-        shouldUpload: selectedGameShouldUpload(state),
-        user: userSelector(state),
-    };
-};
-
-const mapDispatchToProps = (dispatch: AppThunkDispatch): IGameDispatchProps => {
-    return {
-        onAddFriend: (userId, name) => dispatch(addFriend(userId, name)),
-        onBack: () => dispatch(selectGame(null)),
-        onDeclineGame: gameId => dispatch(declineGame(gameId)),
-        onGiveUp: gameId => dispatch(giveUpGame(gameId)),
-        onNewGame: userId => dispatch(createGame(userId)),
-        onPlay: gameId => dispatch(startPlaying(gameId, Date.now())),
-        onRemoveFriend: userId => dispatch(removeFriend(userId)),
-        requestGame: gameId => dispatch(loadGame(gameId)),
-        sendMessage: (gameId, message) => dispatch(sendMessageForGame(gameId, message)),
-        uploadGameState: () => dispatch(uploadRoundForSelectedGame()),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Game);
+export default Game;

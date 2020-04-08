@@ -1,33 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { GameState } from '../api/IApiGame';
 import { selectGame, selectQuiz, showCreateNewGame, showProfile } from '../redux/actions/ui.actions';
-import { IAppStore } from '../redux/interfaces/IAppStore';
 import { IGame } from '../redux/interfaces/IGame';
 import { IQuiz } from '../redux/interfaces/IQuiz';
-import { IUser } from '../redux/interfaces/IUser';
 import { gamesSelector, quizzesSelector, userSelector } from '../redux/selectors/entities.selectors';
-import { AppThunkDispatch } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './Start.css';
 import { Time } from './Time';
-
-interface IStartStateProps {
-    games: IGame[];
-    quizzes: IQuiz[];
-    user: IUser | null;
-}
-interface IStartDispatchProps {
-    onGameSelected: (gameId: number) => void;
-    onQuizSelected: (quizId: string) => void;
-    onNewGame: () => void;
-    onShowProfile: () => void;
-}
-
-interface IStartProps extends IStartStateProps, IStartDispatchProps {
-}
 
 interface IStartElementProps {
     game: IGame;
@@ -101,8 +83,17 @@ function StartQuizElement({ quiz, onQuizSelected }: IStartQuizElementProps): Rea
     </div>;
 }
 
-function Start({ games, user, quizzes, onGameSelected, onQuizSelected,
-    onNewGame, onShowProfile }: IStartProps): React.ReactElement<IStartProps> {
+function Start(): React.ReactElement {
+    const games = useSelector(gamesSelector);
+    const quizzes = useSelector(quizzesSelector);
+    const user = useSelector(userSelector);
+
+    const dispatch = useDispatch();
+    const onGameSelected = React.useCallback(gameId => dispatch(selectGame(gameId)), [dispatch]);
+    const onNewGame = React.useCallback(() => dispatch(showCreateNewGame()), [dispatch]);
+    const onQuizSelected = React.useCallback(quizId => dispatch(selectQuiz(quizId)), [dispatch]);
+    const onShowProfile = React.useCallback(() => dispatch(showProfile()), [dispatch]);
+
     const requestedGames = games.filter(game => game.your_turn && game.state === GameState.REQUESTED)
         .map(g => <StartElement key={g.game_id} game={g} onGameSelected={onGameSelected} />);
     const runningGames = games.filter(game => game.your_turn &&
@@ -159,21 +150,4 @@ function Start({ games, user, quizzes, onGameSelected, onQuizSelected,
     </div >;
 }
 
-const mapStateToProps = (state: IAppStore): IStartStateProps => {
-    return {
-        games: gamesSelector(state),
-        quizzes: quizzesSelector(state),
-        user: userSelector(state),
-    };
-};
-
-const mapDispatchToProps = (dispatch: AppThunkDispatch): IStartDispatchProps => {
-    return {
-        onGameSelected: gameId => dispatch(selectGame(gameId)),
-        onNewGame: () => dispatch(showCreateNewGame()),
-        onQuizSelected: quizId => dispatch(selectQuiz(quizId)),
-        onShowProfile: () => dispatch(showProfile()),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Start);
+export default Start;

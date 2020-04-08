@@ -1,29 +1,22 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { showProfile } from '../redux/actions/ui.actions';
-import { IAppStore } from '../redux/interfaces/IAppStore';
-import { IUser } from '../redux/interfaces/IUser';
 import { friendsSelector, userSelector } from '../redux/selectors/entities.selectors';
-import { AppThunkDispatch, updateUser } from '../redux/thunks';
+import { updateUser } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
 import { FriendStatistics } from './FriendStatistics';
 import './Profile.css';
 import { UserStatistics } from './UserStatistics';
 
-interface IProfileStateProps {
-    user: IUser | null;
-    friends: IUser[];
-}
-interface IProfileDispatchProps {
-    onBack: () => void;
-    onUpdateUser: (name: string, email: string, password: string | null) => void;
-}
-interface IProfileProps extends IProfileStateProps, IProfileDispatchProps {
-}
+function Profile(): React.ReactElement | null {
+    const friends = useSelector(friendsSelector);
+    const user = useSelector(userSelector);
 
-function Profile({ friends, user, onBack, onUpdateUser }: IProfileProps): React.ReactElement<IProfileProps> | null {
+    const dispatch = useDispatch();
+    const onBack = React.useCallback(() => dispatch(showProfile(false)), [dispatch]);
+
     const [name, setName] = React.useState<string | null>(null);
     const [email, setEmail] = React.useState<string | null>(null);
     const [password, setPassword] = React.useState<string | null>(null);
@@ -50,7 +43,7 @@ function Profile({ friends, user, onBack, onUpdateUser }: IProfileProps): React.
         <div className="qd-profile_avatar">Avatar: <Avatar avatarCode={user.avatar_code} /></div>
         {updatePassword ?
             <form className="qd-profile_form" onSubmit={e => {
-                onUpdateUser(name === null ? user.name : name, email === null ? user.email || '' : email, password);
+                dispatch(updateUser(name === null ? user.name : name, email === null ? user.email || '' : email, password));
                 setUpdatePassword(false);
                 e.preventDefault();
             }}>
@@ -103,18 +96,4 @@ function Profile({ friends, user, onBack, onUpdateUser }: IProfileProps): React.
     </div>;
 }
 
-const mapStateToProps = (state: IAppStore): IProfileStateProps => {
-    return {
-        friends: friendsSelector(state),
-        user: userSelector(state),
-    };
-};
-
-const mapDispatchToProps = (dispatch: AppThunkDispatch): IProfileDispatchProps => {
-    return {
-        onBack: () => dispatch(showProfile(false)),
-        onUpdateUser: (name, email, password) => dispatch(updateUser(name, email, password)),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default Profile;

@@ -1,21 +1,13 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { IAppStore } from '../redux/interfaces/IAppStore';
-import { AppThunkDispatch, createUser } from '../redux/thunks';
+import { createUser } from '../redux/thunks';
 import { Button } from './Button';
 import './CreateUser.css';
 
-interface ICreateUserStateProps {
-}
-interface ICreateUserDispatchProps {
-    onCreateUser: (name: string, email: string, password: string) => void;
-}
+function CreateUser(): React.ReactElement {
+    const dispatch = useDispatch();
 
-interface ICreateUserProps extends ICreateUserStateProps, ICreateUserDispatchProps {
-}
-
-function CreateUser({ onCreateUser }: ICreateUserProps): React.ReactElement<ICreateUserProps> {
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -25,7 +17,7 @@ function CreateUser({ onCreateUser }: ICreateUserProps): React.ReactElement<ICre
         <form
             className="qd-create-user_form"
             onSubmit={e => {
-                onCreateUser(name, email, password);
+                dispatch(createUser(name, email, password));
                 e.preventDefault();
             }}
         >
@@ -48,15 +40,4 @@ function CreateUser({ onCreateUser }: ICreateUserProps): React.ReactElement<ICre
     </div>;
 }
 
-const mapStateToProps = (state: IAppStore): ICreateUserStateProps => {
-    return {
-    };
-};
-
-const mapDispatchToProps = (dispatch: AppThunkDispatch): ICreateUserDispatchProps => {
-    return {
-        onCreateUser: (name, email, password) => dispatch(createUser(name, email, password)),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CreateUser);
+export default CreateUser;
