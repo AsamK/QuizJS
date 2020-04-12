@@ -1,12 +1,12 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 
+import { useThunkDispatch } from '../redux/store';
 import { createUser } from '../redux/thunks';
 import { Button } from './Button';
 import './CreateUser.css';
 
 function CreateUser(): React.ReactElement {
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
 
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');

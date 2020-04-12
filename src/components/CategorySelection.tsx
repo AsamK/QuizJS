@@ -1,13 +1,14 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { selectedGameCategoriesForSelectionSelector } from '../redux/selectors/ui.selectors';
+import { useThunkDispatch } from '../redux/store';
 import { selectCategoryForSelectedGame } from '../redux/thunks';
 import './CategorySelection.css';
 
 function CategorySelection(): React.ReactElement {
     const categories = useSelector(selectedGameCategoriesForSelectionSelector);
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
 
     return <div className="qd-category-selection">
         {!categories ? null : categories.map((category, i) =>

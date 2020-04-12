@@ -5,19 +5,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { hot } from 'react-hot-loader';
 import { Provider } from 'react-redux';
-import { applyMiddleware, compose, createStore, Middleware } from 'redux';
-import freeze from 'redux-freeze';
-import thunkMiddleware from 'redux-thunk';
 
 import App from './components/App';
 import './index.css';
 import { initialMessages } from './redux/actions/entities.actions';
 import { initialGameState, initialQuizState } from './redux/actions/ui.actions';
-import { AppAction } from './redux/interfaces/AppAction';
-import { IAppStore } from './redux/interfaces/IAppStore';
-import { rootReducer } from './redux/reducers';
-import { extraThunkArgument } from './redux/store';
-import { AppThunkDispatch } from './redux/thunks';
+import { createAppStore } from './redux/store';
 
 if (process.env.NODE_ENV === 'production') {
   OfflinePluginRuntime.install({
@@ -46,26 +39,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-const reduxMiddlewares: Middleware[] = [
-  thunkMiddleware.withExtraArgument(extraThunkArgument), // lets us use dispatch() functions
-];
-
-if (process.env.NODE_ENV !== 'production') {
-  // Freeze redux state in development to prevent accidental modifications
-  // Disable in production to improve performance
-  reduxMiddlewares.push(freeze);
-}
-
-const composeEnhancers = (process.env.NODE_ENV !== 'production' &&
-  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
-const store = createStore<IAppStore, AppAction, { dispatch: AppThunkDispatch }, {}>(
-  rootReducer,
-  composeEnhancers(
-    applyMiddleware(
-      ...reduxMiddlewares,
-    ),
-  ),
-);
+const store = createAppStore();
 
 const gameStateString = localStorage.getItem('gameState');
 if (gameStateString !== null) {

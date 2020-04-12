@@ -1,9 +1,10 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { selectQuiz, startPlayingQuiz } from '../redux/actions/ui.actions';
 import { userSelector } from '../redux/selectors/entities.selectors';
 import { selectedQuizRoundStateSelector, selectedQuizSelector } from '../redux/selectors/ui.selectors';
+import { useThunkDispatch } from '../redux/store';
 import Avatar from './Avatar';
 import { Button } from './Button';
 import GameRounds from './GameRounds';
@@ -14,7 +15,7 @@ function QuizGame(): React.ReactElement {
     const quiz = useSelector(selectedQuizSelector);
     const user = useSelector(userSelector);
 
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
     const onBack = React.useCallback(() => dispatch(selectQuiz(null)), [dispatch]);
     const onPlay = React.useCallback(quizId => dispatch(startPlayingQuiz(quizId, Date.now())), [dispatch]);
 

@@ -1,11 +1,12 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { GameState } from '../api/IApiGame';
 import { selectGame, selectQuiz, showCreateNewGame, showProfile } from '../redux/actions/ui.actions';
 import { IGame } from '../redux/interfaces/IGame';
 import { IQuiz } from '../redux/interfaces/IQuiz';
 import { gamesSelector, quizzesSelector, userSelector } from '../redux/selectors/entities.selectors';
+import { useThunkDispatch } from '../redux/store';
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './Start.css';
@@ -88,7 +89,7 @@ function Start(): React.ReactElement {
     const quizzes = useSelector(quizzesSelector);
     const user = useSelector(userSelector);
 
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
     const onGameSelected = React.useCallback(gameId => dispatch(selectGame(gameId)), [dispatch]);
     const onNewGame = React.useCallback(() => dispatch(showCreateNewGame()), [dispatch]);
     const onQuizSelected = React.useCallback(quizId => dispatch(selectQuiz(quizId)), [dispatch]);

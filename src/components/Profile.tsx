@@ -1,8 +1,9 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { showProfile } from '../redux/actions/ui.actions';
 import { friendsSelector, userSelector } from '../redux/selectors/entities.selectors';
+import { useThunkDispatch } from '../redux/store';
 import { updateUser } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
@@ -14,7 +15,7 @@ function Profile(): React.ReactElement | null {
     const friends = useSelector(friendsSelector);
     const user = useSelector(userSelector);
 
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
     const onBack = React.useCallback(() => dispatch(showProfile(false)), [dispatch]);
 
     const [name, setName] = React.useState<string | null>(null);

@@ -1,8 +1,9 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { showCreateNewGame } from '../redux/actions/ui.actions';
 import { foundUserSelector, friendsSelector } from '../redux/selectors/entities.selectors';
+import { useThunkDispatch } from '../redux/store';
 import { createGame, createRandomGame, searchUser } from '../redux/thunks';
 import { debounce } from '../utils/utils';
 import Avatar from './Avatar';
@@ -13,7 +14,7 @@ function NewGame(): React.ReactElement {
     const foundUser = useSelector(foundUserSelector);
     const friends = useSelector(friendsSelector);
 
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
 
     const onBack = React.useCallback(() => dispatch(showCreateNewGame(false)), [dispatch]);
     const onCreateGame = React.useCallback(userId => dispatch(createGame(userId)), [dispatch]);

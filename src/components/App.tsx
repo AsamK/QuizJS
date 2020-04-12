@@ -1,12 +1,12 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { STORAGE_KEY_COOKIE } from '../consts';
 import { cookieLoaded } from '../redux/actions/ui.actions';
 import { MainView } from '../redux/MainView';
 import { refreshLoadingSelector } from '../redux/selectors/entities.selectors';
 import { loggedInSelector, mainViewSelector } from '../redux/selectors/ui.selectors';
-import { extraThunkArgument } from '../redux/store';
+import { extraThunkArgument, useThunkDispatch } from '../redux/store';
 import { loadData, login } from '../redux/thunks';
 import { createRequestFn, QD_SERVER } from '../settings';
 import './App.css';
@@ -28,7 +28,7 @@ function App(): React.ReactElement {
     const loggedIn = useSelector(loggedInSelector);
     const mainView = useSelector(mainViewSelector);
 
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
 
     const [createNewAccount, setCreateNewAccount] = React.useState(false);
 

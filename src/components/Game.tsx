@@ -1,10 +1,11 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { GameState } from '../api/IApiGame';
 import { selectGame, startPlaying } from '../redux/actions/ui.actions';
 import { userSelector } from '../redux/selectors/entities.selectors';
 import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameMessagesSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, selectedGameShouldUpload, sendMessageLoadingSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
+import { useThunkDispatch } from '../redux/store';
 import { addFriend, createGame, declineGame, giveUpGame, loadGame, removeFriend, sendMessageForGame, uploadRoundForSelectedGame } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
@@ -28,7 +29,7 @@ function Game(): React.ReactElement {
     const shouldUpload = useSelector(selectedGameShouldUpload);
     const user = useSelector(userSelector);
 
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
     const onAddFriend = React.useCallback((userId, name) => dispatch(addFriend(userId, name)), [dispatch]);
     const onBack = React.useCallback(() => dispatch(selectGame(null)), [dispatch]);
     const onDeclineGame = React.useCallback(gameId => dispatch(declineGame(gameId)), [dispatch]);

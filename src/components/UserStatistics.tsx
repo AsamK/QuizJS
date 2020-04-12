@@ -1,7 +1,8 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { userStatsSelector } from '../redux/selectors/entities.selectors';
+import { useThunkDispatch } from '../redux/store';
 import { loadUserStats } from '../redux/thunks';
 import './UserStatistics.css';
 import { useRefresh } from './utils';
@@ -18,7 +19,7 @@ function formatPercentage(value: number): string {
 
 export function UserStatistics(): React.ReactElement {
     const stats = useSelector(userStatsSelector);
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
     useRefresh(() => { dispatch(loadUserStats()); }, []);
 
     if (stats == null) {

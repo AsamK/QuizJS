@@ -1,7 +1,8 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { friendStatsSelector } from '../redux/selectors/entities.selectors';
+import { useThunkDispatch } from '../redux/store';
 import { loadFriendStats } from '../redux/thunks';
 import Avatar from './Avatar';
 import './FriendStatistics.css';
@@ -9,7 +10,7 @@ import { useRefresh } from './utils';
 
 export function FriendStatistics(): React.ReactElement {
     const stats = useSelector(friendStatsSelector);
-    const dispatch = useDispatch();
+    const dispatch = useThunkDispatch();
     useRefresh(() => { dispatch(loadFriendStats()); }, []);
 
     if (stats == null) {
