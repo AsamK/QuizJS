@@ -154,7 +154,7 @@ export function gameState(state: Map<number, IGameState> = new Map(), action: Ap
         case START_PLAYING: {
             const newState = new Map(state);
             const prev = getGameStateOrDefault(state, action.gameId);
-            if (prev.firstShownTimestamp != null) {
+            if (prev.firstShownTimestamp != null && prev.answeredTimestamp == null) {
                 return state;
             }
             newState.set(action.gameId, {
@@ -240,7 +240,7 @@ export function quizState(state: Map<string, IQuizState> = new Map(), action: Ap
         case START_PLAYING_QUIZ: {
             const newState = new Map(state);
             const prev = getQuizStateOrDefault(state, action.quizId);
-            if (prev.firstShownTimestamp != null) {
+            if (prev.firstShownTimestamp != null && prev.answeredTimestamp == null) {
                 return state;
             }
             newState.set(action.quizId, {
