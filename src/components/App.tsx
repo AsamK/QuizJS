@@ -40,7 +40,11 @@ function App(): React.ReactElement {
         }
     }, []);
 
-    useRefresh(() => { dispatch(loadData()); }, []);
+    useRefresh(() => {
+        if (loggedIn) {
+            dispatch(loadData());
+        }
+    }, [loggedIn]);
 
     let content;
 
