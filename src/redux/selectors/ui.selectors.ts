@@ -331,8 +331,8 @@ export const selectedQuizQuestionsSelector = createSelector(
 export const quizIdToQuizStateSelector = createSelector(uiSelector, ui => ui.quizState);
 
 export const selectedQuizStateSelector = createSelector(quizIdToQuizStateSelector, selectedQuizIdSelector,
-    (map, gameId): IQuizState => {
-        return getQuizStateOrDefault(map, gameId);
+    (map, quizId): IQuizState => {
+        return getQuizStateOrDefault(map, quizId);
     },
 );
 export const selectedQuizYourAnswersIncludingPendingSelector = createSelector(
