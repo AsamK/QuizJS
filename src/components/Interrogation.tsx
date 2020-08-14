@@ -35,15 +35,18 @@ export function Interrogation({
 }: IInterrogationProps): React.ReactElement<IInterrogationProps> {
     const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
 
-    function handleTimer(): void {
+    function updateElapsedSeconds(): boolean {
         if (timeLimit == null) {
-            return;
+            return false;
         }
         const nextElapsedSeconds = getElapsedSeconds();
         if (nextElapsedSeconds >= timeLimit) {
             onAnswerClick(TIME_ELAPSED_ANSWER);
         }
-        setElapsedSeconds(nextElapsedSeconds);
+        if (nextElapsedSeconds < elapsedSeconds || nextElapsedSeconds - elapsedSeconds > 0.2) {
+            setElapsedSeconds(nextElapsedSeconds);
+        }
+        return true;
     }
 
     function getElapsedSeconds(): number {
@@ -58,21 +61,27 @@ export function Interrogation({
     React.useEffect(() => {
         function cleanUpTimer(): void {
             if (timer.current != null) {
-                window.clearInterval(timer.current);
+                window.cancelAnimationFrame(timer.current);
                 timer.current = null;
+            }
+        }
+        function handleTimer(): void {
+            cleanUpTimer();
+            if (updateElapsedSeconds()) {
+                timer.current = window.requestAnimationFrame(handleTimer);
             }
         }
 
         if (answeredTimestamp == null) {
             if (timer.current == null) {
-                timer.current = window.setInterval(handleTimer, 200);
+                timer.current = window.requestAnimationFrame(handleTimer);
             }
         } else {
             cleanUpTimer();
         }
 
         return cleanUpTimer;
-    }, [firstShownTimestamp, answeredTimestamp]);
+    }, [firstShownTimestamp, answeredTimestamp, elapsedSeconds, timeLimit, onAnswerClick]);
 
     const answerOrder = React.useMemo(() => getRandomOrder(4), [question]);
 
