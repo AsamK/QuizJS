@@ -101,9 +101,11 @@ module.exports = function (env, argv) {
             new HtmlWebpackPlugin({
                 template: 'src/index.html'
             }),
-            new CopyWebpackPlugin([
-                'src/manifest.webmanifest'
-            ]),
+            new CopyWebpackPlugin({
+                patterns: [
+                    'src/manifest.webmanifest'
+                ],
+            }),
             ...(isProduction ?
                 [
                     new CleanWebpackPlugin(),
