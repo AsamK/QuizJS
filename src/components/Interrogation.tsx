@@ -43,7 +43,7 @@ export function Interrogation({
         if (nextElapsedSeconds >= timeLimit) {
             onAnswerClick(TIME_ELAPSED_ANSWER);
         }
-        if (nextElapsedSeconds < elapsedSeconds || nextElapsedSeconds - elapsedSeconds > 0.2) {
+        if (nextElapsedSeconds < elapsedSeconds || nextElapsedSeconds - elapsedSeconds > 0.1) {
             setElapsedSeconds(nextElapsedSeconds);
         }
         return true;
