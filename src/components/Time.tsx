@@ -1,6 +1,7 @@
 import React from 'react';
 
 import './Time.css';
+import { useRefresh } from './utils';
 
 export interface ITimeProps {
     timestamp: number;
@@ -13,7 +14,7 @@ export function Time(props: ITimeProps): React.ReactElement<ITimeProps> {
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
     const timer = React.useRef<number | null>(null);
-    React.useEffect(() => {
+    useRefresh(() => {
         function cleanUpTimer(): void {
             if (timer.current != null) {
                 window.clearInterval(timer.current);
@@ -22,6 +23,7 @@ export function Time(props: ITimeProps): React.ReactElement<ITimeProps> {
         }
 
         if (timerInterval != null) {
+            forceUpdate();
             timer.current = window.setInterval(forceUpdate, timerInterval);
         } else {
             cleanUpTimer();
