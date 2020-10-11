@@ -1,27 +1,37 @@
 import React from 'react';
+import { Property } from 'csstype';
 
-import { IGameRoundState } from '../redux/interfaces/IGameRoundState';
+import { AnswerType, IGameRoundState } from '../redux/interfaces/IGameRoundState';
 import './GameRounds.css';
 
 export interface IGameRoundsStateProps {
     gameRound: IGameRoundState[];
 }
 
-const QuestionItem = ({ color }: { color: 'red' | 'green' | 'gray' }) => {
+const QuestionItem = ({ color }: { color: Property.BackgroundColor }) => {
     return <div className="qd-game-round_question-block" style={{ backgroundColor: color }}>
     </div>;
 };
 
+function getAnswerColor(answers: AnswerType[], index: number): Property.BackgroundColor {
+    switch (answers[index]) {
+        case undefined: return 'lightgray'
+        case AnswerType.CORRECT: return 'green'
+        case AnswerType.HIDDEN: return 'gray'
+        case AnswerType.WRONG: return 'red'
+    }
+}
+
 function GameRounds({ gameRound }: IGameRoundsStateProps): React.ReactElement<IGameRoundsStateProps> {
+    const roundAnswerIndices = [0, 1, 2];
     const rounds = gameRound.map((round, i) => (
         <div className="qd-game-round" key={i}>
             <div className="qd-game-round_questions">
-                <QuestionItem
-                    color={round.yourAnswers.length <= 0 ? 'gray' : round.yourAnswers[0] === 0 ? 'green' : 'red'} />
-                <QuestionItem
-                    color={round.yourAnswers.length <= 1 ? 'gray' : round.yourAnswers[1] === 0 ? 'green' : 'red'} />
-                <QuestionItem
-                    color={round.yourAnswers.length <= 2 ? 'gray' : round.yourAnswers[2] === 0 ? 'green' : 'red'} />
+                {roundAnswerIndices.map(i =>
+                    <QuestionItem
+                        key={i}
+                        color={getAnswerColor(round.yourAnswers, i)} />
+                )}
             </div>
             <div className="qd-game-round_info"
             >Runde:&nbsp;{i + 1}
@@ -30,12 +40,11 @@ function GameRounds({ gameRound }: IGameRoundsStateProps): React.ReactElement<IG
                 </div>
             </div>
             <div className="qd-game-round_questions">
-                <QuestionItem
-                    color={round.opponentAnswers.length <= 0 ? 'gray' : round.opponentAnswers[0] === 0 ? 'green' : 'red'} />
-                <QuestionItem
-                    color={round.opponentAnswers.length <= 1 ? 'gray' : round.opponentAnswers[1] === 0 ? 'green' : 'red'} />
-                <QuestionItem
-                    color={round.opponentAnswers.length <= 2 ? 'gray' : round.opponentAnswers[2] === 0 ? 'green' : 'red'} />
+                {roundAnswerIndices.map(i =>
+                    <QuestionItem
+                        key={i}
+                        color={getAnswerColor(round.opponentAnswers, i)} />
+                )}
             </div>
         </div>
     ));

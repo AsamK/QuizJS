@@ -6,7 +6,7 @@ import { addFriendAction, createGameAction, declineGameAction, giveUpGameAction,
 import { LoadingState } from '../actions/requests.utils';
 import { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
 import { ICategory } from '../interfaces/ICategory';
-import { IGameRoundState } from '../interfaces/IGameRoundState';
+import { AnswerType, IGameRoundState } from '../interfaces/IGameRoundState';
 import { IMessage } from '../interfaces/IMessage';
 import { IQuestion } from '../interfaces/IQuestion';
 import { IQuizAnswer } from '../interfaces/IQuizAnswer';
@@ -248,13 +248,17 @@ export const selectedGameCategory = createSelector(
     },
 );
 
+function getAnswerType(answer: number): AnswerType {
+    return answer === 0 ? AnswerType.CORRECT : AnswerType.WRONG;
+}
+
 export const selectedGameRoundStateSelector = createSelector(
     selectedGameSelector,
     selectedGameStateSelector,
     selectedGameYourAnswersIncludingPendingSelector,
     selectedGameQuestionsSelector,
     categoriesSelector,
-    (game, gameState, yourAnswers, questions, categories): IGameRoundState[] => {
+    (game, gameState, allYourAnswers, questions, categories): IGameRoundState[] => {
         if (!game) {
             return [];
         }
@@ -268,10 +272,13 @@ export const selectedGameRoundStateSelector = createSelector(
         for (let i = 0; i < roundCount; i++) {
             const catId = !questions || catChoices.length <= i ? null :
                 questions[i * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND + catChoices[i] * CATEGORIES_PER_ROUND].cat_id;
+            const yourAnswers = allYourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND)
+                .map(getAnswerType);
             result.push({
                 category: catId == null ? null : categories.get(catId) || null,
-                opponentAnswers: game.opponent_answers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
-                yourAnswers: yourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
+                opponentAnswers: game.opponent_answers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND)
+                    .map((answer, index) => index >= yourAnswers.length ? AnswerType.HIDDEN : getAnswerType(answer)),
+                yourAnswers,
             });
         }
         return result;
@@ -401,8 +408,8 @@ export const selectedQuizRoundStateSelector = createSelector(
         for (let i = 0; i < roundCount; i++) {
             result.push({
                 category: null,
-                opponentAnswers: opponentAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
-                yourAnswers: yourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
+                opponentAnswers: opponentAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND).map(getAnswerType),
+                yourAnswers: yourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND).map(getAnswerType),
             });
         }
         return result;

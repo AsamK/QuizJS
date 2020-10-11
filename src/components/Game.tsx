@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { GameState } from '../api/IApiGame';
 import { selectGame, startPlaying } from '../redux/actions/ui.actions';
+import { AnswerType } from '../redux/interfaces/IGameRoundState';
 import { userSelector } from '../redux/selectors/entities.selectors';
 import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameMessagesSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, selectedGameShouldUpload, sendMessageLoadingSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
 import { useThunkDispatch } from '../redux/store';
@@ -50,8 +51,8 @@ function Game(): React.ReactElement {
     if (!game) {
         return <div>'Loading game...'</div>;
     }
-    const yourCorrectAnswers = gameRound.reduce((sum, r) => sum + r.yourAnswers.filter(a => a === 0).length, 0);
-    const opponentCorrectAnswers = gameRound.reduce((sum, r) => sum + r.opponentAnswers.filter(a => a === 0).length, 0);
+    const yourCorrectAnswers = gameRound.reduce((sum, r) => sum + r.yourAnswers.filter(a => a === AnswerType.CORRECT).length, 0);
+    const opponentCorrectAnswers = gameRound.reduce((sum, r) => sum + r.opponentAnswers.filter(a => a === AnswerType.CORRECT).length, 0);
     return <div>
         <Button onClick={onBack}> Zurück</Button >
         <div className="qd-game_header">

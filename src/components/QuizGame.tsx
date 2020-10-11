@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { selectQuiz, startPlayingQuiz } from '../redux/actions/ui.actions';
+import { AnswerType } from '../redux/interfaces/IGameRoundState';
 import { userSelector } from '../redux/selectors/entities.selectors';
 import { selectedQuizRoundStateSelector, selectedQuizSelector } from '../redux/selectors/ui.selectors';
 import { useThunkDispatch } from '../redux/store';
@@ -23,8 +24,8 @@ function QuizGame(): React.ReactElement {
         return <div></div>;
     }
 
-    const yourCorrectAnswers = gameRound.reduce((sum, r) => sum + r.yourAnswers.filter(a => a === 0).length, 0);
-    const opponentCorrectAnswers = gameRound.reduce((sum, r) => sum + r.opponentAnswers.filter(a => a === 0).length, 0);
+    const yourCorrectAnswers = gameRound.reduce((sum, r) => sum + r.yourAnswers.filter(a => a === AnswerType.CORRECT).length, 0);
+    const opponentCorrectAnswers = gameRound.reduce((sum, r) => sum + r.opponentAnswers.filter(a => a === AnswerType.CORRECT).length, 0);
     return <div>
         <Button onClick={onBack}>Zurück</Button>
         <div className="qd-quiz-game_header">

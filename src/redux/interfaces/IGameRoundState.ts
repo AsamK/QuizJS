@@ -1,7 +1,13 @@
 import { ICategory } from './ICategory';
 
+export enum AnswerType {
+    CORRECT,
+    WRONG,
+    HIDDEN,
+}
+
 export interface IGameRoundState {
     category: ICategory | null;
-    yourAnswers: number[];
-    opponentAnswers: number[];
+    yourAnswers: AnswerType[];
+    opponentAnswers: AnswerType[];
 }
