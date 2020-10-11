@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -57,9 +57,11 @@ module.exports = function (env, argv) {
                         {
                             loader: 'postcss-loader',
                             options: {
-                                plugins: (loader) => [
-                                    require('autoprefixer')(),
-                                ]
+                                postcssOptions: {
+                                    plugins: [
+                                        require.resolve('autoprefixer'),
+                                    ]
+                                }
                             }
                         },
                     ],
@@ -72,9 +74,11 @@ module.exports = function (env, argv) {
                         {
                             loader: 'postcss-loader',
                             options: {
-                                plugins: (loader) => [
-                                    require('autoprefixer')(),
-                                ]
+                                postcssOptions: {
+                                    plugins: [
+                                        require.resolve('autoprefixer'),
+                                    ]
+                                }
                             }
                         },
                     ],
