@@ -19,7 +19,7 @@ interface IStartElementProps {
 
 function StartElement({ game, onGameSelected }: IStartElementProps): React.ReactElement<IStartElementProps> {
     const yourCorrect = game.your_answers.filter(a => a === 0).length;
-    const opponentCorrect = game.opponent_answers.filter(a => a === 0).length;
+    const opponentCorrect = game.opponent_answers.slice(0, game.your_answers.length).filter(a => a === 0).length;
     return <div
         className="qd-start_entry"
         onClick={() => onGameSelected(game.game_id)}
