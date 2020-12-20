@@ -77,6 +77,9 @@ export function login(userName: string, password: string): AppThunkAction {
             dispatch,
             () => apiLogin(requestFn, userName, QD_SERVER.passwordSalt, password)
                 .then(res => {
+                    if (handlePopup(res)) {
+                        throw res;
+                    }
                     if ('cookie' in res) {
                         localStorage.setItem(STORAGE_KEY_COOKIE, res.cookie);
                         extraThunkArgument.requestFn = createRequestFn(QD_SERVER.host, res.cookie);
