@@ -31,3 +31,8 @@
     background-color: red;
     color: white;
 }
+
+.qd-game_close-modal {
+    display: block;
+    margin: 10px auto;
+}

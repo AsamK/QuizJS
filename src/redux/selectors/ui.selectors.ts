@@ -174,15 +174,25 @@ const questionRoundOffsetSelector = createSelector(roundIndexSelector,
     roundIndex => roundIndex == null ? null : roundIndex * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND,
 );
 
-export const selectedGameCategoryIndex = createSelector(selectedGameSelector, selectedGameStateSelector, roundIndexSelector,
-    (game, gameState, roundIndex) => {
-        if (game == null || roundIndex == null) {
+export const selectedGameCategoryIndicesSelector = createSelector(selectedGameSelector, selectedGameStateSelector,
+    (game, gameState) => {
+        if (game == null) {
             return null;
         }
 
-        return roundIndex < game.cat_choices.length
-            ? game.cat_choices[roundIndex]
-            : gameState.selectedCategoryIndex;
+        return gameState.selectedCategoryIndex == null
+            ? game.cat_choices
+            : [...game.cat_choices, gameState.selectedCategoryIndex];
+    },
+);
+
+export const selectedGameCategoryIndex = createSelector(selectedGameCategoryIndicesSelector, roundIndexSelector,
+    (catChoices, roundIndex) => {
+        if (catChoices == null || roundIndex == null) {
+            return null;
+        }
+
+        return catChoices[roundIndex];
     },
 );
 
@@ -254,18 +264,15 @@ function getAnswerType(answer: number): AnswerType {
 
 export const selectedGameRoundStateSelector = createSelector(
     selectedGameSelector,
-    selectedGameStateSelector,
+    selectedGameCategoryIndicesSelector,
     selectedGameYourAnswersIncludingPendingSelector,
     selectedGameQuestionsSelector,
     categoriesSelector,
-    (game, gameState, allYourAnswers, questions, categories): IGameRoundState[] => {
-        if (!game) {
+    (game, catChoices, allYourAnswers, questions, categories): IGameRoundState[] => {
+        if (!game || !catChoices) {
             return [];
         }
         const result = [];
-        const catChoices = gameState.selectedCategoryIndex == null
-            ? game.cat_choices
-            : [...game.cat_choices, gameState.selectedCategoryIndex];
         const roundCount = !questions
             ? Math.max(catChoices.length, 6)
             : Math.ceil(questions.length / QUESTIONS_PER_ROUND / CATEGORIES_PER_ROUND);
@@ -401,15 +408,17 @@ export const selectedQuizRoundStateSelector = createSelector(
         }
         const result = [];
         const roundCount = questions.length / QUESTIONS_PER_ROUND;
-        const yourAnswers = [...quiz.your_answers.answers, ...quizState.pendingAnswers].map(a => a.answer);
-        const opponentAnswers = questions.map(q => {
-            return getOpponentAnswerIndexByPercentage(q);
+        const yourAnswers = [...quiz.your_answers.answers, ...quizState.pendingAnswers].map(a => getAnswerType(a.answer));
+        const opponentAnswers = questions.map((q, index) => {
+            return index >= yourAnswers.length
+                ? AnswerType.HIDDEN
+                : getAnswerType(getOpponentAnswerIndexByPercentage(q));
         });
         for (let i = 0; i < roundCount; i++) {
             result.push({
                 category: null,
-                opponentAnswers: opponentAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND).map(getAnswerType),
-                yourAnswers: yourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND).map(getAnswerType),
+                opponentAnswers: opponentAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
+                yourAnswers: yourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
             });
         }
         return result;

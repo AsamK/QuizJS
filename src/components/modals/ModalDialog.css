@@ -1,0 +1,18 @@
+.qd-modal-dialog {
+    background-color: #eceeee;
+    border-radius: 5px;
+    height: max-content;
+    max-height: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    overflow: auto;
+    padding: 10px;
+    width: max-content;
+}
+
+/* Positioning of dialog */
+.qd-modal-dialog {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}

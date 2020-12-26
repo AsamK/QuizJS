@@ -2,17 +2,21 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { GameState } from '../api/IApiGame';
+import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND } from '../consts';
 import { selectGame, startPlaying } from '../redux/actions/ui.actions';
 import { AnswerType } from '../redux/interfaces/IGameRoundState';
-import { userSelector } from '../redux/selectors/entities.selectors';
-import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameMessagesSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, selectedGameShouldUpload, sendMessageLoadingSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
+import { categoriesSelector, userSelector } from '../redux/selectors/entities.selectors';
+import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCategoryIndicesSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameMessagesSelector, selectedGameQuestionsSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, selectedGameShouldUpload, sendMessageLoadingSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
 import { useThunkDispatch } from '../redux/store';
 import { addFriend, createGame, declineGame, giveUpGame, loadGame, removeFriend, sendMessageForGame, uploadRoundForSelectedGame } from '../redux/thunks';
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './Game.css';
 import GameRounds from './GameRounds';
+import { Interrogation } from './Interrogation';
 import { Messaging } from './Messaging';
+import { Modal } from './modals/Modal';
+import { ModalDialog } from './modals/ModalDialog';
 
 function Game(): React.ReactElement {
     const againButtonEnabled = useSelector(selectedGameExistsRunningGameWithPlayer);
@@ -48,6 +52,8 @@ function Game(): React.ReactElement {
         }
     }, [currentGameId]);
 
+    const [showQuestion, setShowQuestion] = React.useState<[number, number] | null>(null);
+
     if (!game) {
         return <div>'Loading game...'</div>;
     }
@@ -60,7 +66,7 @@ function Game(): React.ReactElement {
             <div className="qd-game_points">{yourCorrectAnswers} - {opponentCorrectAnswers}</div>
             <div className="qd-game_user"><Avatar avatarCode={game.opponent.avatar_code} />{game.opponent.name}</div>
         </div>
-        <GameRounds gameRound={gameRound} />
+        <GameRounds gameRound={gameRound} onQuestionClick={(round, question) => setShowQuestion([round, question])} />
         <div className="qd-game_footer">
             {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP && game.state !== GameState.ELAPSED ? null :
                 <Button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}
@@ -118,7 +124,46 @@ function Game(): React.ReactElement {
             sendMessage={message => sendMessage(game.game_id, message)}
             isSending={isSendingMessage}
         />
+        {showQuestion == null ? null :
+            <Modal>
+                <ModalDialog>
+                    <ShowQuestion
+                        round={showQuestion[0]}
+                        question={showQuestion[1]}
+                    ></ShowQuestion>
+                    <Button className="qd-game_close-modal" onClick={() => setShowQuestion(null)}>Schließen</Button>
+                </ModalDialog>
+            </Modal>}
     </div >;
+}
+
+function ShowQuestion({ round, question: questionIndex }: { round: number, question: number }): React.ReactElement | null {
+    const game = useSelector(selectedGameSelector);
+    const gameQuestions = useSelector(selectedGameQuestionsSelector);
+    const gameRound = useSelector(selectedGameRoundStateSelector);
+    const catChoices = useSelector(selectedGameCategoryIndicesSelector);
+    const categories = useSelector(categoriesSelector);
+    if (!game || !gameQuestions || !catChoices || !categories) {
+        return null;
+    }
+
+    const question = gameQuestions[round * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND + catChoices[round] * CATEGORIES_PER_ROUND + questionIndex];
+
+    return <Interrogation
+        answeredTimestamp={0}
+        showSelectedAnswerIndex={gameRound[round].yourAnswers[questionIndex] ?? null}
+        showCorrectAnswerIndex={0}
+        opponentAnswerIndex={gameRound[round].opponentAnswers[questionIndex] ?? null}
+        question={question.question}
+        answers={[question.correct, question.wrong1, question.wrong2, question.wrong3]}
+        category={categories.get(question.cat_id)!}
+        firstShownTimestamp={0}
+        onAnswerClick={() => { }}
+        onContinueClick={() => { }}
+        opponentName={game.opponent.name}
+        timeLimit={0}
+        imageUrl={question.image_url}
+    ></Interrogation>;
 }
 
 export default Game;

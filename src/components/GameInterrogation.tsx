@@ -11,17 +11,16 @@ const mapStateToProps = (state: IAppStore): IInterrogationStateProps => {
     const question = selectedGameQuestionSelector(state);
     const gameState = selectedGameStateSelector(state);
 
-    const answers: [string, string, string, string] = !question
-        ? ['', '', '', '']
-        : [
-            question.correct,
-            question.wrong1,
-            question.wrong2,
-            question.wrong3,
-        ];
     return {
         answeredTimestamp: gameState.answeredTimestamp,
-        answers,
+        answers: !question
+            ? ['', '', '', '']
+            : [
+                question.correct,
+                question.wrong1,
+                question.wrong2,
+                question.wrong3,
+            ],
         category: selectedGameCategory(state),
         firstShownTimestamp: gameState.firstShownTimestamp,
         imageUrl: !question ? undefined : question.image_url,

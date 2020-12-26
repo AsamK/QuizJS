@@ -6,10 +6,11 @@ import './GameRounds.css';
 
 export interface IGameRoundsStateProps {
     gameRound: IGameRoundState[];
+    onQuestionClick: (round: number, question: number) => void;
 }
 
-const QuestionItem = ({ color }: { color: Property.BackgroundColor }) => {
-    return <div className="qd-game-round_question-block" style={{ backgroundColor: color }}>
+const QuestionItem = ({ color, onClick }: { color: Property.BackgroundColor, onClick: () => void }) => {
+    return <div className="qd-game-round_question-block" style={{ backgroundColor: color }} onClick={onClick}>
     </div>;
 };
 
@@ -22,19 +23,29 @@ function getAnswerColor(answers: AnswerType[], index: number): Property.Backgrou
     }
 }
 
-function GameRounds({ gameRound }: IGameRoundsStateProps): React.ReactElement<IGameRoundsStateProps> {
+function isAnswerClickable(answers: AnswerType[], index: number): boolean {
+    switch (answers[index]) {
+        case undefined: return false
+        case AnswerType.CORRECT: return true
+        case AnswerType.HIDDEN: return false
+        case AnswerType.WRONG: return true
+    }
+}
+
+function GameRounds({ gameRound, onQuestionClick }: IGameRoundsStateProps): React.ReactElement<IGameRoundsStateProps> {
     const roundAnswerIndices = [0, 1, 2];
-    const rounds = gameRound.map((round, i) => (
-        <div className="qd-game-round" key={i}>
+    const rounds = gameRound.map((round, r) => (
+        <div className="qd-game-round" key={r}>
             <div className="qd-game-round_questions">
                 {roundAnswerIndices.map(i =>
                     <QuestionItem
                         key={i}
+                        onClick={() => { if (isAnswerClickable(round.yourAnswers, i)) { onQuestionClick(r, i) } }}
                         color={getAnswerColor(round.yourAnswers, i)} />
                 )}
             </div>
             <div className="qd-game-round_info"
-            >Runde:&nbsp;{i + 1}
+            >Runde:&nbsp;{r + 1}
                 <div className="qd-game-round_category">
                     {!round.category ? null : round.category.name}
                 </div>
@@ -43,6 +54,7 @@ function GameRounds({ gameRound }: IGameRoundsStateProps): React.ReactElement<IG
                 {roundAnswerIndices.map(i =>
                     <QuestionItem
                         key={i}
+                        onClick={() => { if (isAnswerClickable(round.opponentAnswers, i)) { onQuestionClick(r, i) } }}
                         color={getAnswerColor(round.opponentAnswers, i)} />
                 )}
             </div>
