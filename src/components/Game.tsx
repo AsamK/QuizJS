@@ -168,7 +168,8 @@ function ShowQuestion({ round, question: questionIndex }: { round: number, quest
         return null;
     }
 
-    const question = gameQuestions[round * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND + catChoices[round] * CATEGORIES_PER_ROUND + questionIndex];
+    const questionOffset = round * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND + catChoices[round] * CATEGORIES_PER_ROUND;
+    const question = gameQuestions[questionOffset + questionIndex];
 
     return <Interrogation
         answeredTimestamp={0}

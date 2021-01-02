@@ -1,5 +1,5 @@
-import React from 'react';
 import { Property } from 'csstype';
+import React from 'react';
 
 import { AnswerType, IGameRoundState } from '../redux/interfaces/IGameRoundState';
 import './GameRounds.css';
@@ -16,19 +16,19 @@ const QuestionItem = ({ color, onClick }: { color: Property.BackgroundColor, onC
 
 function getAnswerColor(answers: AnswerType[], index: number): Property.BackgroundColor {
     switch (answers[index]) {
-        case undefined: return 'lightgray'
-        case AnswerType.CORRECT: return 'green'
-        case AnswerType.HIDDEN: return 'gray'
-        case AnswerType.WRONG: return 'red'
+        case undefined: return 'lightgray';
+        case AnswerType.CORRECT: return 'green';
+        case AnswerType.HIDDEN: return 'gray';
+        case AnswerType.WRONG: return 'red';
     }
 }
 
 function isAnswerClickable(answers: AnswerType[], index: number): boolean {
     switch (answers[index]) {
-        case undefined: return false
-        case AnswerType.CORRECT: return true
-        case AnswerType.HIDDEN: return false
-        case AnswerType.WRONG: return true
+        case undefined: return false;
+        case AnswerType.CORRECT: return true;
+        case AnswerType.HIDDEN: return false;
+        case AnswerType.WRONG: return true;
     }
 }
 
@@ -40,7 +40,7 @@ function GameRounds({ gameRound, onQuestionClick }: IGameRoundsStateProps): Reac
                 {roundAnswerIndices.map(i =>
                     <QuestionItem
                         key={i}
-                        onClick={() => { if (isAnswerClickable(round.yourAnswers, i)) { onQuestionClick(r, i) } }}
+                        onClick={() => { if (isAnswerClickable(round.yourAnswers, i)) { onQuestionClick(r, i); } }}
                         color={getAnswerColor(round.yourAnswers, i)} />
                 )}
             </div>
@@ -54,7 +54,7 @@ function GameRounds({ gameRound, onQuestionClick }: IGameRoundsStateProps): Reac
                 {roundAnswerIndices.map(i =>
                     <QuestionItem
                         key={i}
-                        onClick={() => { if (isAnswerClickable(round.opponentAnswers, i)) { onQuestionClick(r, i) } }}
+                        onClick={() => { if (isAnswerClickable(round.opponentAnswers, i)) { onQuestionClick(r, i); } }}
                         color={getAnswerColor(round.opponentAnswers, i)} />
                 )}
             </div>
