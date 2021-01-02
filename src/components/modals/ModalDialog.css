@@ -1,5 +1,5 @@
 .qd-modal-dialog {
-    background-color: #eceeee;
+    background-color: var(--color-secondary-background);
     border-radius: 5px;
     height: max-content;
     max-height: calc(100% - 20px);

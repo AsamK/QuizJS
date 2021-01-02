@@ -1,5 +1,7 @@
 html {
   height: 100%;
+  background-color: var(--color-background);
+  color: var(--color-default);
 }
 
 body {
@@ -13,4 +15,22 @@ body {
 #content {
   display: flex;
   height: 100%;
+}
+
+:root {
+    --color-primary: #2a3db8;
+    --color-default: #393f3f;
+    --color-background: #fff;
+    --color-secondary-background: #eceeee;
+    --color-tertiary-background: gainsboro;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-primary: #2a3db8;
+        --color-default: #ebdbb2;
+        --color-background: #121212;
+        --color-secondary-background: #1d1e20;
+        --color-tertiary-background: #555;
+    }
 }

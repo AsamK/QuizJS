@@ -8,10 +8,21 @@
 
 .qd-new-game_user,
 .qd-new-game_friend {
-    background-color: lightblue;
+    background-color: #2a3db8;
     cursor: pointer;
     margin-bottom: 1px;
     padding: 5px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, .2);
+    color: #ddd;
+    margin-bottom: 5px;
+    padding: 10px;
+}
+
+.qd-new-game_friend-email {
+    color: gray;
+    font-size: .8em;
+    margin-left: 10px;
 }
 
 .qd-new-game_search-user {

@@ -27,6 +27,7 @@
 }
 
 .qd-game-round_question-block {
+    cursor: pointer;
     flex: auto;
     margin-right: 3px;
 }

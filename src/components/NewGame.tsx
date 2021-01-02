@@ -35,7 +35,7 @@ function NewGame(): React.ReactElement {
             className="qd-new-game_friend"
             onClick={() => onCreateGame(friend.user_id)}
         >
-            <Avatar avatarCode={friend.avatar_code} /> {friend.name} {friend.email}
+            <Avatar avatarCode={friend.avatar_code} /> {friend.name}<span className="qd-new-game_friend-email">{friend.email}</span>
         </div>,
     ), [friends, onCreateGame]);
 
