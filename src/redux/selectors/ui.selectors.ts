@@ -143,10 +143,11 @@ export const selectedGameShouldUpload = createSelector(
 export const selectedGameExistsRunningGameWithPlayer = createSelector(selectedGameSelector, gamesSelector,
     (game, games) => {
         if (game !== null && games.findIndex(g =>
-            g.opponent.user_id === game.opponent.user_id &&
-            g.state !== GameState.FINISHED &&
-            g.state !== GameState.ELAPSED &&
-            g.state !== GameState.GAVE_UP) >= 0) {
+            g.opponent.user_id === game.opponent.user_id
+            && g.state !== GameState.FINISHED
+            && g.state !== GameState.ELAPSED
+            && g.state !== GameState.GAVE_UP) >= 0
+        ) {
             return true;
         }
         return false;

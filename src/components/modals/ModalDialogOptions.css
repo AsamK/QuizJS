@@ -1,0 +1,20 @@
+.qd-modal-dialog-options_title {
+    font-size: 1.1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.qd-modal-dialog-options_text {
+    margin-bottom: 20px;
+}
+
+.qd-modal-dialog-options_options {
+    display: flex;
+    flex-direction: column;
+}
+
+.qd-modal-dialog-options_option {
+    margin-bottom: 10px;
+}

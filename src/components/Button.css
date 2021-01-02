@@ -16,6 +16,15 @@
     padding-left: 26px;
 }
 
+.qd-button_highlighted {
+    border: 3px solid greenyellow;
+}
+
+.qd-button_dangerous {
+    border: 3px solid red;
+    color: red;
+}
+
 .qd-button[disabled] {
     background-color: #ddd;
     color: #aaa;

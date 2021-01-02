@@ -17,9 +17,10 @@ import { Interrogation } from './Interrogation';
 import { Messaging } from './Messaging';
 import { Modal } from './modals/Modal';
 import { ModalDialog } from './modals/ModalDialog';
+import { ModalDialogOptions } from './modals/ModalDialogOptions';
 
 function Game(): React.ReactElement {
-    const againButtonEnabled = useSelector(selectedGameExistsRunningGameWithPlayer);
+    const againButtonDisabled = useSelector(selectedGameExistsRunningGameWithPlayer);
     const game = useSelector(selectedGameSelector);
     const currentGameId = useSelector(selectedGameIdSelector);
     const gameRound = useSelector(selectedGameRoundStateSelector);
@@ -53,6 +54,7 @@ function Game(): React.ReactElement {
     }, [currentGameId]);
 
     const [showQuestion, setShowQuestion] = React.useState<[number, number] | null>(null);
+    const [showPlayAgain, setShowPlayAgain] = React.useState(true);
 
     if (!game) {
         return <div>'Loading game...'</div>;
@@ -71,7 +73,7 @@ function Game(): React.ReactElement {
             {game.state !== GameState.FINISHED && game.state !== GameState.GAVE_UP && game.state !== GameState.ELAPSED ? null :
                 <Button className="qd-game_again" onClick={() => onNewGame(game.opponent.user_id)}
                     showLoadingIndicator={isStartingNewGame}
-                    disabled={isStartingNewGame || againButtonEnabled}
+                    disabled={isStartingNewGame || againButtonDisabled}
                 >Nochmal</Button>
             }
             {game.state !== GameState.ACTIVE && game.state !== GameState.REQUESTED && game.state !== GameState.NEW_RANDOM_GAME ? null :
@@ -132,6 +134,25 @@ function Game(): React.ReactElement {
                         question={showQuestion[1]}
                     ></ShowQuestion>
                     <Button className="qd-game_close-modal" onClick={() => setShowQuestion(null)}>Schließen</Button>
+                </ModalDialog>
+            </Modal>}
+        {!showPlayAgain || againButtonDisabled ? null :
+            <Modal>
+                <ModalDialog>
+                    <ModalDialogOptions
+                        title="Spiel beendet"
+                        text={`Nochmal gegen ${game.opponent.name} spielen?`}
+                        options={[
+                            'Nein',
+                            { text: 'Nochmal spielen', highlighted: true }
+                        ]}
+                        onOptionClick={e => {
+                            if (e === 1) {
+                                onNewGame(game.opponent.user_id);
+                            }
+                            setShowPlayAgain(false);
+                        }}
+                    />
                 </ModalDialog>
             </Modal>}
     </div >;
