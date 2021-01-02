@@ -1,6 +1,5 @@
 import 'map.prototype.tojson'; // TODO only import for development
 import 'normalize.css';
-import OfflinePluginRuntime from 'offline-plugin/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { hot } from 'react-hot-loader';
@@ -13,30 +12,35 @@ import { initialGameState, initialQuizState } from './redux/actions/ui.actions';
 import { createAppStore } from './redux/store';
 
 if (process.env.NODE_ENV === 'production') {
-  OfflinePluginRuntime.install({
-    onUpdating: () => {
-      // do something
-    },
-    // tslint:disable-next-line:object-literal-sort-keys
-    onUpdateReady: () => {
-      // Tells to new SW to take control immediately
-      OfflinePluginRuntime.applyUpdate();
-    },
-    onUpdated: () => {
-      // Reload the webpage to load into the new version
-      // TODO: show an update notification with button, or reload on user navigation
-      window.location.reload();
-    },
-    onUpdateFailed: () => {
-      // do something
-    },
-  });
+  let serviceWorkerRegistered = false;
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => {
+          serviceWorkerRegistered = true;
+          reg.addEventListener('updatefound', () => {
+            console.info('[SW] Update found');
+            const newSW = reg.installing;
+            newSW?.addEventListener('statechange', e => {
+              if (newSW?.state === 'installed') {
+                console.info('[SW] Reloading to update');
+                window.location.reload();
+              }
+            });
+          });
+        })
+        .catch(() => {
+          // Failed to register service worker, maybe blocked by user agent
+          serviceWorkerRegistered = false;
+        });
+    });
 
-  document.addEventListener('visibilitychange', e => {
-    if (!document.hidden) {
-      OfflinePluginRuntime.update();
-    }
-  });
+    document.addEventListener('visibilitychange', async () => {
+      if (serviceWorkerRegistered && !document.hidden) {
+        (await navigator.serviceWorker.getRegistration())?.update();
+      }
+    });
+  }
 }
 
 const store = createAppStore();

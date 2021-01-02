@@ -4,11 +4,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const OfflinePlugin = require('offline-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { InjectManifest } = require('workbox-webpack-plugin');
 
 module.exports = function (env, argv) {
     const isProduction = argv.mode === 'production';
+    const createSourceMaps = !isProduction;
 
     return {
         output: {
@@ -17,7 +18,7 @@ module.exports = function (env, argv) {
         },
 
         // Enable sourcemaps for debugging webpack's output.
-        devtool: 'source-map',
+        devtool: createSourceMaps && 'source-map',
 
         resolve: {
             // Add '.ts' and '.tsx' as resolvable extensions.
@@ -53,7 +54,7 @@ module.exports = function (env, argv) {
                     test: /\.css$/,
                     use: [
                         isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
-                        'css-loader',
+                        { loader: 'css-loader', options: { sourceMap: createSourceMaps } },
                         {
                             loader: 'postcss-loader',
                             options: {
@@ -61,24 +62,8 @@ module.exports = function (env, argv) {
                                     plugins: [
                                         require.resolve('autoprefixer'),
                                     ]
-                                }
-                            }
-                        },
-                    ],
-                },
-                {
-                    test: /\.scss$/,
-                    use: [
-                        isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
-                        'css-loader',
-                        {
-                            loader: 'postcss-loader',
-                            options: {
-                                postcssOptions: {
-                                    plugins: [
-                                        require.resolve('autoprefixer'),
-                                    ]
-                                }
+                                },
+                                sourceMap: createSourceMaps,
                             }
                         },
                     ],
@@ -95,7 +80,7 @@ module.exports = function (env, argv) {
                     use: [
                         {
                             loader: 'html-loader',
-                            options: { minimize: true }
+                            options: { minimize: isProduction }
                         }
                     ]
                 },
@@ -114,37 +99,11 @@ module.exports = function (env, argv) {
                 [
                     new CleanWebpackPlugin(),
                     new MiniCssExtractPlugin({
-                        filename: '[name].css',
-                        chunkFilename: '[name].[contenthash].css'
+                        filename: isProduction ? '[name].[contenthash].css' : '[name].css',
                     }),
-                    new webpack.HashedModuleIdsPlugin(),
-                    new OfflinePlugin({
-                        excludes: [
-                            '**/*.map',
-                            '**/*.png',
-                        ],
-                        autoUpdate: true,
-                        ServiceWorker: {
-                            cacheName: 'qd',
-                            events: true,
-                        },
-                        version: '[hash]',
-                        caches: {
-                            main: [
-                                'index.html',
-                                '*.webmanifest',
-                                'runtime~*',
-                                'main.*',
-                                'vendors~main.*',
-                            ],
-                            additional: [
-                                ':rest:',
-                            ],
-                            optional: [
-                                'locale-data-*',
-                                'messages-*',
-                            ],
-                        },
+                    new InjectManifest({
+                        swSrc: './src/sw.ts',
+                        swDest: 'sw.js',
                     }),
                 ] : [
                     new webpack.HotModuleReplacementPlugin()
@@ -157,18 +116,19 @@ module.exports = function (env, argv) {
             runtimeChunk: true,
             minimizer: [
                 new TerserPlugin({
-                    cache: true,
                     parallel: true,
-                    sourceMap: true, // set to true if you want JS source maps
+                    terserOptions: {
+                        sourceMap: createSourceMaps,
+                    }
                 }),
-                new OptimizeCSSAssetsPlugin({})
+                new CssMinimizerPlugin({
+                    sourceMap: createSourceMaps,
+                }),
             ]
         },
 
         devServer: {
-            inline: true,
-            contentBase: 'dist',
-            hot: true,
+            static: false,
         }
     }
 }
