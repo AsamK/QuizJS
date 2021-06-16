@@ -121,9 +121,7 @@ module.exports = function (env, argv) {
                         sourceMap: createSourceMaps,
                     }
                 }),
-                new CssMinimizerPlugin({
-                    sourceMap: createSourceMaps,
-                }),
+                new CssMinimizerPlugin(),
             ]
         },
 

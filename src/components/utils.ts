@@ -8,7 +8,7 @@ import React, { DependencyList, EffectCallback } from 'react';
  */
 export function useRefresh(effect: EffectCallback, deps?: DependencyList): void {
     React.useEffect(() => {
-        let userCleanup: void | (() => void | undefined);
+        let userCleanup: ReturnType<EffectCallback>;
         function handleVisibilityChange(): void {
             if (!document.hidden) {
                 userCleanup = effect();

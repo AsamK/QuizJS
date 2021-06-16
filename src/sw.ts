@@ -5,7 +5,7 @@ import { } from '.';
 
 type ManifestEntry = {
     url: string;
-    revision: string;
+    revision: string | null;
 };
 
 const INJECTED_MANIFEST: ManifestEntry[] = (self as any).__WB_MANIFEST;
