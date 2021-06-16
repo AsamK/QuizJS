@@ -260,7 +260,13 @@ export const selectedGameCategory = createSelector(
 );
 
 function getAnswerType(answer: number): AnswerType {
-    return answer === 0 ? AnswerType.CORRECT : AnswerType.WRONG;
+    switch (answer) {
+        case 0: return AnswerType.CORRECT;
+        case 1: return AnswerType.WRONG1;
+        case 2: return AnswerType.WRONG2;
+        case 3: return AnswerType.WRONG3;
+        default: throw Error("Illegal answer index")
+    }
 }
 
 export const selectedGameRoundStateSelector = createSelector(

@@ -19,7 +19,9 @@ function getAnswerColor(answers: AnswerType[], index: number): Property.Backgrou
         case undefined: return 'lightgray';
         case AnswerType.CORRECT: return 'green';
         case AnswerType.HIDDEN: return 'gray';
-        case AnswerType.WRONG: return 'red';
+        case AnswerType.WRONG1:
+        case AnswerType.WRONG2:
+        case AnswerType.WRONG3: return 'red';
     }
 }
 
@@ -28,7 +30,9 @@ function isAnswerClickable(answers: AnswerType[], index: number): boolean {
         case undefined: return false;
         case AnswerType.CORRECT: return true;
         case AnswerType.HIDDEN: return false;
-        case AnswerType.WRONG: return true;
+        case AnswerType.WRONG1:
+        case AnswerType.WRONG2:
+        case AnswerType.WRONG3: return true;
     }
 }
 
