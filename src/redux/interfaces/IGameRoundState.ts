@@ -6,7 +6,8 @@ export enum AnswerType {
     WRONG1 = 1,
     WRONG2 = 2,
     WRONG3 = 3,
-    INVALID = 4,
+    TIME_ELAPSED = 9,
+    INVALID = 10,
 }
 
 export interface IGameRoundState {

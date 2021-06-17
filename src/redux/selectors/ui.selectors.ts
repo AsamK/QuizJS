@@ -265,6 +265,7 @@ function getAnswerType(answer: number): AnswerType {
         case 1: return AnswerType.WRONG1;
         case 2: return AnswerType.WRONG2;
         case 3: return AnswerType.WRONG3;
+        case 9: return AnswerType.TIME_ELAPSED;
         default: return AnswerType.INVALID;
     }
 }
