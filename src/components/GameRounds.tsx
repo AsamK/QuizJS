@@ -22,6 +22,7 @@ function getAnswerColor(answers: AnswerType[], index: number): Property.Backgrou
         case AnswerType.WRONG1:
         case AnswerType.WRONG2:
         case AnswerType.WRONG3: return 'red';
+        case AnswerType.INVALID: return 'blue';
     }
 }
 
@@ -32,7 +33,8 @@ function isAnswerClickable(answers: AnswerType[], index: number): boolean {
         case AnswerType.HIDDEN: return false;
         case AnswerType.WRONG1:
         case AnswerType.WRONG2:
-        case AnswerType.WRONG3: return true;
+        case AnswerType.WRONG3:
+        case AnswerType.INVALID: return true;
     }
 }
 

@@ -6,6 +6,7 @@ export enum AnswerType {
     WRONG1 = 1,
     WRONG2 = 2,
     WRONG3 = 3,
+    INVALID = 4,
 }
 
 export interface IGameRoundState {

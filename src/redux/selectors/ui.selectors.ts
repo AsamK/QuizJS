@@ -265,7 +265,7 @@ function getAnswerType(answer: number): AnswerType {
         case 1: return AnswerType.WRONG1;
         case 2: return AnswerType.WRONG2;
         case 3: return AnswerType.WRONG3;
-        default: throw Error("Illegal answer index")
+        default: return AnswerType.INVALID;
     }
 }
 
