@@ -22,7 +22,7 @@ function QuizGame(): React.ReactElement {
 
     const dispatch = useThunkDispatch();
     const onBack = React.useCallback(() => dispatch(selectQuiz(null)), [dispatch]);
-    const onPlay = React.useCallback(quizId => dispatch(startPlayingQuiz(quizId, Date.now())), [dispatch]);
+    const onPlay = React.useCallback((quizId: string) => dispatch(startPlayingQuiz(quizId, Date.now())), [dispatch]);
 
     const [showQuestion, setShowQuestion] = React.useState<[number, number] | null>(null);
 

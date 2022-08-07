@@ -90,9 +90,9 @@ function Start(): React.ReactElement {
     const user = useSelector(userSelector);
 
     const dispatch = useThunkDispatch();
-    const onGameSelected = React.useCallback(gameId => dispatch(selectGame(gameId)), [dispatch]);
+    const onGameSelected = React.useCallback((gameId: number | null) => dispatch(selectGame(gameId)), [dispatch]);
     const onNewGame = React.useCallback(() => dispatch(showCreateNewGame()), [dispatch]);
-    const onQuizSelected = React.useCallback(quizId => dispatch(selectQuiz(quizId)), [dispatch]);
+    const onQuizSelected = React.useCallback((quizId: string | null) => dispatch(selectQuiz(quizId)), [dispatch]);
     const onShowProfile = React.useCallback(() => dispatch(showProfile()), [dispatch]);
 
     const requestedGames = games.filter(game => game.your_turn && game.state === GameState.REQUESTED)

@@ -106,7 +106,6 @@ module.exports = function (env, argv) {
                         swDest: 'sw.js',
                     }),
                 ] : [
-                    new webpack.HotModuleReplacementPlugin()
                 ]),
         ],
         optimization: {

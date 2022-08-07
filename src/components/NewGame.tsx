@@ -17,9 +17,9 @@ function NewGame(): React.ReactElement {
     const dispatch = useThunkDispatch();
 
     const onBack = React.useCallback(() => dispatch(showCreateNewGame(false)), [dispatch]);
-    const onCreateGame = React.useCallback(userId => dispatch(createGame(userId)), [dispatch]);
+    const onCreateGame = React.useCallback((userId: string) => dispatch(createGame(userId)), [dispatch]);
     const onRandomGame = React.useCallback(() => dispatch(createRandomGame()), [dispatch]);
-    const onSearchUser = React.useCallback(name => dispatch(searchUser(name)), [dispatch]);
+    const onSearchUser = React.useCallback((name: string) => dispatch(searchUser(name)), [dispatch]);
 
     const onSearchUserDebounced = React.useCallback(debounce(
         (name: string) => onSearchUser(name)

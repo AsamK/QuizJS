@@ -2,7 +2,6 @@ import 'map.prototype.tojson'; // TODO only import for development
 import 'normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { hot } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 
 import App from './components/App';
@@ -100,9 +99,7 @@ const ReduxApp = () => <Provider store={store}>
   <App />
 </Provider>;
 
-const HotloadableApp = process.env.NODE_ENV !== 'production' ? hot(module)(ReduxApp) : ReduxApp;
-
 ReactDOM.render(
-  <HotloadableApp />,
+  <ReduxApp />,
   document.getElementById('content'),
 );

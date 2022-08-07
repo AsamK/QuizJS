@@ -36,15 +36,15 @@ function Game(): React.ReactElement {
     const user = useSelector(userSelector);
 
     const dispatch = useThunkDispatch();
-    const onAddFriend = React.useCallback((userId, name) => dispatch(addFriend(userId, name)), [dispatch]);
+    const onAddFriend = React.useCallback((userId:string, name:string) => dispatch(addFriend(userId, name)), [dispatch]);
     const onBack = React.useCallback(() => dispatch(selectGame(null)), [dispatch]);
-    const onDeclineGame = React.useCallback(gameId => dispatch(declineGame(gameId)), [dispatch]);
-    const onGiveUp = React.useCallback(gameId => dispatch(giveUpGame(gameId)), [dispatch]);
-    const onNewGame = React.useCallback(userId => dispatch(createGame(userId)), [dispatch]);
-    const onPlay = React.useCallback(gameId => dispatch(startPlaying(gameId, Date.now())), [dispatch]);
-    const onRemoveFriend = React.useCallback(userId => dispatch(removeFriend(userId)), [dispatch]);
-    const requestGame = React.useCallback(gameId => dispatch(loadGame(gameId)), [dispatch]);
-    const sendMessage = React.useCallback((gameId, message) => dispatch(sendMessageForGame(gameId, message)), [dispatch]);
+    const onDeclineGame = React.useCallback((gameId: number) => dispatch(declineGame(gameId)), [dispatch]);
+    const onGiveUp = React.useCallback((gameId: number) => dispatch(giveUpGame(gameId)), [dispatch]);
+    const onNewGame = React.useCallback((userId: string) => dispatch(createGame(userId)), [dispatch]);
+    const onPlay = React.useCallback((gameId: number) => dispatch(startPlaying(gameId, Date.now())), [dispatch]);
+    const onRemoveFriend = React.useCallback((userId: string) => dispatch(removeFriend(userId)), [dispatch]);
+    const requestGame = React.useCallback((gameId: number) => dispatch(loadGame(gameId)), [dispatch]);
+    const sendMessage = React.useCallback((gameId: number, message: string) => dispatch(sendMessageForGame(gameId, message)), [dispatch]);
     const uploadGameState = React.useCallback(() => dispatch(uploadRoundForSelectedGame()), [dispatch]);
 
     React.useEffect(() => {
