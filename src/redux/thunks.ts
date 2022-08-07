@@ -140,8 +140,8 @@ function handleRequest<
         });
 }
 
-export function login(userName: string, password: string): AppThunkAction {
-    return (dispatch, getState, { requestFn }) => {
+export function login(userName: string, password: string): AppThunkAction<Promise<unknown>> {
+    return (dispatch, getState, { requestFn }) =>
         handleRequest(
             dispatch,
             () =>
@@ -159,7 +159,6 @@ export function login(userName: string, password: string): AppThunkAction {
             loginAction,
             undefined,
         );
-    };
 }
 
 export function loadData(): AppThunkAction {

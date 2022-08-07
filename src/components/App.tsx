@@ -61,7 +61,7 @@ function App(): React.ReactElement {
             <div>
                 <Login
                     onLogin={(name, password) => {
-                        dispatch(login(name, password));
+                        dispatch(login(name, password)).catch(() => alert('Failed to contact the server.'));
                     }}
                 />
                 <Button onClick={() => setCreateNewAccount(true)}>Neues Konto erstellen</Button>
