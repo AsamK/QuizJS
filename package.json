@@ -3,7 +3,6 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "prettier": "2.7.x",
         "react": "18.2.x",
         "react-dom": "18.2.x",
         "react-redux": "8.0.x",
@@ -51,6 +50,7 @@
         "normalize.css": "8.0.x",
         "postcss": "8.4.x",
         "postcss-loader": "7.0.x",
+        "prettier": "2.7.x",
         "source-map-loader": "4.0.x",
         "style-loader": "3.3.x",
         "stylelint": "14.9.x",
