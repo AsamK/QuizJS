@@ -1,5 +1,3 @@
-// TODO improve json casts
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { toFormUrlencoded } from '../utils/utils';
 
 import type { IApiBooleanResult } from './IApiBooleanResult';
@@ -31,63 +29,62 @@ export type BackendRequestFn = (
     options: IRequestOptions,
 ) => Promise<Response>;
 
-export function apiLogin(
+export async function apiLogin(
     requestFn: BackendRequestFn,
     userName: string,
     passwordSalt: string,
     password: string,
-): Promise<IApiPopup | { cookie: string | null; body: IApiStateResponse }> {
+): Promise<IApiPopup | { cookie: string; body: IApiStateResponse }> {
     const passwordHash = getPasswordHash(passwordSalt, password);
     const body = toFormUrlencoded({
         name: userName,
         pwd: passwordHash,
     });
-    return requestFn('POST', 'users/login', { body, contentType: CONTENT_TYPE_URLENCODED }).then(
-        response =>
-            response.json().then((responseBody: IApiPopup | IApiStateResponse) => {
-                if ('logged_in' in responseBody) {
-                    return {
-                        body: responseBody,
-                        cookie:
-                            response.headers.get('Set-Cookie') ||
-                            response.headers.get('X-Set-Cookie'),
-                    };
-                }
-                return responseBody;
-            }),
-    );
+    const response = await requestFn('POST', 'users/login', {
+        body,
+        contentType: CONTENT_TYPE_URLENCODED,
+    });
+
+    const responseBody = (await response.json()) as IApiPopup | IApiStateResponse;
+    if ('logged_in' in responseBody) {
+        return {
+            body: responseBody,
+            cookie:
+                response.headers.get('Set-Cookie') || response.headers.get('X-Set-Cookie') || '',
+        };
+    }
+    return responseBody;
 }
 
-export function apiCreateUser(
+export async function apiCreateUser(
     requestFn: BackendRequestFn,
     userName: string,
     email: string,
     passwordSalt: string,
     password: string,
-): Promise<IApiPopup | { cookie: string | null; body: IApiStateResponse }> {
+): Promise<IApiPopup | { cookie: string; body: IApiStateResponse }> {
     const passwordHash = getPasswordHash(passwordSalt, password);
     const body = toFormUrlencoded({
         email,
         name: userName,
         pwd: passwordHash,
     });
-    return requestFn('POST', 'users/create', { body, contentType: CONTENT_TYPE_URLENCODED }).then(
-        response =>
-            response.json().then((responseBody: IApiPopup | IApiStateResponse) => {
-                if ('logged_in' in responseBody) {
-                    return {
-                        body: responseBody,
-                        cookie:
-                            response.headers.get('Set-Cookie') ||
-                            response.headers.get('X-Set-Cookie'),
-                    };
-                }
-                return responseBody;
-            }),
-    );
+    const response = await requestFn('POST', 'users/create', {
+        body,
+        contentType: CONTENT_TYPE_URLENCODED,
+    });
+    const responseBody = (await response.json()) as IApiPopup | IApiStateResponse;
+    if ('logged_in' in responseBody) {
+        return {
+            body: responseBody,
+            cookie:
+                response.headers.get('Set-Cookie') || response.headers.get('X-Set-Cookie') || '',
+        };
+    }
+    return responseBody;
 }
 
-export function apiUpdateUser(
+export async function apiUpdateUser(
     requestFn: BackendRequestFn,
     userName: string,
     email: string,
@@ -100,26 +97,28 @@ export function apiUpdateUser(
         name: userName,
         pwd: passwordHash,
     });
-    return requestFn('POST', 'users/update_user', {
+    const response = await requestFn('POST', 'users/update_user', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiPopup | { user: IApiUser };
 }
 
-export function apiUpdateAvatar(
+export async function apiUpdateAvatar(
     requestFn: BackendRequestFn,
     avatarCode: string,
 ): Promise<IApiBooleanResult> {
     const body = toFormUrlencoded({
         avatar_code: avatarCode,
     });
-    return requestFn('POST', 'users/update_avatar', {
+    const response = await requestFn('POST', 'users/update_avatar', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiBooleanResult;
 }
 
-export function apiAddDeviceTokenAndroid(
+export async function apiAddDeviceTokenAndroid(
     requestFn: BackendRequestFn,
     deviceToken: string,
     deviceType: string,
@@ -128,54 +127,61 @@ export function apiAddDeviceTokenAndroid(
         device_token: deviceToken,
         device_type: deviceType,
     });
-    return requestFn('POST', 'users/add_device_token_android', {
+    const response = await requestFn('POST', 'users/add_device_token_android', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiBooleanResult;
 }
 
-export function apiRequestState(requestFn: BackendRequestFn): Promise<IApiStateResponse> {
-    return requestFn('POST', 'users/current_user_games_m', {}).then(response => response.json());
+export async function apiRequestState(requestFn: BackendRequestFn): Promise<IApiStateResponse> {
+    const response = await requestFn('POST', 'users/current_user_games_m', {});
+    return (await response.json()) as IApiStateResponse;
 }
 
-export function apiRequestGames(
+export async function apiRequestGames(
     requestFn: BackendRequestFn,
     gameIds: number[],
 ): Promise<IApiGamesResponse> {
     const body = toFormUrlencoded({
         gids: '[' + gameIds.join(',') + ']',
     });
-    return requestFn('POST', 'games/short_games', {
+    const response = await requestFn('POST', 'games/short_games', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiGamesResponse;
 }
 
-export function apiRequestGame(
+export async function apiRequestGame(
     requestFn: BackendRequestFn,
     gameId: number,
 ): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         gids: String(gameId),
     });
-    return requestFn('POST', 'games_f', { body, contentType: CONTENT_TYPE_URLENCODED }).then(
-        response => response.json(),
-    );
+    const response = await requestFn('POST', 'games_f', {
+        body,
+        contentType: CONTENT_TYPE_URLENCODED,
+    });
+    return (await response.json()) as IApiGameResponse;
 }
 
-export function apiRequestGameM(
+export async function apiRequestGameM(
     requestFn: BackendRequestFn,
     gameId: number,
 ): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         gids: String(gameId),
     });
-    return requestFn('POST', 'games_m', { body, contentType: CONTENT_TYPE_URLENCODED }).then(
-        response => response.json(),
-    );
+    const response = await requestFn('POST', 'games_m', {
+        body,
+        contentType: CONTENT_TYPE_URLENCODED,
+    });
+    return (await response.json()) as IApiGameResponse;
 }
 
-export function apiCreateGame(
+export async function apiCreateGame(
     requestFn: BackendRequestFn,
     opponentId: string,
     mode = 0,
@@ -186,26 +192,28 @@ export function apiCreateGame(
         opponent_id: opponentId,
         was_recommended: String(wasRecommended),
     });
-    return requestFn('POST', 'games/create_game', {
+    const response = await requestFn('POST', 'games/create_game', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiGameResponse;
 }
 
-export function apiCreateRandomGame(
+export async function apiCreateRandomGame(
     requestFn: BackendRequestFn,
     mode = 0,
 ): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         mode: String(mode),
     });
-    return requestFn('POST', 'games/start_random_game', {
+    const response = await requestFn('POST', 'games/start_random_game', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiGameResponse;
 }
 
-export function apiDeclineGame(
+export async function apiDeclineGame(
     requestFn: BackendRequestFn,
     gameId: number,
 ): Promise<IApiBooleanResult> {
@@ -213,24 +221,28 @@ export function apiDeclineGame(
         accept: '0',
         game_id: String(gameId),
     });
-    return requestFn('POST', 'games/accept', { body, contentType: CONTENT_TYPE_URLENCODED }).then(
-        response => response.json(),
-    );
+    const response = await requestFn('POST', 'games/accept', {
+        body,
+        contentType: CONTENT_TYPE_URLENCODED,
+    });
+    return (await response.json()) as IApiBooleanResult;
 }
 
-export function apiGiveUpGame(
+export async function apiGiveUpGame(
     requestFn: BackendRequestFn,
     gameId: number,
 ): Promise<IApiGameResponse> {
     const body = toFormUrlencoded({
         game_id: String(gameId),
     });
-    return requestFn('POST', 'games/give_up', { body, contentType: CONTENT_TYPE_URLENCODED }).then(
-        response => response.json(),
-    );
+    const response = await requestFn('POST', 'games/give_up', {
+        body,
+        contentType: CONTENT_TYPE_URLENCODED,
+    });
+    return (await response.json()) as IApiGameResponse;
 }
 
-export function apiSendMessage(
+export async function apiSendMessage(
     requestFn: BackendRequestFn,
     gameId: number,
     text: string,
@@ -239,49 +251,56 @@ export function apiSendMessage(
         game_id: String(gameId),
         text,
     });
-    return requestFn('POST', 'games/send_message', {
+    const response = await requestFn('POST', 'games/send_message', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiSendMessageResponse;
 }
 
-export function apiRemoveFriend(
+export async function apiRemoveFriend(
     requestFn: BackendRequestFn,
     userId: string,
 ): Promise<{ removed_id: string }> {
     const body = toFormUrlencoded({
         friend_id: userId,
     });
-    return requestFn('POST', 'users/remove_friend', {
+    const response = await requestFn('POST', 'users/remove_friend', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as { removed_id: string };
 }
 
-export function apiAddFriend(requestFn: BackendRequestFn, userId: string): Promise<IApiPopup> {
+export async function apiAddFriend(
+    requestFn: BackendRequestFn,
+    userId: string,
+): Promise<IApiPopup> {
     const body = toFormUrlencoded({
         friend_id: userId,
     });
-    return requestFn('POST', 'users/add_friend', {
+    const response = await requestFn('POST', 'users/add_friend', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiPopup;
 }
 
-export function apiFindUser(
+export async function apiFindUser(
     requestFn: BackendRequestFn,
     searchName: string,
 ): Promise<IApiUserSearchResponse | IApiPopup> {
     const body = toFormUrlencoded({
         opponent_name: searchName,
     });
-    return requestFn('POST', 'users/find_user', {
+    const response = await requestFn('POST', 'users/find_user', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiUserSearchResponse | IApiPopup;
 }
 
-export function apiRequestUploadRound(
+export async function apiRequestUploadRound(
     requestFn: BackendRequestFn,
     gameId: number,
     isImageQuestionDisabled: 0 | 1,
@@ -296,22 +315,24 @@ export function apiRequestUploadRound(
         is_image_question_disabled: String(isImageQuestionDisabled),
         question_types: '[' + questionTypes.join(',') + ']',
     });
-    return requestFn('POST', 'games/upload_round_answers', {
+    const response = await requestFn('POST', 'games/upload_round_answers', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiGameResponse;
 }
 
-export function apiRequestQuiz(
+export async function apiRequestQuiz(
     requestFn: BackendRequestFn,
     quizId: string,
 ): Promise<IApiQuizResponse> {
-    return requestFn('GET', 'quizzes/', {
+    const response = await requestFn('GET', 'quizzes/', {
         queryParams: { quiz_id: quizId },
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiQuizResponse;
 }
 
-export function apiRequestUploadQuizRound(
+export async function apiRequestUploadQuizRound(
     requestFn: BackendRequestFn,
     quizId: string,
     answers: IApiQuizAnswer[],
@@ -321,11 +342,12 @@ export function apiRequestUploadQuizRound(
         answer_dicts: JSON.stringify(answers),
         give_up: giveUp ? '1' : '0',
     });
-    return requestFn('POST', 'quizzes/my_answers', {
+    const response = await requestFn('POST', 'quizzes/my_answers', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
         queryParams: { quiz_id: quizId },
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiQuizResponse;
 }
 export interface IApiDailyChallengeQuestion {
     type: 'text';
@@ -359,13 +381,14 @@ export interface IApiDailyChallengeResponse {
     };
 }
 
-export function apiRequestDailyChallenge(
+export async function apiRequestDailyChallenge(
     requestFn: BackendRequestFn,
     challengeSize: number,
 ): Promise<IApiDailyChallengeResponse> {
-    return requestFn('GET', 'games/dailyChallenge', {
+    const response = await requestFn('GET', 'games/dailyChallenge', {
         queryParams: { challengeSize: challengeSize.toString() },
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiDailyChallengeResponse;
 }
 
 export interface IApiDailyChallengeUploadResponse {
@@ -375,7 +398,7 @@ export interface IApiDailyChallengeUploadResponse {
     topList: IApiRatingUser[];
 }
 
-export function apiUploadDailyChallenge(
+export async function apiUploadDailyChallenge(
     requestFn: BackendRequestFn,
     score: number,
 ): Promise<IApiDailyChallengeUploadResponse> {
@@ -383,10 +406,11 @@ export function apiUploadDailyChallenge(
         facebook_ids: '[]',
         score: score.toString(),
     });
-    return requestFn('POST', 'games/submitBlitzGame', {
+    const response = await requestFn('POST', 'games/submitBlitzGame', {
         body,
         contentType: CONTENT_TYPE_URLENCODED,
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiDailyChallengeUploadResponse;
 }
 
 export interface IApiRatingUser extends IApiOpponent {
@@ -397,24 +421,27 @@ export interface IApiTopListRatingResponse {
     users: IApiRatingUser[];
 }
 
-export function apiRequestTopListRating(
+export async function apiRequestTopListRating(
     requestFn: BackendRequestFn,
     mode = 2,
 ): Promise<IApiTopListRatingResponse> {
-    return requestFn('GET', 'users/top_list_rating', {
+    const response = await requestFn('GET', 'users/top_list_rating', {
         queryParams: {
             fids: '[]',
             mode: mode.toString(),
         },
-    }).then(response => response.json());
+    });
+    return (await response.json()) as IApiTopListRatingResponse;
 }
 
-export function apiRequestStats(requestFn: BackendRequestFn): Promise<IApiStats> {
-    return requestFn('GET', 'stats/my_stats', {}).then(response => response.json());
+export async function apiRequestStats(requestFn: BackendRequestFn): Promise<IApiStats> {
+    const response = await requestFn('GET', 'stats/my_stats', {});
+    return (await response.json()) as IApiStats;
 }
 
-export function apiRequestGameStats(requestFn: BackendRequestFn): Promise<IApiGameStats> {
-    return requestFn('GET', 'stats/my_game_stats', {}).then(response => response.json());
+export async function apiRequestGameStats(requestFn: BackendRequestFn): Promise<IApiGameStats> {
+    const response = await requestFn('GET', 'stats/my_game_stats', {});
+    return (await response.json()) as IApiGameStats;
 }
 
 function getPasswordHash(passwordSalt: string, password: string): string {
