@@ -69,12 +69,12 @@ module.exports = {
         'jsdoc/check-alignment': 'warn',
         'jsdoc/check-indentation': 'warn',
         'jsdoc/newline-after-description': 'warn',
-        // 'max-len': [
-        //     'warn',
-        //     {
-        //         code: 140,
-        //     },
-        // ],
+        'max-len': [
+            'warn',
+            {
+                code: 140,
+            },
+        ],
         'new-parens': 'warn',
         'no-bitwise': 'warn',
         'no-caller': 'warn',

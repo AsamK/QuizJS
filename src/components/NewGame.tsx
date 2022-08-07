@@ -18,53 +18,67 @@ function NewGame(): React.ReactElement {
     const dispatch = useThunkDispatch();
 
     const onBack = React.useCallback(() => dispatch(showCreateNewGame(false)), [dispatch]);
-    const onCreateGame = React.useCallback((userId: string) => dispatch(createGame(userId)), [dispatch]);
+    const onCreateGame = React.useCallback(
+        (userId: string) => dispatch(createGame(userId)),
+        [dispatch],
+    );
     const onRandomGame = React.useCallback(() => dispatch(createRandomGame()), [dispatch]);
-    const onSearchUser = React.useCallback((name: string) => dispatch(searchUser(name)), [dispatch]);
+    const onSearchUser = React.useCallback(
+        (name: string) => dispatch(searchUser(name)),
+        [dispatch],
+    );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const onSearchUserDebounced = React.useCallback(debounce(
-        (name: string) => onSearchUser(name)
-        , 200), [onSearchUser]);
+    const onSearchUserDebounced = React.useCallback(
+        debounce((name: string) => onSearchUser(name), 200),
+        [onSearchUser],
+    );
 
     const onSearchUserCallback = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => onSearchUserDebounced(e.target.value),
-        [onSearchUserDebounced]);
+        [onSearchUserDebounced],
+    );
 
-    const friendElements = React.useMemo(() => friends.map(friend =>
-        <div
-            key={friend.user_id}
-            className="qd-new-game_friend"
-            onClick={() => onCreateGame(friend.user_id)}
-        >
-            <Avatar avatarCode={friend.avatar_code} /> {friend.name}<span className="qd-new-game_friend-email">{friend.email}</span>
-        </div>,
-    ), [friends, onCreateGame]);
-
-    return <div className="qd-new-game">
-        <Button className="qd-new-game_back" onClick={onBack}>Zurück</Button>
-        <Button
-            onClick={onRandomGame}
-        >Beliebiger Spieler</Button>
-        <div className="qd-new-game_search-user">
-            <label>Benutzer suchen:<input
-                onChange={onSearchUserCallback}
-            /></label>
-            {!foundUser ? null :
+    const friendElements = React.useMemo(
+        () =>
+            friends.map(friend => (
                 <div
-                    key={foundUser.user_id}
-                    className="qd-new-game_user"
-                    onClick={() => onCreateGame(foundUser.user_id)}
+                    key={friend.user_id}
+                    className="qd-new-game_friend"
+                    onClick={() => onCreateGame(friend.user_id)}
                 >
-                    <Avatar avatarCode={foundUser.avatar_code} /> {foundUser.name}
+                    <Avatar avatarCode={friend.avatar_code} /> {friend.name}
+                    <span className="qd-new-game_friend-email">{friend.email}</span>
                 </div>
-            }
+            )),
+        [friends, onCreateGame],
+    );
+
+    return (
+        <div className="qd-new-game">
+            <Button className="qd-new-game_back" onClick={onBack}>
+                Zurück
+            </Button>
+            <Button onClick={onRandomGame}>Beliebiger Spieler</Button>
+            <div className="qd-new-game_search-user">
+                <label>
+                    Benutzer suchen:
+                    <input onChange={onSearchUserCallback} />
+                </label>
+                {!foundUser ? null : (
+                    <div
+                        key={foundUser.user_id}
+                        className="qd-new-game_user"
+                        onClick={() => onCreateGame(foundUser.user_id)}
+                    >
+                        <Avatar avatarCode={foundUser.avatar_code} /> {foundUser.name}
+                    </div>
+                )}
+            </div>
+            <label>Freunde</label>
+            <div className="qd-new-game_friends">{friendElements}</div>
         </div>
-        <label>Freunde</label>
-        <div className="qd-new-game_friends">
-            {friendElements}
-        </div>
-    </div>;
+    );
 }
 
 export default NewGame;

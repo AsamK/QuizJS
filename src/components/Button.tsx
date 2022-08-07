@@ -23,15 +23,20 @@ export const Button = ({
     dangerous,
     type,
 }: IButtonProps): React.ReactElement<IButtonProps> => {
-    return <button
-        className={'qd-button'
-            + (showLoadingIndicator ? ' qd-button_loading' : '')
-            + (highlighted ? ' qd-button_highlighted' : '')
-            + (dangerous ? ' qd-button_dangerous' : '')
-            + (className ? ' ' + className : '')
-        }
-        onClick={onClick}
-        disabled={disabled}
-        type={type}
-    >{children}</button>;
+    return (
+        <button
+            className={
+                'qd-button' +
+                (showLoadingIndicator ? ' qd-button_loading' : '') +
+                (highlighted ? ' qd-button_highlighted' : '') +
+                (dangerous ? ' qd-button_dangerous' : '') +
+                (className ? ' ' + className : '')
+            }
+            onClick={onClick}
+            disabled={disabled}
+            type={type}
+        >
+            {children}
+        </button>
+    );
 };

@@ -9,7 +9,5 @@ interface IModalDialogProps {
 export const ModalDialog = ({
     children,
 }: IModalDialogProps): React.ReactElement<IModalDialogProps> => {
-    return <div className="qd-modal-dialog">
-        {children}
-    </div>;
+    return <div className="qd-modal-dialog">{children}</div>;
 };

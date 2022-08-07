@@ -2,13 +2,13 @@
     background-color: #555;
     border: none;
     border-radius: 5px;
-    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, .2);
+    box-shadow: 2px 2px 5px 1px rgb(0 0 0 / 20%);
     color: #fff;
     height: 30px;
 }
 
 .qd-button_loading {
-    background-image: url(../spinner.svg);
+    background-image: url('../spinner.svg');
     background-position-x: 5px;
     background-position-y: center;
     background-repeat: no-repeat;

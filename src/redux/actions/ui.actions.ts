@@ -46,7 +46,11 @@ export const stopPlaying = (): AppAction => ({
 
 export const SELECT_CATEGORY = 'SELECT_CATEGORY';
 
-export const selectCategory = (gameId: number, categoryId: number, timestamp: number): AppAction => ({
+export const selectCategory = (
+    gameId: number,
+    categoryId: number,
+    timestamp: number,
+): AppAction => ({
     categoryId,
     gameId,
     timestamp,
@@ -55,7 +59,12 @@ export const selectCategory = (gameId: number, categoryId: number, timestamp: nu
 
 export const SELECT_ANSWER = 'SELECT_ANSWER';
 
-export const selectAnswer = (gameId: number, answerIndex: number, questionType: QuestionType, timestamp: number): AppAction => ({
+export const selectAnswer = (
+    gameId: number,
+    answerIndex: number,
+    questionType: QuestionType,
+    timestamp: number,
+): AppAction => ({
     answerIndex,
     gameId,
     questionType,
@@ -95,7 +104,11 @@ export const startPlayingQuiz = (quizId: string, timestamp: number): AppAction =
 
 export const SELECT_ANSWER_QUIZ = 'SELECT_ANSWER_QUIZ';
 
-export const selectAnswerQuiz = (quizId: string, answerIndex: number, timestamp: number): AppAction => ({
+export const selectAnswerQuiz = (
+    quizId: string,
+    answerIndex: number,
+    timestamp: number,
+): AppAction => ({
     answerIndex,
     quizId,
     timestamp,

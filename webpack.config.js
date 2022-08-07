@@ -14,7 +14,7 @@ module.exports = function (env, argv) {
     return {
         output: {
             filename: isProduction ? '[name].[contenthash].js' : '[name].js',
-            path: __dirname + '/dist'
+            path: __dirname + '/dist',
         },
 
         // Enable sourcemaps for debugging webpack's output.
@@ -39,16 +39,16 @@ module.exports = function (env, argv) {
                 {
                     enforce: 'pre',
                     test: /\.js$/,
-                    loader: 'source-map-loader'
+                    loader: 'source-map-loader',
                 },
                 {
                     test: /\.(png|jpg|gif)$/,
                     use: [
                         {
                             loader: 'file-loader',
-                            options: {}
-                        }
-                    ]
+                            options: {},
+                        },
+                    ],
                 },
                 {
                     test: /\.css$/,
@@ -59,12 +59,10 @@ module.exports = function (env, argv) {
                             loader: 'postcss-loader',
                             options: {
                                 postcssOptions: {
-                                    plugins: [
-                                        require.resolve('autoprefixer'),
-                                    ]
+                                    plugins: [require.resolve('autoprefixer')],
                                 },
                                 sourceMap: createSourceMaps,
-                            }
+                            },
                         },
                     ],
                 },
@@ -72,41 +70,39 @@ module.exports = function (env, argv) {
                     test: /\.svg$/,
                     use: {
                         loader: 'svg-url-loader',
-                        options: {}
-                    }
+                        options: {},
+                    },
                 },
                 {
                     test: /\.html$/,
                     use: [
                         {
                             loader: 'html-loader',
-                            options: { minimize: isProduction }
-                        }
-                    ]
+                            options: { minimize: isProduction },
+                        },
+                    ],
                 },
-            ]
+            ],
         },
         plugins: [
             new HtmlWebpackPlugin({
-                template: 'src/index.html'
+                template: 'src/index.html',
             }),
             new CopyWebpackPlugin({
-                patterns: [
-                    'src/manifest.webmanifest'
-                ],
+                patterns: ['src/manifest.webmanifest'],
             }),
-            ...(isProduction ?
-                [
-                    new CleanWebpackPlugin(),
-                    new MiniCssExtractPlugin({
-                        filename: isProduction ? '[name].[contenthash].css' : '[name].css',
-                    }),
-                    new InjectManifest({
-                        swSrc: './src/sw.ts',
-                        swDest: 'sw.js',
-                    }),
-                ] : [
-                ]),
+            ...(isProduction
+                ? [
+                      new CleanWebpackPlugin(),
+                      new MiniCssExtractPlugin({
+                          filename: isProduction ? '[name].[contenthash].css' : '[name].css',
+                      }),
+                      new InjectManifest({
+                          swSrc: './src/sw.ts',
+                          swDest: 'sw.js',
+                      }),
+                  ]
+                : []),
         ],
         optimization: {
             splitChunks: {
@@ -118,14 +114,14 @@ module.exports = function (env, argv) {
                     parallel: true,
                     terserOptions: {
                         sourceMap: createSourceMaps,
-                    }
+                    },
                 }),
                 new CssMinimizerPlugin(),
-            ]
+            ],
         },
 
         devServer: {
             static: false,
-        }
-    }
-}
+        },
+    };
+};

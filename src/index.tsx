@@ -13,95 +13,101 @@ import type { IMessage } from './redux/interfaces/IMessage';
 import { createAppStore } from './redux/store';
 
 if (process.env.NODE_ENV === 'production') {
-  let serviceWorkerRegistered = false;
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => {
-          serviceWorkerRegistered = true;
-          reg.addEventListener('updatefound', () => {
-            console.info('[SW] Update found');
-            const newSW = reg.installing;
-            newSW?.addEventListener('statechange', () => {
-              if (newSW?.state === 'installed') {
-                console.info('[SW] Reloading to update');
-                window.location.reload();
-              }
-            });
-          });
-        })
-        .catch(() => {
-          // Failed to register service worker, maybe blocked by user agent
-          serviceWorkerRegistered = false;
+    let serviceWorkerRegistered = false;
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker
+                .register('sw.js')
+                .then(reg => {
+                    serviceWorkerRegistered = true;
+                    reg.addEventListener('updatefound', () => {
+                        console.info('[SW] Update found');
+                        const newSW = reg.installing;
+                        newSW?.addEventListener('statechange', () => {
+                            if (newSW?.state === 'installed') {
+                                console.info('[SW] Reloading to update');
+                                window.location.reload();
+                            }
+                        });
+                    });
+                })
+                .catch(() => {
+                    // Failed to register service worker, maybe blocked by user agent
+                    serviceWorkerRegistered = false;
+                });
         });
-    });
 
-    document.addEventListener('visibilitychange', async () => {
-      if (serviceWorkerRegistered && !document.hidden) {
-        (await navigator.serviceWorker.getRegistration())?.update();
-      }
-    });
-  }
+        document.addEventListener('visibilitychange', async () => {
+            if (serviceWorkerRegistered && !document.hidden) {
+                (await navigator.serviceWorker.getRegistration())?.update();
+            }
+        });
+    }
 }
 
 const store = createAppStore();
 
 const gameStateString = localStorage.getItem('gameState');
 if (gameStateString !== null) {
-  const gameStates = JSON.parse(gameStateString) as [[number, IGameState]];
-  store.dispatch(initialGameState(gameStates));
+    const gameStates = JSON.parse(gameStateString) as [[number, IGameState]];
+    store.dispatch(initialGameState(gameStates));
 }
 
 const quizStateString = localStorage.getItem('quizState');
 if (quizStateString !== null) {
-  const quizStates = JSON.parse(quizStateString) as [[string, IQuizState]];
-  store.dispatch(initialQuizState(quizStates));
+    const quizStates = JSON.parse(quizStateString) as [[string, IQuizState]];
+    store.dispatch(initialQuizState(quizStates));
 }
 
 const messagesString = localStorage.getItem('gameMessages');
 if (messagesString !== null) {
-  const messages = JSON.parse(messagesString) as IMessage[];
-  store.dispatch(initialMessages(messages));
+    const messages = JSON.parse(messagesString) as IMessage[];
+    store.dispatch(initialMessages(messages));
 }
 
-store.subscribe((() => {
-  let previousState = store.getState().ui.gameState;
-  return () => {
-    const newState = store.getState().ui.gameState;
-    if (previousState !== newState) {
-      localStorage.setItem('gameState', JSON.stringify(Array.from(newState.entries())));
-      previousState = newState;
-    }
-  };
-})());
-
-store.subscribe((() => {
-  let previousState = store.getState().entities.messages;
-  return () => {
-    const newState = store.getState().entities.messages;
-    if (previousState !== newState) {
-      localStorage.setItem('gameMessages', JSON.stringify(newState));
-      previousState = newState;
-    }
-  };
-})());
-
-store.subscribe((() => {
-  let previousState = store.getState().ui.quizState;
-  return () => {
-    const newState = store.getState().ui.quizState;
-    if (previousState !== newState) {
-      localStorage.setItem('quizState', JSON.stringify(Array.from(newState.entries())));
-      previousState = newState;
-    }
-  };
-})());
-
-const ReduxApp = () => <Provider store={store}>
-  <App />
-</Provider>;
-
-ReactDOM.render(
-  <ReduxApp />,
-  document.getElementById('content'),
+store.subscribe(
+    (() => {
+        let previousState = store.getState().ui.gameState;
+        return () => {
+            const newState = store.getState().ui.gameState;
+            if (previousState !== newState) {
+                localStorage.setItem('gameState', JSON.stringify(Array.from(newState.entries())));
+                previousState = newState;
+            }
+        };
+    })(),
 );
+
+store.subscribe(
+    (() => {
+        let previousState = store.getState().entities.messages;
+        return () => {
+            const newState = store.getState().entities.messages;
+            if (previousState !== newState) {
+                localStorage.setItem('gameMessages', JSON.stringify(newState));
+                previousState = newState;
+            }
+        };
+    })(),
+);
+
+store.subscribe(
+    (() => {
+        let previousState = store.getState().ui.quizState;
+        return () => {
+            const newState = store.getState().ui.quizState;
+            if (previousState !== newState) {
+                localStorage.setItem('quizState', JSON.stringify(Array.from(newState.entries())));
+                previousState = newState;
+            }
+        };
+    })(),
+);
+
+const ReduxApp = () => (
+    <Provider store={store}>
+        <App />
+    </Provider>
+);
+
+ReactDOM.render(<ReduxApp />, document.getElementById('content'));

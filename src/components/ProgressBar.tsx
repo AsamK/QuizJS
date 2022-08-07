@@ -10,12 +10,11 @@ interface IProgressBarProps {
 }
 
 function ProgressBar({ progress }: IProgressBarProps): React.ReactElement<IProgressBarProps> {
-    return <div className="qd-progress-bar">
-        <div
-            className="qd-progress-bar_progress"
-            style={{ width: `${progress * 100}%` }}
-        ></div>
-    </div>;
+    return (
+        <div className="qd-progress-bar">
+            <div className="qd-progress-bar_progress" style={{ width: `${progress * 100}%` }}></div>
+        </div>
+    );
 }
 
 export default ProgressBar;

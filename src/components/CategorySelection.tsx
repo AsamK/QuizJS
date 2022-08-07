@@ -10,16 +10,22 @@ function CategorySelection(): React.ReactElement {
     const categories = useSelector(selectedGameCategoriesForSelectionSelector);
     const dispatch = useThunkDispatch();
 
-    return <div className="qd-category-selection">
-        {!categories ? null : categories.map((category, i) =>
-            <div
-                className="qd-category-selection_item"
-                key={category.cat_id}
-                style={{ backgroundColor: category.color }}
-                onClick={() => dispatch(selectCategoryForSelectedGame(i))}
-            >{category.name}
-            </div>)}
-    </div>;
+    return (
+        <div className="qd-category-selection">
+            {!categories
+                ? null
+                : categories.map((category, i) => (
+                      <div
+                          className="qd-category-selection_item"
+                          key={category.cat_id}
+                          style={{ backgroundColor: category.color }}
+                          onClick={() => dispatch(selectCategoryForSelectedGame(i))}
+                      >
+                          {category.name}
+                      </div>
+                  ))}
+        </div>
+    );
 }
 
 export default CategorySelection;

@@ -1,4 +1,3 @@
-
 export interface IQuestion {
     q_id: number;
     timestamp?: number;

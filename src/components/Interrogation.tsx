@@ -27,36 +27,52 @@ export interface IInterrogationDispatchProps {
     onContinueClick?: () => void;
 }
 
-interface IInterrogationProps extends IInterrogationStateProps, IInterrogationDispatchProps {
-}
+interface IInterrogationProps extends IInterrogationStateProps, IInterrogationDispatchProps {}
 
 export function Interrogation({
-    answers, category, imageUrl, question, showCorrectAnswerIndex, showSelectedAnswerIndex, onAnswerClick, onContinueClick,
-    opponentAnswerIndex, opponentName, answeredTimestamp, timeLimit, firstShownTimestamp,
+    answers,
+    category,
+    imageUrl,
+    question,
+    showCorrectAnswerIndex,
+    showSelectedAnswerIndex,
+    onAnswerClick,
+    onContinueClick,
+    opponentAnswerIndex,
+    opponentName,
+    answeredTimestamp,
+    timeLimit,
+    firstShownTimestamp,
 }: IInterrogationProps): React.ReactElement<IInterrogationProps> {
     const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
 
-    const getElapsedSeconds = React.useCallback(function (): number {
-        if (firstShownTimestamp == null) {
-            return 0;
-        }
-        const endTimestamp = answeredTimestamp == null ? Date.now() : answeredTimestamp;
-        return (endTimestamp - firstShownTimestamp) / 1000;
-    }, [answeredTimestamp, firstShownTimestamp]);
+    const getElapsedSeconds = React.useCallback(
+        function (): number {
+            if (firstShownTimestamp == null) {
+                return 0;
+            }
+            const endTimestamp = answeredTimestamp == null ? Date.now() : answeredTimestamp;
+            return (endTimestamp - firstShownTimestamp) / 1000;
+        },
+        [answeredTimestamp, firstShownTimestamp],
+    );
 
-    const updateElapsedSeconds = React.useCallback(function (): boolean {
-        if (timeLimit == null) {
-            return false;
-        }
-        const nextElapsedSeconds = getElapsedSeconds();
-        if (nextElapsedSeconds >= timeLimit) {
-            onAnswerClick?.(TIME_ELAPSED_ANSWER);
-        }
-        if (nextElapsedSeconds < elapsedSeconds || nextElapsedSeconds - elapsedSeconds > 0.1) {
-            setElapsedSeconds(nextElapsedSeconds);
-        }
-        return true;
-    }, [elapsedSeconds, getElapsedSeconds, onAnswerClick, timeLimit]);
+    const updateElapsedSeconds = React.useCallback(
+        function (): boolean {
+            if (timeLimit == null) {
+                return false;
+            }
+            const nextElapsedSeconds = getElapsedSeconds();
+            if (nextElapsedSeconds >= timeLimit) {
+                onAnswerClick?.(TIME_ELAPSED_ANSWER);
+            }
+            if (nextElapsedSeconds < elapsedSeconds || nextElapsedSeconds - elapsedSeconds > 0.1) {
+                setElapsedSeconds(nextElapsedSeconds);
+            }
+            return true;
+        },
+        [elapsedSeconds, getElapsedSeconds, onAnswerClick, timeLimit],
+    );
 
     const timer = React.useRef<number | null>(null);
     React.useEffect(() => {
@@ -82,37 +98,47 @@ export function Interrogation({
         }
 
         return cleanUpTimer;
-    }, [firstShownTimestamp, answeredTimestamp, elapsedSeconds, timeLimit, onAnswerClick, updateElapsedSeconds]);
+    }, [
+        firstShownTimestamp,
+        answeredTimestamp,
+        elapsedSeconds,
+        timeLimit,
+        onAnswerClick,
+        updateElapsedSeconds,
+    ]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const answerOrder = React.useMemo(() => getRandomOrder(4), [question]);
 
-    const answerElements = answers
-        .map((answer, i) => <Answer
+    const answerElements = answers.map((answer, i) => (
+        <Answer
             key={i}
-            state={showCorrectAnswerIndex !== i && i === showSelectedAnswerIndex ? AnswerState.WRONG :
-                showCorrectAnswerIndex === i && i === showSelectedAnswerIndex ? AnswerState.CORRECT :
-                    showCorrectAnswerIndex === i && i !== showSelectedAnswerIndex ? AnswerState.CORRECT_BUT_NOT_SELECTED :
-                        AnswerState.NEUTRAL
+            state={
+                showCorrectAnswerIndex !== i && i === showSelectedAnswerIndex
+                    ? AnswerState.WRONG
+                    : showCorrectAnswerIndex === i && i === showSelectedAnswerIndex
+                    ? AnswerState.CORRECT
+                    : showCorrectAnswerIndex === i && i !== showSelectedAnswerIndex
+                    ? AnswerState.CORRECT_BUT_NOT_SELECTED
+                    : AnswerState.NEUTRAL
             }
             answer={answer}
-            info={
-                opponentAnswerIndex !== i ? undefined : opponentName || undefined
-            }
+            info={opponentAnswerIndex !== i ? undefined : opponentName || undefined}
             onClick={() => onAnswerClick?.(i)}
-        />);
-    const remainingSeconds = timeLimit == null || timeLimit <= 0
-        ? 0
-        : (timeLimit - elapsedSeconds);
-    return <div className="qd-interrogation">
-        <div
-            className="qd-interrogation_category"
-            style={{ backgroundColor: !category ? undefined : category.color }}
-        >{!category ? null : category.name}</div>
-        <Question question={question} imageUrl={imageUrl} onClick={onContinueClick} />
-        {shuffleArray(answerElements, answerOrder)}
-        <ProgressBar
-            progress={timeLimit == null ? 1 : remainingSeconds / timeLimit}
         />
-    </div>;
+    ));
+    const remainingSeconds = timeLimit == null || timeLimit <= 0 ? 0 : timeLimit - elapsedSeconds;
+    return (
+        <div className="qd-interrogation">
+            <div
+                className="qd-interrogation_category"
+                style={{ backgroundColor: !category ? undefined : category.color }}
+            >
+                {!category ? null : category.name}
+            </div>
+            <Question question={question} imageUrl={imageUrl} onClick={onContinueClick} />
+            {shuffleArray(answerElements, answerOrder)}
+            <ProgressBar progress={timeLimit == null ? 1 : remainingSeconds / timeLimit} />
+        </div>
+    );
 }

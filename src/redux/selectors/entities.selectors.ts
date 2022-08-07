@@ -21,9 +21,15 @@ export const gamesSelector = createSelector(entitiesSelector, entities => entiti
 
 export const friendsSelector = createSelector(entitiesSelector, entities => entities.friends);
 
-export const gameQuestionsSelector = createSelector(entitiesSelector, entities => entities.gameQuestions);
+export const gameQuestionsSelector = createSelector(
+    entitiesSelector,
+    entities => entities.gameQuestions,
+);
 
-export const gameImageQuestionsSelector = createSelector(entitiesSelector, entities => entities.gameImageQuestions);
+export const gameImageQuestionsSelector = createSelector(
+    entitiesSelector,
+    entities => entities.gameImageQuestions,
+);
 
 export const questionsSelector = createSelector(entitiesSelector, entities => entities.questions);
 
@@ -31,10 +37,16 @@ export const categoriesSelector = createSelector(entitiesSelector, entities => e
 
 export const quizzesSelector = createSelector(entitiesSelector, entities => entities.quizzes);
 
-export const quizQuestionsSelector = createSelector(entitiesSelector, entities => entities.quizQuestions);
+export const quizQuestionsSelector = createSelector(
+    entitiesSelector,
+    entities => entities.quizQuestions,
+);
 
 export const messagesSelector = createSelector(entitiesSelector, entities => entities.messages);
 
 export const userStatsSelector = createSelector(entitiesSelector, entities => entities.userStats);
 
-export const friendStatsSelector = createSelector(entitiesSelector, entities => entities.friendStats);
+export const friendStatsSelector = createSelector(
+    entitiesSelector,
+    entities => entities.friendStats,
+);

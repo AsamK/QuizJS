@@ -50,28 +50,40 @@ function App(): React.ReactElement {
     let content;
 
     if (!loggedIn) {
-        content = createNewAccount ? <div><CreateUser
-        /><Button onClick={() => setCreateNewAccount(false)}>Bestehendes Konto verwenden</Button></div> :
-            <div><Login onLogin={(name, password) => {
-                dispatch(login(name, password));
-            }} /><Button onClick={() => setCreateNewAccount(true)}>Neues Konto erstellen</Button></div>;
+        content = createNewAccount ? (
+            <div>
+                <CreateUser />
+                <Button onClick={() => setCreateNewAccount(false)}>
+                    Bestehendes Konto verwenden
+                </Button>
+            </div>
+        ) : (
+            <div>
+                <Login
+                    onLogin={(name, password) => {
+                        dispatch(login(name, password));
+                    }}
+                />
+                <Button onClick={() => setCreateNewAccount(true)}>Neues Konto erstellen</Button>
+            </div>
+        );
     } else {
         content = renderContent(mainView);
-        content = <>
-            <Button
-                className="qd-app_refresh"
-                onClick={() => dispatch(loadData())}
-                showLoadingIndicator={isRefreshing}
-                disabled={isRefreshing}
-            >Refresh</Button>
-            {content}
-        </>;
+        content = (
+            <>
+                <Button
+                    className="qd-app_refresh"
+                    onClick={() => dispatch(loadData())}
+                    showLoadingIndicator={isRefreshing}
+                    disabled={isRefreshing}
+                >
+                    Refresh
+                </Button>
+                {content}
+            </>
+        );
     }
-    return (
-        <div className="qd-app">
-            {content}
-        </div>
-    );
+    return <div className="qd-app">{content}</div>;
 }
 
 function renderContent(mainView: MainView): React.ReactNode {

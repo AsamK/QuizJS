@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './Time.css';
 import { useRefresh } from './utils';
 
 export interface ITimeProps {
@@ -52,7 +51,7 @@ export function Time(props: ITimeProps): React.ReactElement<ITimeProps> {
         nextInterval = 1000 * 60 * 15;
     } else if (minutes > 0 || !showSeconds) {
         age = `${minutes}min`;
-        nextInterval = (1000 * 15);
+        nextInterval = 1000 * 15;
     } else {
         age = `${seconds}s`;
         nextInterval = 1000;

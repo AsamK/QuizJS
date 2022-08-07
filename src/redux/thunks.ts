@@ -1,18 +1,74 @@
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import type { BackendRequestFn } from '../api/api';
-import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDeclineGame, apiFindUser, apiGiveUpGame, apiLogin, apiRemoveFriend, apiRequestGames, apiRequestGameStats, apiRequestQuiz, apiRequestState, apiRequestStats, apiRequestUploadQuizRound, apiRequestUploadRound, apiSendMessage, apiUpdateUser } from '../api/api';
+import {
+    apiAddFriend,
+    apiCreateGame,
+    apiCreateRandomGame,
+    apiCreateUser,
+    apiDeclineGame,
+    apiFindUser,
+    apiGiveUpGame,
+    apiLogin,
+    apiRemoveFriend,
+    apiRequestGames,
+    apiRequestGameStats,
+    apiRequestQuiz,
+    apiRequestState,
+    apiRequestStats,
+    apiRequestUploadQuizRound,
+    apiRequestUploadRound,
+    apiSendMessage,
+    apiUpdateUser,
+} from '../api/api';
 import { QuestionType } from '../api/IApiGame';
 import type { IApiPopup } from '../api/IApiPopup';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND, STORAGE_KEY_COOKIE } from '../consts';
 import { createRequestFn, QD_SERVER } from '../settings';
 
-import { addFriendAction, appDataAction, createGameAction, createUserAction, declineGameAction, findUserAction, giveUpGameAction, loadGamesAction, loadGameStatsAction, loadQuizAction, loadStatsAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from './actions/entities.actions';
+import {
+    addFriendAction,
+    appDataAction,
+    createGameAction,
+    createUserAction,
+    declineGameAction,
+    findUserAction,
+    giveUpGameAction,
+    loadGamesAction,
+    loadGameStatsAction,
+    loadQuizAction,
+    loadStatsAction,
+    loginAction,
+    removeFriendAction,
+    sendGameMessageAction,
+    updateUserAction,
+    uploadQuizRoundAction,
+    uploadRoundAction,
+} from './actions/entities.actions';
 import type { ActionType } from './actions/requests.utils';
-import { finishRound, finishRoundQuiz, nextQuestion, nextQuestionQuiz, selectAnswer, selectAnswerQuiz, selectCategory } from './actions/ui.actions';
+import {
+    finishRound,
+    finishRoundQuiz,
+    nextQuestion,
+    nextQuestionQuiz,
+    selectAnswer,
+    selectAnswerQuiz,
+    selectCategory,
+} from './actions/ui.actions';
 import type { AppAction } from './interfaces/AppAction';
 import type { IAppStore } from './interfaces/IAppStore';
-import { selectedGameIdSelector, selectedGameQuestionSelector, selectedGameQuestionsSelector, selectedGameSelector, selectedGameStateSelector, selectedQuizIdSelector, selectedQuizQuestionsSelector, selectedQuizSelector, selectedQuizStateSelector, showAnswerSelector } from './selectors/ui.selectors';
+import {
+    selectedGameIdSelector,
+    selectedGameQuestionSelector,
+    selectedGameQuestionsSelector,
+    selectedGameSelector,
+    selectedGameStateSelector,
+    selectedQuizIdSelector,
+    selectedQuizQuestionsSelector,
+    selectedQuizSelector,
+    selectedQuizStateSelector,
+    showAnswerSelector,
+} from './selectors/ui.selectors';
 import { extraThunkArgument } from './store';
 
 export interface IExtraArgument {
@@ -55,7 +111,14 @@ function requestHandleHelper<T extends object, R>(
     };
 }
 
-function handleRequest<T extends object, REQUEST extends string, RESPONSE, ERROR, T5, REQUEST_INFO extends { id: string | number } | undefined>(
+function handleRequest<
+    T extends object,
+    REQUEST extends string,
+    RESPONSE,
+    ERROR,
+    T5,
+    REQUEST_INFO extends { id: string | number } | undefined,
+>(
     dispatch: AppThunkDispatch,
     sendRequest: () => Promise<T>,
     action: ActionType<REQUEST, RESPONSE, ERROR, Exclude<T, IApiPopup>, T5, REQUEST_INFO>,
@@ -63,12 +126,16 @@ function handleRequest<T extends object, REQUEST extends string, RESPONSE, ERROR
 ): Promise<T> {
     dispatch(action.createRequestAction(requestInfo) as unknown as AppAction);
     return sendRequest()
-        .then(requestHandleHelper(dispatch, res => {
-            dispatch(action.createResponseAction(res, requestInfo) as unknown as AppAction);
-            return res;
-        }))
+        .then(
+            requestHandleHelper(dispatch, res => {
+                dispatch(action.createResponseAction(res, requestInfo) as unknown as AppAction);
+                return res;
+            }),
+        )
         .catch((e: Response) => {
-            dispatch(action.createErrorAction('Request failed', requestInfo) as unknown as AppAction);
+            dispatch(
+                action.createErrorAction('Request failed', requestInfo) as unknown as AppAction,
+            );
             throw e;
         });
 }
@@ -77,8 +144,8 @@ export function login(userName: string, password: string): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
         handleRequest(
             dispatch,
-            () => apiLogin(requestFn, userName, QD_SERVER.passwordSalt, password)
-                .then(res => {
+            () =>
+                apiLogin(requestFn, userName, QD_SERVER.passwordSalt, password).then(res => {
                     if (handlePopup(res)) {
                         throw res;
                     }
@@ -88,8 +155,7 @@ export function login(userName: string, password: string): AppThunkAction {
                         return res.body;
                     }
                     throw res;
-                })
-            ,
+                }),
             loginAction,
             undefined,
         );
@@ -98,34 +164,23 @@ export function login(userName: string, password: string): AppThunkAction {
 
 export function loadData(): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiRequestState(requestFn),
-            appDataAction,
-            undefined,
-        );
+        handleRequest(dispatch, () => apiRequestState(requestFn), appDataAction, undefined);
     };
 }
 
 export function loadGame(gameId: number): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiRequestGames(requestFn, [gameId]),
-            loadGamesAction,
-            { id: gameId },
-        );
+        handleRequest(dispatch, () => apiRequestGames(requestFn, [gameId]), loadGamesAction, {
+            id: gameId,
+        });
     };
 }
 
 export function loadQuiz(quizId: string): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiRequestQuiz(requestFn, quizId),
-            loadQuizAction,
-            { id: quizId },
-        );
+        handleRequest(dispatch, () => apiRequestQuiz(requestFn, quizId), loadQuizAction, {
+            id: quizId,
+        });
     };
 }
 
@@ -133,16 +188,21 @@ export function createUser(name: string, email: string, password: string): AppTh
     return (dispatch, getState, { requestFn }) => {
         handleRequest(
             dispatch,
-            () => apiCreateUser(requestFn, name, email, QD_SERVER.passwordSalt, password)
-                .then(res => {
-                    if ('cookie' in res) {
-                        localStorage.setItem(STORAGE_KEY_COOKIE, res.cookie);
-                        extraThunkArgument.requestFn = createRequestFn(QD_SERVER.host, res.cookie);
-                        return res.body;
-                    } else {
-                        throw res;
-                    }
-                }),
+            () =>
+                apiCreateUser(requestFn, name, email, QD_SERVER.passwordSalt, password).then(
+                    res => {
+                        if ('cookie' in res) {
+                            localStorage.setItem(STORAGE_KEY_COOKIE, res.cookie);
+                            extraThunkArgument.requestFn = createRequestFn(
+                                QD_SERVER.host,
+                                res.cookie,
+                            );
+                            return res.body;
+                        } else {
+                            throw res;
+                        }
+                    },
+                ),
             createUserAction,
             undefined,
         );
@@ -151,7 +211,8 @@ export function createUser(name: string, email: string, password: string): AppTh
 
 export function updateUser(name: string, email: string, password: string | null): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(dispatch,
+        handleRequest(
+            dispatch,
             () => apiUpdateUser(requestFn, name, email, QD_SERVER.passwordSalt, password),
             updateUserAction,
             undefined,
@@ -161,67 +222,48 @@ export function updateUser(name: string, email: string, password: string | null)
 
 export function addFriend(userId: string, name = ''): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiAddFriend(requestFn, userId),
-            addFriendAction,
-            { id: userId, name },
-        );
+        handleRequest(dispatch, () => apiAddFriend(requestFn, userId), addFriendAction, {
+            id: userId,
+            name,
+        });
     };
 }
 
 export function removeFriend(userId: string): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiRemoveFriend(requestFn, userId),
-            removeFriendAction,
-            { id: userId },
-        );
+        handleRequest(dispatch, () => apiRemoveFriend(requestFn, userId), removeFriendAction, {
+            id: userId,
+        });
     };
 }
 
 export function createRandomGame(): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiCreateRandomGame(requestFn),
-            createGameAction,
-            undefined,
-        );
+        handleRequest(dispatch, () => apiCreateRandomGame(requestFn), createGameAction, undefined);
     };
 }
 
 export function createGame(userId: string): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiCreateGame(requestFn, userId),
-            createGameAction,
-            { id: userId },
-        );
+        handleRequest(dispatch, () => apiCreateGame(requestFn, userId), createGameAction, {
+            id: userId,
+        });
     };
 }
 
 export function declineGame(gameId: number): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiDeclineGame(requestFn, gameId),
-            declineGameAction,
-            { id: gameId },
-        );
+        handleRequest(dispatch, () => apiDeclineGame(requestFn, gameId), declineGameAction, {
+            id: gameId,
+        });
     };
 }
 
 export function giveUpGame(gameId: number): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiGiveUpGame(requestFn, gameId),
-            giveUpGameAction,
-            { id: gameId },
-        );
+        handleRequest(dispatch, () => apiGiveUpGame(requestFn, gameId), giveUpGameAction, {
+            id: gameId,
+        });
     };
 }
 
@@ -247,18 +289,27 @@ export function uploadRoundForSelectedGame(): AppThunkAction {
 
         const gameState = selectedGameStateSelector(state);
 
-        const pendingAnswers = gameState.pendingSelectedAnswer === null
-            ? gameState.pendingAnswers
-            : [...gameState.pendingAnswers, gameState.pendingSelectedAnswer];
+        const pendingAnswers =
+            gameState.pendingSelectedAnswer === null
+                ? gameState.pendingAnswers
+                : [...gameState.pendingAnswers, gameState.pendingSelectedAnswer];
 
-        const pendingQuestionTypes = gameState.pendingSelectedQuestionType === null
-            ? gameState.pendingQuestionTypes
-            : [...gameState.pendingQuestionTypes, gameState.pendingSelectedQuestionType];
+        const pendingQuestionTypes =
+            gameState.pendingSelectedQuestionType === null
+                ? gameState.pendingQuestionTypes
+                : [...gameState.pendingQuestionTypes, gameState.pendingSelectedQuestionType];
 
         handleRequest(
             dispatch,
-            () => apiRequestUploadRound(requestFn, game.game_id, 0, gameState.selectedCategoryIndex || 0,
-                [...game.your_answers, ...pendingAnswers], [...game.your_question_types, ...pendingQuestionTypes]),
+            () =>
+                apiRequestUploadRound(
+                    requestFn,
+                    game.game_id,
+                    0,
+                    gameState.selectedCategoryIndex || 0,
+                    [...game.your_answers, ...pendingAnswers],
+                    [...game.your_question_types, ...pendingQuestionTypes],
+                ),
             uploadRoundAction,
             { id: game.game_id },
         );
@@ -285,7 +336,8 @@ export function selectAnswerForSelectedGame(answerIndex: number): AppThunkAction
         }
 
         const question = selectedGameQuestionSelector(state);
-        const questionType = !question || !question.image_url ? QuestionType.NORMAL : QuestionType.IMAGE;
+        const questionType =
+            !question || !question.image_url ? QuestionType.NORMAL : QuestionType.IMAGE;
         dispatch(selectAnswer(gameId, answerIndex, questionType, Date.now()));
     };
 }
@@ -297,14 +349,23 @@ export function nextQuestionSelectedGame(): AppThunkAction {
         const game = selectedGameSelector(state);
         const questions = selectedGameQuestionsSelector(state);
         const gameState = selectedGameStateSelector(state);
-        if (gameState.pendingSelectedAnswer == null || gameId == null || game == null || questions == null) {
+        if (
+            gameState.pendingSelectedAnswer == null ||
+            gameId == null ||
+            game == null ||
+            questions == null
+        ) {
             return;
         }
 
         const pendingAnswersLength = gameState.pendingAnswers.length + 1;
 
-        if (game.opponent_answers.length + QUESTIONS_PER_ROUND <= game.your_answers.length + pendingAnswersLength ||
-            game.your_answers.length + pendingAnswersLength >= questions.length / CATEGORIES_PER_ROUND) {
+        if (
+            game.opponent_answers.length + QUESTIONS_PER_ROUND <=
+                game.your_answers.length + pendingAnswersLength ||
+            game.your_answers.length + pendingAnswersLength >=
+                questions.length / CATEGORIES_PER_ROUND
+        ) {
             dispatch(uploadRoundForSelectedGame());
             dispatch(finishRound(gameId));
         } else if (pendingAnswersLength % QUESTIONS_PER_ROUND === 0) {
@@ -326,12 +387,16 @@ export function uploadRoundForSelectedQuiz(): AppThunkAction {
         const gameState = selectedQuizStateSelector(state);
         handleRequest(
             dispatch,
-            () => apiRequestUploadQuizRound(requestFn, quiz.quiz_id,
-                [...quiz.your_answers.answers, ...gameState.pendingAnswers].map(a => ({
-                    answer: a.answer,
-                    time: a.time,
-                    timestamp: new Date(a.timestamp).toISOString(),
-                }))),
+            () =>
+                apiRequestUploadQuizRound(
+                    requestFn,
+                    quiz.quiz_id,
+                    [...quiz.your_answers.answers, ...gameState.pendingAnswers].map(a => ({
+                        answer: a.answer,
+                        time: a.time,
+                        timestamp: new Date(a.timestamp).toISOString(),
+                    })),
+                ),
             uploadQuizRoundAction,
             { id: quiz.quiz_id },
         );
@@ -374,23 +439,13 @@ export function selectAnswerForSelectedQuiz(answerIndex: number): AppThunkAction
 
 export function searchUser(name: string): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiFindUser(requestFn, name),
-            findUserAction,
-            { id: name },
-        );
+        handleRequest(dispatch, () => apiFindUser(requestFn, name), findUserAction, { id: name });
     };
 }
 
 export function loadUserStats(): AppThunkAction {
     return (dispatch, getState, { requestFn }) => {
-        handleRequest(
-            dispatch,
-            () => apiRequestStats(requestFn),
-            loadStatsAction,
-            undefined,
-        );
+        handleRequest(dispatch, () => apiRequestStats(requestFn), loadStatsAction, undefined);
     };
 }
 

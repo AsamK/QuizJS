@@ -2,7 +2,15 @@ import { createSelector } from 'reselect';
 
 import { GameState } from '../../api/IApiGame';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND } from '../../consts';
-import { addFriendAction, createGameAction, declineGameAction, giveUpGameAction, removeFriendAction, sendGameMessageAction, uploadRoundAction } from '../actions/entities.actions';
+import {
+    addFriendAction,
+    createGameAction,
+    declineGameAction,
+    giveUpGameAction,
+    removeFriendAction,
+    sendGameMessageAction,
+    uploadRoundAction,
+} from '../actions/entities.actions';
 import { LoadingState } from '../actions/requests.utils';
 import type { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
 import type { ICategory } from '../interfaces/ICategory';
@@ -12,9 +20,24 @@ import type { IMessage } from '../interfaces/IMessage';
 import type { IQuestion } from '../interfaces/IQuestion';
 import type { IQuizAnswer } from '../interfaces/IQuizAnswer';
 import { MainView } from '../MainView';
-import { getGameStateOrDefault, getOpponentAnswerIndexByPercentage, getQuizStateOrDefault } from '../utils';
+import {
+    getGameStateOrDefault,
+    getOpponentAnswerIndexByPercentage,
+    getQuizStateOrDefault,
+} from '../utils';
 
-import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, loadingSelector, messagesSelector, questionsSelector, quizQuestionsSelector, quizzesSelector } from './entities.selectors';
+import {
+    categoriesSelector,
+    friendsSelector,
+    gameImageQuestionsSelector,
+    gameQuestionsSelector,
+    gamesSelector,
+    loadingSelector,
+    messagesSelector,
+    questionsSelector,
+    quizQuestionsSelector,
+    quizzesSelector,
+} from './entities.selectors';
 
 const uiSelector = (state: IAppStore) => state.ui;
 
@@ -26,7 +49,9 @@ export const showProfileSelector = createSelector(uiSelector, ui => ui.showProfi
 
 export const selectedGameIdSelector = createSelector(uiSelector, ui => ui.selectedGameId);
 
-export const selectedGameSelector = createSelector(selectedGameIdSelector, gamesSelector,
+export const selectedGameSelector = createSelector(
+    selectedGameIdSelector,
+    gamesSelector,
     (gameId, games) => games.find(g => g.game_id === gameId) || null,
 );
 
@@ -68,7 +93,9 @@ export const selectedGameQuestionsSelector = createSelector(
     },
 );
 
-export const isSelectedGameWithFriendSelector = createSelector(selectedGameSelector, friendsSelector,
+export const isSelectedGameWithFriendSelector = createSelector(
+    selectedGameSelector,
+    friendsSelector,
     (game, friends): boolean => {
         if (!game) {
             return false;
@@ -77,40 +104,60 @@ export const isSelectedGameWithFriendSelector = createSelector(selectedGameSelec
     },
 );
 
-export const selectedGameAddFriendLoadingSelector = createSelector(selectedGameSelector, loadingSelector,
+export const selectedGameAddFriendLoadingSelector = createSelector(
+    selectedGameSelector,
+    loadingSelector,
     (game, loadingStates): boolean => {
         if (!game) {
             return false;
         }
-        return addFriendAction.getLoadingState(loadingStates, game.opponent.user_id) === LoadingState.LOADING;
+        return (
+            addFriendAction.getLoadingState(loadingStates, game.opponent.user_id) ===
+            LoadingState.LOADING
+        );
     },
 );
 
-export const selectedGameRemoveFriendLoadingSelector = createSelector(selectedGameSelector, loadingSelector,
+export const selectedGameRemoveFriendLoadingSelector = createSelector(
+    selectedGameSelector,
+    loadingSelector,
     (game, loadingStates): boolean => {
         if (!game) {
             return false;
         }
-        return removeFriendAction.getLoadingState(loadingStates, game.opponent.user_id) === LoadingState.LOADING;
+        return (
+            removeFriendAction.getLoadingState(loadingStates, game.opponent.user_id) ===
+            LoadingState.LOADING
+        );
     },
 );
 
-export const selectedGameCreateLoadingSelector = createSelector(selectedGameSelector, loadingSelector,
+export const selectedGameCreateLoadingSelector = createSelector(
+    selectedGameSelector,
+    loadingSelector,
     (game, loadingStates): boolean => {
         if (!game) {
             return false;
         }
-        return createGameAction.getLoadingState(loadingStates, game.opponent.user_id) === LoadingState.LOADING;
+        return (
+            createGameAction.getLoadingState(loadingStates, game.opponent.user_id) ===
+            LoadingState.LOADING
+        );
     },
 );
 
-export const selectedGameGiveUpLoadingSelector = createSelector(selectedGameSelector, loadingSelector,
+export const selectedGameGiveUpLoadingSelector = createSelector(
+    selectedGameSelector,
+    loadingSelector,
     (game, loadingStates): boolean => {
         if (!game) {
             return false;
         }
-        return declineGameAction.getLoadingState(loadingStates, game.game_id) === LoadingState.LOADING
-            || giveUpGameAction.getLoadingState(loadingStates, game.game_id) === LoadingState.LOADING;
+        return (
+            declineGameAction.getLoadingState(loadingStates, game.game_id) ===
+                LoadingState.LOADING ||
+            giveUpGameAction.getLoadingState(loadingStates, game.game_id) === LoadingState.LOADING
+        );
     },
 );
 
@@ -119,7 +166,9 @@ export const showAnswerSelector = createSelector(uiSelector, ui => ui.showAnswer
 
 export const gameIdToGameStateSelector = createSelector(uiSelector, ui => ui.gameState);
 
-export const selectedGameStateSelector = createSelector(gameIdToGameStateSelector, selectedGameIdSelector,
+export const selectedGameStateSelector = createSelector(
+    gameIdToGameStateSelector,
+    selectedGameIdSelector,
     (map, gameId): IGameState => {
         return getGameStateOrDefault(map, gameId);
     },
@@ -135,20 +184,30 @@ export const selectedGameShouldUpload = createSelector(
         }
 
         const questionsCount = questions == null ? QUESTIONS_PER_ROUND * 6 : questions.length;
-        const pendingAnswersLength = gameState.pendingAnswers.length + (gameState.pendingSelectedAnswer === null ? 0 : 1);
+        const pendingAnswersLength =
+            gameState.pendingAnswers.length + (gameState.pendingSelectedAnswer === null ? 0 : 1);
 
-        return game.opponent_answers.length + QUESTIONS_PER_ROUND <= game.your_answers.length + pendingAnswersLength ||
-            game.your_answers.length + pendingAnswersLength >= questionsCount / CATEGORIES_PER_ROUND;
+        return (
+            game.opponent_answers.length + QUESTIONS_PER_ROUND <=
+                game.your_answers.length + pendingAnswersLength ||
+            game.your_answers.length + pendingAnswersLength >= questionsCount / CATEGORIES_PER_ROUND
+        );
     },
 );
 
-export const selectedGameExistsRunningGameWithPlayer = createSelector(selectedGameSelector, gamesSelector,
+export const selectedGameExistsRunningGameWithPlayer = createSelector(
+    selectedGameSelector,
+    gamesSelector,
     (game, games) => {
-        if (game !== null && games.findIndex(g =>
-            g.opponent.user_id === game.opponent.user_id
-            && g.state !== GameState.FINISHED
-            && g.state !== GameState.ELAPSED
-            && g.state !== GameState.GAVE_UP) >= 0
+        if (
+            game !== null &&
+            games.findIndex(
+                g =>
+                    g.opponent.user_id === game.opponent.user_id &&
+                    g.state !== GameState.FINISHED &&
+                    g.state !== GameState.ELAPSED &&
+                    g.state !== GameState.GAVE_UP,
+            ) >= 0
         ) {
             return true;
         }
@@ -167,17 +226,20 @@ export const selectedGameYourAnswersIncludingPendingSelector = createSelector(
     },
 );
 
-export const roundIndexSelector = createSelector(selectedGameYourAnswersIncludingPendingSelector,
+export const roundIndexSelector = createSelector(
+    selectedGameYourAnswersIncludingPendingSelector,
     yourAnswers => {
         return Math.trunc(yourAnswers.length / QUESTIONS_PER_ROUND);
     },
 );
 
-const questionRoundOffsetSelector = createSelector(roundIndexSelector,
-    roundIndex => roundIndex == null ? null : roundIndex * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND,
+const questionRoundOffsetSelector = createSelector(roundIndexSelector, roundIndex =>
+    roundIndex == null ? null : roundIndex * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND,
 );
 
-export const selectedGameCategoryIndicesSelector = createSelector(selectedGameSelector, selectedGameStateSelector,
+export const selectedGameCategoryIndicesSelector = createSelector(
+    selectedGameSelector,
+    selectedGameStateSelector,
     (game, gameState) => {
         if (game == null) {
             return null;
@@ -189,7 +251,9 @@ export const selectedGameCategoryIndicesSelector = createSelector(selectedGameSe
     },
 );
 
-export const selectedGameCategoryIndex = createSelector(selectedGameCategoryIndicesSelector, roundIndexSelector,
+export const selectedGameCategoryIndex = createSelector(
+    selectedGameCategoryIndicesSelector,
+    roundIndexSelector,
     (catChoices, roundIndex) => {
         if (catChoices == null || roundIndex == null) {
             return null;
@@ -207,13 +271,15 @@ export const selectedGameCategoriesForSelectionSelector = createSelector(
         if (questions == null || questionRoundOffset == null) {
             return null;
         }
-        return [
-            questions[questionRoundOffset + 0],
-            questions[questionRoundOffset + 3],
-            questions[questionRoundOffset + 6],
-        ]
-            // the categories do definitely exist here
-            .map(q => categories.get(q.cat_id)!);
+        return (
+            [
+                questions[questionRoundOffset + 0],
+                questions[questionRoundOffset + 3],
+                questions[questionRoundOffset + 6],
+            ]
+                // the categories do definitely exist here
+                .map(q => categories.get(q.cat_id)!)
+        );
     },
 );
 
@@ -233,8 +299,11 @@ export const selectedGameQuestionIndexSelector = createSelector(
         if (questionRoundOffset == null || categoryIndex == null) {
             return null;
         }
-        return questionRoundOffset + categoryIndex * QUESTIONS_PER_ROUND +
-            (gameState.pendingAnswers.length % QUESTIONS_PER_ROUND);
+        return (
+            questionRoundOffset +
+            categoryIndex * QUESTIONS_PER_ROUND +
+            (gameState.pendingAnswers.length % QUESTIONS_PER_ROUND)
+        );
     },
 );
 
@@ -263,12 +332,18 @@ export const selectedGameCategory = createSelector(
 
 function getAnswerType(answer: number): AnswerType {
     switch (answer) {
-        case 0: return AnswerType.CORRECT;
-        case 1: return AnswerType.WRONG1;
-        case 2: return AnswerType.WRONG2;
-        case 3: return AnswerType.WRONG3;
-        case 9: return AnswerType.TIME_ELAPSED;
-        default: return AnswerType.INVALID;
+        case 0:
+            return AnswerType.CORRECT;
+        case 1:
+            return AnswerType.WRONG1;
+        case 2:
+            return AnswerType.WRONG2;
+        case 3:
+            return AnswerType.WRONG3;
+        case 9:
+            return AnswerType.TIME_ELAPSED;
+        default:
+            return AnswerType.INVALID;
     }
 }
 
@@ -287,14 +362,23 @@ export const selectedGameRoundStateSelector = createSelector(
             ? Math.max(catChoices.length, 6)
             : Math.ceil(questions.length / QUESTIONS_PER_ROUND / CATEGORIES_PER_ROUND);
         for (let i = 0; i < roundCount; i++) {
-            const catId = !questions || catChoices.length <= i ? null :
-                questions[i * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND + catChoices[i] * CATEGORIES_PER_ROUND].cat_id;
-            const yourAnswers = allYourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND)
+            const catId =
+                !questions || catChoices.length <= i
+                    ? null
+                    : questions[
+                          i * QUESTIONS_PER_ROUND * CATEGORIES_PER_ROUND +
+                              catChoices[i] * CATEGORIES_PER_ROUND
+                      ].cat_id;
+            const yourAnswers = allYourAnswers
+                .slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND)
                 .map(getAnswerType);
             result.push({
                 category: catId == null ? null : categories.get(catId) || null,
-                opponentAnswers: game.opponent_answers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND)
-                    .map((answer, index) => index >= yourAnswers.length ? AnswerType.HIDDEN : getAnswerType(answer)),
+                opponentAnswers: game.opponent_answers
+                    .slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND)
+                    .map((answer, index) =>
+                        index >= yourAnswers.length ? AnswerType.HIDDEN : getAnswerType(answer),
+                    ),
                 yourAnswers,
             });
         }
@@ -311,18 +395,24 @@ export const selectedGameMessagesSelector = createSelector(
         }
         const opponentId = game.opponent.user_id;
         return messages.filter(m => m.from === opponentId || m.to === opponentId);
-    }
+    },
 );
 
-export const sendMessageLoadingSelector = createSelector(loadingSelector, selectedGameIdSelector,
-    (loadingStates, gameId) => gameId == null
-        ? false
-        : sendGameMessageAction.getLoadingState(loadingStates, gameId.toString()) === LoadingState.LOADING,
+export const sendMessageLoadingSelector = createSelector(
+    loadingSelector,
+    selectedGameIdSelector,
+    (loadingStates, gameId) =>
+        gameId == null
+            ? false
+            : sendGameMessageAction.getLoadingState(loadingStates, gameId.toString()) ===
+              LoadingState.LOADING,
 );
 
 export const selectedQuizIdSelector = createSelector(uiSelector, ui => ui.selectedQuizId);
 
-export const selectedQuizSelector = createSelector(selectedQuizIdSelector, quizzesSelector,
+export const selectedQuizSelector = createSelector(
+    selectedQuizIdSelector,
+    quizzesSelector,
     (quizId, quizzes) => quizzes.find(q => q.quiz_id === quizId) || null,
 );
 
@@ -354,7 +444,9 @@ export const selectedQuizQuestionsSelector = createSelector(
 
 export const quizIdToQuizStateSelector = createSelector(uiSelector, ui => ui.quizState);
 
-export const selectedQuizStateSelector = createSelector(quizIdToQuizStateSelector, selectedQuizIdSelector,
+export const selectedQuizStateSelector = createSelector(
+    quizIdToQuizStateSelector,
+    selectedQuizIdSelector,
     (map, quizId): IQuizState => {
         return getQuizStateOrDefault(map, quizId);
     },
@@ -379,8 +471,8 @@ export const quizRoundIndexSelector = createSelector(
     },
 );
 
-const quizQuestionRoundOffsetSelector = createSelector(quizRoundIndexSelector,
-    roundIndex => roundIndex == null ? null : roundIndex * QUESTIONS_PER_ROUND,
+const quizQuestionRoundOffsetSelector = createSelector(quizRoundIndexSelector, roundIndex =>
+    roundIndex == null ? null : roundIndex * QUESTIONS_PER_ROUND,
 );
 
 export const selectedQuizQuestionIndexSelector = createSelector(
@@ -391,8 +483,10 @@ export const selectedQuizQuestionIndexSelector = createSelector(
         if (questionRoundOffset == null) {
             return null;
         }
-        return questionRoundOffset +
-            ((quizState.pendingAnswers.length - (showAnswer ? 1 : 0)) % QUESTIONS_PER_ROUND);
+        return (
+            questionRoundOffset +
+            ((quizState.pendingAnswers.length - (showAnswer ? 1 : 0)) % QUESTIONS_PER_ROUND)
+        );
     },
 );
 
@@ -418,7 +512,9 @@ export const selectedQuizRoundStateSelector = createSelector(
         }
         const result = [];
         const roundCount = questions.length / QUESTIONS_PER_ROUND;
-        const yourAnswers = [...quiz.your_answers.answers, ...quizState.pendingAnswers].map(a => getAnswerType(a.answer));
+        const yourAnswers = [...quiz.your_answers.answers, ...quizState.pendingAnswers].map(a =>
+            getAnswerType(a.answer),
+        );
         const opponentAnswers = questions.map((q, index) => {
             return index >= yourAnswers.length
                 ? AnswerType.HIDDEN
@@ -427,8 +523,14 @@ export const selectedQuizRoundStateSelector = createSelector(
         for (let i = 0; i < roundCount; i++) {
             result.push({
                 category: null,
-                opponentAnswers: opponentAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
-                yourAnswers: yourAnswers.slice(i * QUESTIONS_PER_ROUND, i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND),
+                opponentAnswers: opponentAnswers.slice(
+                    i * QUESTIONS_PER_ROUND,
+                    i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND,
+                ),
+                yourAnswers: yourAnswers.slice(
+                    i * QUESTIONS_PER_ROUND,
+                    i * QUESTIONS_PER_ROUND + QUESTIONS_PER_ROUND,
+                ),
             });
         }
         return result;
@@ -469,8 +571,12 @@ export const mainViewSelector = createSelector(
     },
 );
 
-export const uploadRoundLoadingSelector = createSelector(loadingSelector, selectedGameIdSelector,
-    (loadingStates, gameId) => gameId == null
-        ? false
-        : uploadRoundAction.getLoadingState(loadingStates, gameId.toString()) === LoadingState.LOADING,
+export const uploadRoundLoadingSelector = createSelector(
+    loadingSelector,
+    selectedGameIdSelector,
+    (loadingStates, gameId) =>
+        gameId == null
+            ? false
+            : uploadRoundAction.getLoadingState(loadingStates, gameId.toString()) ===
+              LoadingState.LOADING,
 );

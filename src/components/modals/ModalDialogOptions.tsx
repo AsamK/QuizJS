@@ -22,22 +22,26 @@ export const ModalDialogOptions = ({
     onOptionClick,
     options,
 }: IModalDialogOptionsProps): React.ReactElement<IModalDialogOptionsProps> => {
-    return <div className="qd-modal-dialog-options">
-        <div className="qd-modal-dialog-options_title">{title}</div>
-        {text == null ? null :
-            <div className="qd-modal-dialog-options_text">{text}</div>
-        }
-        <div className="qd-modal-dialog-options_options">
-            {options.map((o, i) => {
-                const option = typeof o === 'string' ? { text: o } : o;
-                return <Button
-                    key={i}
-                    className="qd-modal-dialog-options_option"
-                    highlighted={option.highlighted}
-                    dangerous={option.dangerous}
-                    onClick={() => onOptionClick(i)}
-                >{option.text}</Button>;
-            })}
+    return (
+        <div className="qd-modal-dialog-options">
+            <div className="qd-modal-dialog-options_title">{title}</div>
+            {text == null ? null : <div className="qd-modal-dialog-options_text">{text}</div>}
+            <div className="qd-modal-dialog-options_options">
+                {options.map((o, i) => {
+                    const option = typeof o === 'string' ? { text: o } : o;
+                    return (
+                        <Button
+                            key={i}
+                            className="qd-modal-dialog-options_option"
+                            highlighted={option.highlighted}
+                            dangerous={option.dangerous}
+                            onClick={() => onOptionClick(i)}
+                        >
+                            {option.text}
+                        </Button>
+                    );
+                })}
+            </div>
         </div>
-    </div>;
+    );
 };

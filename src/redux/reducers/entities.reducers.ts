@@ -5,7 +5,26 @@ import type { IApiQuestion } from '../../api/IApiQuestion';
 import type { IApiQuiz } from '../../api/IApiQuiz';
 import type { IApiQuizQuestion } from '../../api/IApiQuizQuestion';
 import type { IApiStats } from '../../api/IApiStats';
-import { addFriendAction, appDataAction, createGameAction, declineGameAction, findUserAction, giveUpGameAction, INITIAL_MESSAGES, loadGameAction, loadGamesAction, loadGameStatsAction, loadQuizAction, loadStatsAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
+import {
+    addFriendAction,
+    appDataAction,
+    createGameAction,
+    declineGameAction,
+    findUserAction,
+    giveUpGameAction,
+    INITIAL_MESSAGES,
+    loadGameAction,
+    loadGamesAction,
+    loadGameStatsAction,
+    loadQuizAction,
+    loadStatsAction,
+    loginAction,
+    removeFriendAction,
+    sendGameMessageAction,
+    updateUserAction,
+    uploadQuizRoundAction,
+    uploadRoundAction,
+} from '../actions/entities.actions';
 import type { LoadingState } from '../actions/requests.utils';
 import { getNextLoadingState } from '../actions/requests.utils';
 import type { AppAction } from '../interfaces/AppAction';
@@ -18,7 +37,10 @@ import type { IQuiz } from '../interfaces/IQuiz';
 import type { IUser } from '../interfaces/IUser';
 import { immutableModifyAtPosition, immutableReplaceAtPositionOrAppend } from '../utils';
 
-export function loadingStates(state: { [requestId: string]: LoadingState } = {}, action: AppAction): typeof state {
+export function loadingStates(
+    state: { [requestId: string]: LoadingState } = {},
+    action: AppAction,
+): typeof state {
     if ('requestActionType' in action && 'requestId' in action) {
         const item = state[action.requestId];
         const nextState = getNextLoadingState(item, action.requestActionType);
@@ -114,7 +136,10 @@ const mapApiGameToGame = (game: IApiGame): IGame => ({
     opponent_question_types: game.opponent_question_types,
     rating_bonus: game.rating_bonus,
     state: game.state,
-    timestamp: game.elapsed_min === 2880 ? null : (Math.floor(Date.now() / 60 / 1000) - game.elapsed_min) * 60 * 1000,
+    timestamp:
+        game.elapsed_min === 2880
+            ? null
+            : (Math.floor(Date.now() / 60 / 1000) - game.elapsed_min) * 60 * 1000,
     you_gave_up: game.you_gave_up,
     your_answers: game.your_answers,
     your_question_types: game.your_question_types,
@@ -125,8 +150,7 @@ export function games(state: IGame[] = [], action: AppAction): typeof state {
     switch (action.type) {
         case appDataAction.RESPONSE:
         case loginAction.RESPONSE: {
-            return action.response.user.games
-                .map(mapApiGameToGame);
+            return action.response.user.games.map(mapApiGameToGame);
         }
         case createGameAction.RESPONSE:
         case loadGameAction.RESPONSE:
@@ -141,8 +165,10 @@ export function games(state: IGame[] = [], action: AppAction): typeof state {
             action.response.games.forEach(game => {
                 const index = newState.findIndex(g => g.game_id === game.game_id);
                 newState = immutableModifyAtPosition(newState, index, oldGame => {
-                    if (oldGame.your_answers.length > game.your_answers.length ||
-                        oldGame.opponent_answers.length > game.opponent_answers.length) {
+                    if (
+                        oldGame.your_answers.length > game.your_answers.length ||
+                        oldGame.opponent_answers.length > game.opponent_answers.length
+                    ) {
                         return oldGame;
                     }
                     return mapApiGameToGame(game);
@@ -162,20 +188,25 @@ export function games(state: IGame[] = [], action: AppAction): typeof state {
     }
 }
 
-export function gameQuestions(state: Map<number, number[]> = new Map(), action: AppAction): typeof state {
+export function gameQuestions(
+    state: Map<number, number[]> = new Map(),
+    action: AppAction,
+): typeof state {
     switch (action.type) {
         case appDataAction.RESPONSE: {
             let result: typeof state | undefined;
-            action.response.user.games
-                .forEach(game => {
-                    if (game.questions.length === 0) {
-                        return;
-                    }
-                    if (!result) {
-                        result = new Map(state);
-                    }
-                    result.set(game.game_id, game.questions.map(q => q.q_id));
-                });
+            action.response.user.games.forEach(game => {
+                if (game.questions.length === 0) {
+                    return;
+                }
+                if (!result) {
+                    result = new Map(state);
+                }
+                result.set(
+                    game.game_id,
+                    game.questions.map(q => q.q_id),
+                );
+            });
             return result || state;
         }
         case createGameAction.RESPONSE:
@@ -186,21 +217,26 @@ export function gameQuestions(state: Map<number, number[]> = new Map(), action: 
                 return state;
             }
             const result = new Map(state);
-            result.set(game.game_id, game.questions.map(q => q.q_id));
+            result.set(
+                game.game_id,
+                game.questions.map(q => q.q_id),
+            );
             return result;
         }
         case loadGamesAction.RESPONSE: {
             let result: typeof state | undefined;
-            action.response.games
-                .forEach(game => {
-                    if (game.questions.length === 0) {
-                        return;
-                    }
-                    if (!result) {
-                        result = new Map(state);
-                    }
-                    result.set(game.game_id, game.questions.map(q => q.q_id));
-                });
+            action.response.games.forEach(game => {
+                if (game.questions.length === 0) {
+                    return;
+                }
+                if (!result) {
+                    result = new Map(state);
+                }
+                result.set(
+                    game.game_id,
+                    game.questions.map(q => q.q_id),
+                );
+            });
             return result || state;
         }
         default:
@@ -208,20 +244,28 @@ export function gameQuestions(state: Map<number, number[]> = new Map(), action: 
     }
 }
 
-export function gameImageQuestions(state: Map<number, Map<number, number>> = new Map(), action: AppAction): typeof state {
+export function gameImageQuestions(
+    state: Map<number, Map<number, number>> = new Map(),
+    action: AppAction,
+): typeof state {
     switch (action.type) {
         case appDataAction.RESPONSE: {
             let result: typeof state | undefined;
-            action.response.user.games
-                .forEach(game => {
-                    if (game.image_questions.length === 0) {
-                        return;
-                    }
-                    if (!result) {
-                        result = new Map(state);
-                    }
-                    result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map<number, number>()));
-                });
+            action.response.user.games.forEach(game => {
+                if (game.image_questions.length === 0) {
+                    return;
+                }
+                if (!result) {
+                    result = new Map(state);
+                }
+                result.set(
+                    game.game_id,
+                    game.image_questions.reduce(
+                        (map, q) => map.set(q.index, q.question.q_id),
+                        new Map<number, number>(),
+                    ),
+                );
+            });
             return result || state;
         }
         case createGameAction.RESPONSE:
@@ -232,21 +276,32 @@ export function gameImageQuestions(state: Map<number, Map<number, number>> = new
                 return state;
             }
             const result = new Map(state);
-            result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map<number, number>()));
+            result.set(
+                game.game_id,
+                game.image_questions.reduce(
+                    (map, q) => map.set(q.index, q.question.q_id),
+                    new Map<number, number>(),
+                ),
+            );
             return result;
         }
         case loadGamesAction.RESPONSE: {
             let result: typeof state | undefined;
-            action.response.games
-                .forEach(game => {
-                    if (game.image_questions.length === 0) {
-                        return;
-                    }
-                    if (!result) {
-                        result = new Map(state);
-                    }
-                    result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map<number, number>()));
-                });
+            action.response.games.forEach(game => {
+                if (game.image_questions.length === 0) {
+                    return;
+                }
+                if (!result) {
+                    result = new Map(state);
+                }
+                result.set(
+                    game.game_id,
+                    game.image_questions.reduce(
+                        (map, q) => map.set(q.index, q.question.q_id),
+                        new Map<number, number>(),
+                    ),
+                );
+            });
             return result || state;
         }
         default:
@@ -268,7 +323,10 @@ const mapApiQuestionToQuestion = (question: IApiQuestion): IQuestion => ({
     wrong3: question.wrong3,
 });
 
-export function questions(state: Map<number, IQuestion> = new Map(), action: AppAction): typeof state {
+export function questions(
+    state: Map<number, IQuestion> = new Map(),
+    action: AppAction,
+): typeof state {
     switch (action.type) {
         case appDataAction.RESPONSE: {
             let result: typeof state | undefined;
@@ -320,7 +378,10 @@ export function questions(state: Map<number, IQuestion> = new Map(), action: App
     }
 }
 
-export function categories(state: Map<number, ICategory> = new Map(), action: AppAction): typeof state {
+export function categories(
+    state: Map<number, ICategory> = new Map(),
+    action: AppAction,
+): typeof state {
     switch (action.type) {
         case appDataAction.RESPONSE: {
             let result: typeof state | undefined;
@@ -404,13 +465,16 @@ export function quizzes(state: IQuiz[] = [], action: AppAction): typeof state {
     switch (action.type) {
         case appDataAction.RESPONSE:
         case loginAction.RESPONSE: {
-            return action.response.user.quizzes
-                .map(mapApiQuizToQuiz);
+            return action.response.user.quizzes.map(mapApiQuizToQuiz);
         }
         case uploadQuizRoundAction.RESPONSE:
         case loadQuizAction.RESPONSE: {
             const newQuiz = mapApiQuizToQuiz(action.response.quiz);
-            return immutableReplaceAtPositionOrAppend(state, state.findIndex(q => q.quiz_id === newQuiz.quiz_id), newQuiz);
+            return immutableReplaceAtPositionOrAppend(
+                state,
+                state.findIndex(q => q.quiz_id === newQuiz.quiz_id),
+                newQuiz,
+            );
         }
         default:
             return state;
@@ -429,7 +493,10 @@ const mapApiQuizQuestionToQuestion = (question: IApiQuizQuestion): IQuestion => 
     wrong3: question.wrong3,
 });
 
-export function quizQuestions(state: Map<number, IQuestion> = new Map(), action: AppAction): typeof state {
+export function quizQuestions(
+    state: Map<number, IQuestion> = new Map(),
+    action: AppAction,
+): typeof state {
     switch (action.type) {
         case appDataAction.RESPONSE:
         case loginAction.RESPONSE: {

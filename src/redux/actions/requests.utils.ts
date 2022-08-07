@@ -40,24 +40,27 @@ export class ActionType<
     ERROR_ACTION_TYPE,
     RESPONSE_PAYLOAD,
     ERROR_PAYLOAD = string,
-    REQUEST_INFO extends { id: string | number } | undefined = undefined
-    > {
+    REQUEST_INFO extends { id: string | number } | undefined = undefined,
+> {
     public readonly ALL_ACTIONS_ONLY_TYPE!:
-        IRequestAction<REQUEST_ACTION_TYPE, REQUEST_INFO> |
-        IResponseAction<RESPONSE_ACTION_TYPE, REQUEST_INFO, RESPONSE_PAYLOAD> |
-        IErrorAction<ERROR_ACTION_TYPE, REQUEST_INFO, ERROR_PAYLOAD>;
+        | IRequestAction<REQUEST_ACTION_TYPE, REQUEST_INFO>
+        | IResponseAction<RESPONSE_ACTION_TYPE, REQUEST_INFO, RESPONSE_PAYLOAD>
+        | IErrorAction<ERROR_ACTION_TYPE, REQUEST_INFO, ERROR_PAYLOAD>;
 
     constructor(
         public readonly REQUEST: REQUEST_ACTION_TYPE,
         public readonly RESPONSE: RESPONSE_ACTION_TYPE,
         public readonly ERROR: ERROR_ACTION_TYPE,
-    ) {
-    }
+    ) {}
 
-    public createRequestAction(requestInfo: REQUEST_INFO): IRequestAction<REQUEST_ACTION_TYPE, REQUEST_INFO> {
+    public createRequestAction(
+        requestInfo: REQUEST_INFO,
+    ): IRequestAction<REQUEST_ACTION_TYPE, REQUEST_INFO> {
         return {
             requestActionType: RequestActionType.REQUEST,
-            requestId: this.REQUEST + (requestInfo && 'id' in requestInfo ? requestInfo.id.toString() : ''),
+            requestId:
+                this.REQUEST +
+                (requestInfo && 'id' in requestInfo ? requestInfo.id.toString() : ''),
             requestInfo,
             type: this.REQUEST,
         };
@@ -69,7 +72,9 @@ export class ActionType<
     ): IResponseAction<RESPONSE_ACTION_TYPE, REQUEST_INFO, RESPONSE_PAYLOAD> {
         return {
             requestActionType: RequestActionType.RESPONSE,
-            requestId: this.REQUEST + (requestInfo && 'id' in requestInfo ? requestInfo.id.toString() : ''),
+            requestId:
+                this.REQUEST +
+                (requestInfo && 'id' in requestInfo ? requestInfo.id.toString() : ''),
             requestInfo,
             response,
             type: this.RESPONSE,
@@ -83,19 +88,27 @@ export class ActionType<
         return {
             error,
             requestActionType: RequestActionType.ERROR,
-            requestId: this.REQUEST + (requestInfo && 'id' in requestInfo ? requestInfo.id.toString() : ''),
+            requestId:
+                this.REQUEST +
+                (requestInfo && 'id' in requestInfo ? requestInfo.id.toString() : ''),
             requestInfo,
             type: this.ERROR,
         };
     }
 
-    public getLoadingState(state: { [requestId: string]: LoadingState }, extraRequestId?: string | number): LoadingState {
+    public getLoadingState(
+        state: { [requestId: string]: LoadingState },
+        extraRequestId?: string | number,
+    ): LoadingState {
         const id = this.REQUEST + (extraRequestId ? extraRequestId.toString() : '');
         return state[id] || LoadingState.INITIAL;
     }
 }
 
-export function getNextLoadingState(state: LoadingState, requestActionType: RequestActionType): LoadingState {
+export function getNextLoadingState(
+    state: LoadingState,
+    requestActionType: RequestActionType,
+): LoadingState {
     switch (requestActionType) {
         case RequestActionType.RESPONSE:
             return LoadingState.SUCCESS;

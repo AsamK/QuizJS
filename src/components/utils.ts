@@ -33,6 +33,6 @@ export function useRefresh(effect: EffectCallback, deps?: DependencyList): void 
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
         return cleanUp;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, deps);
 }

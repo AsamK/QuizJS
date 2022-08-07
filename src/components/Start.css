@@ -19,7 +19,7 @@
     align-items: center;
     background-color: #2a3db8;
     border-radius: 5px;
-    box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, .2);
+    box-shadow: 2px 2px 5px 2px rgb(0 0 0 / 20%);
     color: #ddd;
     cursor: pointer;
     display: flex;
@@ -37,7 +37,7 @@
 }
 
 .qd-start_entry_info {
-    font-size: .8rem;
+    font-size: 0.8rem;
 }
 
 .qd-start_entry_opponent {
@@ -51,6 +51,6 @@
 
 .qd-start_entry_time {
     flex: none;
-    font-size: .8rem;
+    font-size: 0.8rem;
     min-width: 0;
 }

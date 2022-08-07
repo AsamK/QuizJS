@@ -5,7 +5,7 @@
 .qd-profile_friend {
     background-color: #324ae6;
     border-radius: 5px;
-    box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, .2);
+    box-shadow: 2px 2px 5px 2px rgb(0 0 0 / 20%);
     color: #ddd;
     margin-bottom: 5px;
     padding: 10px;
@@ -13,7 +13,7 @@
 
 .qd-profile_friend-email {
     color: gray;
-    font-size: .8em;
+    font-size: 0.8em;
     margin-left: 10px;
 }
 
@@ -22,6 +22,6 @@
     flex-direction: column;
 }
 
-.qd-profile_form>label {
+.qd-profile_form > label {
     margin-bottom: 10px;
 }

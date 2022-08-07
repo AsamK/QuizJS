@@ -1,8 +1,42 @@
-import { appDataAction, createGameAction, createUserAction, declineGameAction, loadGameAction, loadGamesAction, loadQuizAction, loginAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
-import { COOKIE_LOADED, FINISH_ROUND, FINISH_ROUND_QUIZ, INITIAL_GAME_STATE, INITIAL_QUIZ_STATE, NEXT_QUESTION, NEXT_QUESTION_QUIZ, SELECT_ANSWER, SELECT_ANSWER_QUIZ, SELECT_CATEGORY, SELECT_GAME, SELECT_QUIZ, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, START_PLAYING_QUIZ, STOP_PLAYING } from '../actions/ui.actions';
+import {
+    appDataAction,
+    createGameAction,
+    createUserAction,
+    declineGameAction,
+    loadGameAction,
+    loadGamesAction,
+    loadQuizAction,
+    loginAction,
+    uploadQuizRoundAction,
+    uploadRoundAction,
+} from '../actions/entities.actions';
+import {
+    COOKIE_LOADED,
+    FINISH_ROUND,
+    FINISH_ROUND_QUIZ,
+    INITIAL_GAME_STATE,
+    INITIAL_QUIZ_STATE,
+    NEXT_QUESTION,
+    NEXT_QUESTION_QUIZ,
+    SELECT_ANSWER,
+    SELECT_ANSWER_QUIZ,
+    SELECT_CATEGORY,
+    SELECT_GAME,
+    SELECT_QUIZ,
+    SHOW_CREATE_NEW_GAME,
+    SHOW_PROFILE,
+    START_PLAYING,
+    START_PLAYING_QUIZ,
+    STOP_PLAYING,
+} from '../actions/ui.actions';
 import type { AppAction } from '../interfaces/AppAction';
 import type { IGameState, IQuizState } from '../interfaces/IAppStore';
-import { getDefaultGameState, getDefaultQuizState, getGameStateOrDefault, getQuizStateOrDefault } from '../utils';
+import {
+    getDefaultGameState,
+    getDefaultQuizState,
+    getGameStateOrDefault,
+    getQuizStateOrDefault,
+} from '../utils';
 
 export function loggedIn(state = false, action: AppAction): typeof state {
     switch (action.type) {
@@ -89,7 +123,10 @@ export function showAnswer(state = false, action: AppAction): typeof state {
     }
 }
 
-export function gameState(state: Map<number, IGameState> = new Map(), action: AppAction): typeof state {
+export function gameState(
+    state: Map<number, IGameState> = new Map(),
+    action: AppAction,
+): typeof state {
     switch (action.type) {
         case INITIAL_GAME_STATE: {
             return new Map(action.gameStates);
@@ -128,7 +165,10 @@ export function gameState(state: Map<number, IGameState> = new Map(), action: Ap
                 answeredTimestamp: null,
                 firstShownTimestamp: action.timestamp,
                 pendingAnswers: [...prev.pendingAnswers, prev.pendingSelectedAnswer],
-                pendingQuestionTypes: [...prev.pendingQuestionTypes, prev.pendingSelectedQuestionType],
+                pendingQuestionTypes: [
+                    ...prev.pendingQuestionTypes,
+                    prev.pendingSelectedQuestionType,
+                ],
                 pendingSelectedAnswer: null,
                 pendingSelectedQuestionType: null,
             });
@@ -145,7 +185,10 @@ export function gameState(state: Map<number, IGameState> = new Map(), action: Ap
             newState.set(action.gameId, {
                 ...prev,
                 pendingAnswers: [...prev.pendingAnswers, prev.pendingSelectedAnswer],
-                pendingQuestionTypes: [...prev.pendingQuestionTypes, prev.pendingSelectedQuestionType],
+                pendingQuestionTypes: [
+                    ...prev.pendingQuestionTypes,
+                    prev.pendingSelectedQuestionType,
+                ],
                 pendingSelectedAnswer: null,
                 pendingSelectedQuestionType: null,
             });
@@ -208,7 +251,10 @@ export function gameState(state: Map<number, IGameState> = new Map(), action: Ap
     }
 }
 
-export function quizState(state: Map<string, IQuizState> = new Map(), action: AppAction): typeof state {
+export function quizState(
+    state: Map<string, IQuizState> = new Map(),
+    action: AppAction,
+): typeof state {
     switch (action.type) {
         case INITIAL_QUIZ_STATE: {
             return new Map(action.quizStates);
@@ -219,11 +265,17 @@ export function quizState(state: Map<string, IQuizState> = new Map(), action: Ap
             newState.set(action.quizId, {
                 ...prev,
                 answeredTimestamp: action.timestamp,
-                pendingAnswers: [...prev.pendingAnswers, {
-                    answer: action.answerIndex,
-                    time: prev.firstShownTimestamp == null ? 0 : (action.timestamp - prev.firstShownTimestamp) / 1000,
-                    timestamp: action.timestamp,
-                }],
+                pendingAnswers: [
+                    ...prev.pendingAnswers,
+                    {
+                        answer: action.answerIndex,
+                        time:
+                            prev.firstShownTimestamp == null
+                                ? 0
+                                : (action.timestamp - prev.firstShownTimestamp) / 1000,
+                        timestamp: action.timestamp,
+                    },
+                ],
             });
             return newState;
         }

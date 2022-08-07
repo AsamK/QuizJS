@@ -7,9 +7,11 @@ interface IAvatarProps {
 }
 
 function Avatar({ avatarCode }: IAvatarProps): React.ReactElement<IAvatarProps> {
-    return <span className="qd-avatar">
-        {avatarCode == null ? '🙂' : <span className="qd-avatar_code">{avatarCode}</span>}
-    </span>;
+    return (
+        <span className="qd-avatar">
+            {avatarCode == null ? '🙂' : <span className="qd-avatar_code">{avatarCode}</span>}
+        </span>
+    );
 }
 
 export default Avatar;

@@ -35,7 +35,11 @@ export function toFormUrlencoded(form: { [key: string]: string }): string {
         .join('&');
 }
 
-export function createProxiedRequestFn(proxyUrl: string, targetHost: string, cookie?: string): BackendRequestFn {
+export function createProxiedRequestFn(
+    proxyUrl: string,
+    targetHost: string,
+    cookie?: string,
+): BackendRequestFn {
     return async (method, path, { contentType, body, queryParams }): Promise<Response> => {
         if (queryParams) {
             path += '?' + toFormUrlencoded(queryParams);
@@ -67,7 +71,10 @@ export function createProxiedRequestFn(proxyUrl: string, targetHost: string, coo
     };
 }
 
-export function debounce<P>(fn: (...args: P[]) => void, milliSeconds: number): (...args: P[]) => void {
+export function debounce<P>(
+    fn: (...args: P[]) => void,
+    milliSeconds: number,
+): (...args: P[]) => void {
     let timer: number | null = null;
     return (...args: P[]): void => {
         if (timer != null) {
