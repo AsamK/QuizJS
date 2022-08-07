@@ -6,6 +6,7 @@ import { foundUserSelector, friendsSelector } from '../redux/selectors/entities.
 import { useThunkDispatch } from '../redux/store';
 import { createGame, createRandomGame, searchUser } from '../redux/thunks';
 import { debounce } from '../utils/utils';
+
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './NewGame.css';
@@ -21,6 +22,7 @@ function NewGame(): React.ReactElement {
     const onRandomGame = React.useCallback(() => dispatch(createRandomGame()), [dispatch]);
     const onSearchUser = React.useCallback((name: string) => dispatch(searchUser(name)), [dispatch]);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const onSearchUserDebounced = React.useCallback(debounce(
         (name: string) => onSearchUser(name)
         , 200), [onSearchUser]);

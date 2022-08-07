@@ -1,6 +1,6 @@
-import { IApiCoins } from './IApiCoins';
-import { IApiGame } from './IApiGame';
-import { IApiPopup } from './IApiPopup';
+import type { IApiCoins } from './IApiCoins';
+import type { IApiGame } from './IApiGame';
+import type { IApiPopup } from './IApiPopup';
 
 export interface IApiGameResponse {
     game: IApiGame;

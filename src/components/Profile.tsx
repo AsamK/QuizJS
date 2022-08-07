@@ -5,6 +5,7 @@ import { showProfile } from '../redux/actions/ui.actions';
 import { friendsSelector, userSelector } from '../redux/selectors/entities.selectors';
 import { useThunkDispatch } from '../redux/store';
 import { updateUser } from '../redux/thunks';
+
 import Avatar from './Avatar';
 import { Button } from './Button';
 import { FriendStatistics } from './FriendStatistics';

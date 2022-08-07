@@ -1,4 +1,4 @@
-import { IsoDate } from '../../api/types';
+import type { IsoDate } from '../../api/types';
 
 export interface IMessage {
     text: string;

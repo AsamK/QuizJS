@@ -1,4 +1,5 @@
-import React, { DependencyList, EffectCallback } from 'react';
+import type { DependencyList, EffectCallback } from 'react';
+import React from 'react';
 
 /**
  * The effect will be called when deps have changed (determined by useEffect hook)
@@ -32,5 +33,6 @@ export function useRefresh(effect: EffectCallback, deps?: DependencyList): void 
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
         return cleanUp;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, deps);
 }

@@ -1,11 +1,11 @@
-import { IApiCategory } from './IApiCategory';
-import { IsoDate } from './types';
+import type { IApiCategory } from './IApiCategory';
+import type { IsoDate } from './types';
 
 export interface IApiQuestion {
     extra_explanation: {
         images: null;
         text: null;
-        videos: null
+        videos: null;
     };
     cat_name: string;
     q_id: number;
@@ -16,10 +16,10 @@ export interface IApiQuestion {
     answer_time: number;
     stats: {
         correct_answer_ratio: number;
-        correct_answer_percent: number
-        wrong1_answer_percent: number
-        wrong2_answer_percent: number
-        wrong3_answer_percent: number
+        correct_answer_percent: number;
+        wrong1_answer_percent: number;
+        wrong2_answer_percent: number;
+        wrong3_answer_percent: number;
     };
     question: string;
     wrong1: string;

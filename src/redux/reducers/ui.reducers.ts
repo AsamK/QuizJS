@@ -1,7 +1,7 @@
 import { appDataAction, createGameAction, createUserAction, declineGameAction, loadGameAction, loadGamesAction, loadQuizAction, loginAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
 import { COOKIE_LOADED, FINISH_ROUND, FINISH_ROUND_QUIZ, INITIAL_GAME_STATE, INITIAL_QUIZ_STATE, NEXT_QUESTION, NEXT_QUESTION_QUIZ, SELECT_ANSWER, SELECT_ANSWER_QUIZ, SELECT_CATEGORY, SELECT_GAME, SELECT_QUIZ, SHOW_CREATE_NEW_GAME, SHOW_PROFILE, START_PLAYING, START_PLAYING_QUIZ, STOP_PLAYING } from '../actions/ui.actions';
-import { AppAction } from '../interfaces/AppAction';
-import { IGameState, IQuizState } from '../interfaces/IAppStore';
+import type { AppAction } from '../interfaces/AppAction';
+import type { IGameState, IQuizState } from '../interfaces/IAppStore';
 import { getDefaultGameState, getDefaultQuizState, getGameStateOrDefault, getQuizStateOrDefault } from '../utils';
 
 export function loggedIn(state = false, action: AppAction): typeof state {

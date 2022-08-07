@@ -1,7 +1,7 @@
-import { IApiCoins } from './IApiCoins';
-import { IApiDeviceToken } from './IApiDeviceToken';
-import { IApiGame } from './IApiGame';
-import { IApiQuiz } from './IApiQuiz';
+import type { IApiCoins } from './IApiCoins';
+import type { IApiDeviceToken } from './IApiDeviceToken';
+import type { IApiGame } from './IApiGame';
+import type { IApiQuiz } from './IApiQuiz';
 
 export interface IApiUser {
     avatar_code: string | null;

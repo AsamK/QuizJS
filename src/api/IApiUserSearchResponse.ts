@@ -1,4 +1,4 @@
-import { IApiOpponent } from './IApiOpponent';
+import type { IApiOpponent } from './IApiOpponent';
 
 export interface IApiUserSearchResponse {
     qdOpponent: IApiOpponent;

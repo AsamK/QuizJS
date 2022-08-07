@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { userStatsSelector } from '../redux/selectors/entities.selectors';
 import { useThunkDispatch } from '../redux/store';
 import { loadUserStats } from '../redux/thunks';
+
 import './UserStatistics.css';
 import { useRefresh } from './utils';
 
@@ -14,7 +15,7 @@ function computePercentage(value: number, total: number): string {
 }
 
 function formatPercentage(value: number): string {
-    return (Math.trunc(value * 10000) / 100) + '%';
+    return `${Math.trunc(value * 10000) / 100}%`;
 }
 
 export function UserStatistics(): React.ReactElement {

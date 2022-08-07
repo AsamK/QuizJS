@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux';
 
 import { GameState } from '../api/IApiGame';
 import { selectGame, selectQuiz, showCreateNewGame, showProfile } from '../redux/actions/ui.actions';
-import { IGame } from '../redux/interfaces/IGame';
-import { IQuiz } from '../redux/interfaces/IQuiz';
+import type { IGame } from '../redux/interfaces/IGame';
+import type { IQuiz } from '../redux/interfaces/IQuiz';
 import { gamesSelector, quizzesSelector, userSelector } from '../redux/selectors/entities.selectors';
 import { useThunkDispatch } from '../redux/store';
+
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './Start.css';

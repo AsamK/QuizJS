@@ -8,6 +8,8 @@ import App from './components/App';
 import './index.css';
 import { initialMessages } from './redux/actions/entities.actions';
 import { initialGameState, initialQuizState } from './redux/actions/ui.actions';
+import type { IGameState, IQuizState } from './redux/interfaces/IAppStore';
+import type { IMessage } from './redux/interfaces/IMessage';
 import { createAppStore } from './redux/store';
 
 if (process.env.NODE_ENV === 'production') {
@@ -20,7 +22,7 @@ if (process.env.NODE_ENV === 'production') {
           reg.addEventListener('updatefound', () => {
             console.info('[SW] Update found');
             const newSW = reg.installing;
-            newSW?.addEventListener('statechange', e => {
+            newSW?.addEventListener('statechange', () => {
               if (newSW?.state === 'installed') {
                 console.info('[SW] Reloading to update');
                 window.location.reload();
@@ -46,19 +48,19 @@ const store = createAppStore();
 
 const gameStateString = localStorage.getItem('gameState');
 if (gameStateString !== null) {
-  const gameStates = JSON.parse(gameStateString);
+  const gameStates = JSON.parse(gameStateString) as [[number, IGameState]];
   store.dispatch(initialGameState(gameStates));
 }
 
 const quizStateString = localStorage.getItem('quizState');
 if (quizStateString !== null) {
-  const quizStates = JSON.parse(quizStateString);
+  const quizStates = JSON.parse(quizStateString) as [[string, IQuizState]];
   store.dispatch(initialQuizState(quizStates));
 }
 
 const messagesString = localStorage.getItem('gameMessages');
 if (messagesString !== null) {
-  const messages = JSON.parse(messagesString);
+  const messages = JSON.parse(messagesString) as IMessage[];
   store.dispatch(initialMessages(messages));
 }
 

@@ -6,10 +6,10 @@ export interface IQuestion {
     answer_time: number;
     stats: {
         correct_answer_ratio: number;
-        correct_answer_percent: number
-        wrong1_answer_percent: number
-        wrong2_answer_percent: number
-        wrong3_answer_percent: number
+        correct_answer_percent: number;
+        wrong1_answer_percent: number;
+        wrong2_answer_percent: number;
+        wrong3_answer_percent: number;
     };
     question: string;
     wrong1: string;

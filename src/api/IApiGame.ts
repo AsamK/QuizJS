@@ -1,7 +1,7 @@
-import { IApiImageQuestion } from './IApiImageQuestion';
-import { IApiMessage } from './IApiMessage';
-import { IApiOpponent } from './IApiOpponent';
-import { IApiQuestion } from './IApiQuestion';
+import type { IApiImageQuestion } from './IApiImageQuestion';
+import type { IApiMessage } from './IApiMessage';
+import type { IApiOpponent } from './IApiOpponent';
+import type { IApiQuestion } from './IApiQuestion';
 
 export const enum GameState {
     REQUESTED = 0,

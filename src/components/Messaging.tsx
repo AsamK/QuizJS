@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { IMessage } from '../redux/interfaces/IMessage';
+import type { IMessage } from '../redux/interfaces/IMessage';
+
 import { Button } from './Button';
 import './Messaging.css';
 

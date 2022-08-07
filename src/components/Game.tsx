@@ -9,6 +9,7 @@ import { categoriesSelector, userSelector } from '../redux/selectors/entities.se
 import { isSelectedGameWithFriendSelector, selectedGameAddFriendLoadingSelector, selectedGameCategoryIndicesSelector, selectedGameCreateLoadingSelector, selectedGameExistsRunningGameWithPlayer, selectedGameGiveUpLoadingSelector, selectedGameIdSelector, selectedGameMessagesSelector, selectedGameQuestionsSelector, selectedGameRemoveFriendLoadingSelector, selectedGameRoundStateSelector, selectedGameSelector, selectedGameShouldUpload, sendMessageLoadingSelector, uploadRoundLoadingSelector } from '../redux/selectors/ui.selectors';
 import { useThunkDispatch } from '../redux/store';
 import { addFriend, createGame, declineGame, giveUpGame, loadGame, removeFriend, sendMessageForGame, uploadRoundForSelectedGame } from '../redux/thunks';
+
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './Game.css';
@@ -51,7 +52,7 @@ function Game(): React.ReactElement {
         if (currentGameId != null && !isUploading) {
             requestGame(currentGameId);
         }
-    }, [currentGameId]);
+    }, [currentGameId, isUploading, requestGame]);
 
     const [showQuestion, setShowQuestion] = React.useState<[number, number] | null>(null);
     const [showPlayAgain, setShowPlayAgain] = React.useState(true);
@@ -158,7 +159,7 @@ function Game(): React.ReactElement {
     </div >;
 }
 
-function ShowQuestion({ round, question: questionIndex }: { round: number, question: number }): React.ReactElement | null {
+function ShowQuestion({ round, question: questionIndex }: { round: number; question: number }): React.ReactElement | null {
     const game = useSelector(selectedGameSelector);
     const gameQuestions = useSelector(selectedGameQuestionsSelector);
     const gameRound = useSelector(selectedGameRoundStateSelector);
@@ -180,8 +181,6 @@ function ShowQuestion({ round, question: questionIndex }: { round: number, quest
         answers={[question.correct, question.wrong1, question.wrong2, question.wrong3]}
         category={categories.get(question.cat_id)!}
         firstShownTimestamp={0}
-        onAnswerClick={() => { }}
-        onContinueClick={() => { }}
         opponentName={game.opponent.name}
         timeLimit={0}
         imageUrl={question.image_url}

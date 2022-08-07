@@ -1,3 +1,3 @@
-import { IApiCategory } from '../../api/IApiCategory';
+import type { IApiCategory } from '../../api/IApiCategory';
 
 export type ICategory = IApiCategory;

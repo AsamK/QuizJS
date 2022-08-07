@@ -1,5 +1,5 @@
-import { GameState, QuestionType } from '../../api/IApiGame';
-import { IApiOpponent } from '../../api/IApiOpponent';
+import type { GameState, QuestionType } from '../../api/IApiGame';
+import type { IApiOpponent } from '../../api/IApiOpponent';
 
 export interface IGame {
     nounce: number;

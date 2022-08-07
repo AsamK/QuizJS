@@ -1,15 +1,17 @@
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDeclineGame, apiFindUser, apiGiveUpGame, apiLogin, apiRemoveFriend, apiRequestGames, apiRequestGameStats, apiRequestQuiz, apiRequestState, apiRequestStats, apiRequestUploadQuizRound, apiRequestUploadRound, apiSendMessage, apiUpdateUser, BackendRequestFn } from '../api/api';
+import type { BackendRequestFn } from '../api/api';
+import { apiAddFriend, apiCreateGame, apiCreateRandomGame, apiCreateUser, apiDeclineGame, apiFindUser, apiGiveUpGame, apiLogin, apiRemoveFriend, apiRequestGames, apiRequestGameStats, apiRequestQuiz, apiRequestState, apiRequestStats, apiRequestUploadQuizRound, apiRequestUploadRound, apiSendMessage, apiUpdateUser } from '../api/api';
 import { QuestionType } from '../api/IApiGame';
-import { IApiPopup } from '../api/IApiPopup';
+import type { IApiPopup } from '../api/IApiPopup';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND, STORAGE_KEY_COOKIE } from '../consts';
 import { createRequestFn, QD_SERVER } from '../settings';
+
 import { addFriendAction, appDataAction, createGameAction, createUserAction, declineGameAction, findUserAction, giveUpGameAction, loadGamesAction, loadGameStatsAction, loadQuizAction, loadStatsAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from './actions/entities.actions';
-import { ActionType } from './actions/requests.utils';
+import type { ActionType } from './actions/requests.utils';
 import { finishRound, finishRoundQuiz, nextQuestion, nextQuestionQuiz, selectAnswer, selectAnswerQuiz, selectCategory } from './actions/ui.actions';
-import { AppAction } from './interfaces/AppAction';
-import { IAppStore } from './interfaces/IAppStore';
+import type { AppAction } from './interfaces/AppAction';
+import type { IAppStore } from './interfaces/IAppStore';
 import { selectedGameIdSelector, selectedGameQuestionSelector, selectedGameQuestionsSelector, selectedGameSelector, selectedGameStateSelector, selectedQuizIdSelector, selectedQuizQuestionsSelector, selectedQuizSelector, selectedQuizStateSelector, showAnswerSelector } from './selectors/ui.selectors';
 import { extraThunkArgument } from './store';
 
@@ -53,7 +55,7 @@ function requestHandleHelper<T extends object, R>(
     };
 }
 
-function handleRequest<T extends object, REQUEST, RESPONSE, ERROR, T5, REQUEST_INFO extends { id: string | number } | undefined>(
+function handleRequest<T extends object, REQUEST extends string, RESPONSE, ERROR, T5, REQUEST_INFO extends { id: string | number } | undefined>(
     dispatch: AppThunkDispatch,
     sendRequest: () => Promise<T>,
     action: ActionType<REQUEST, RESPONSE, ERROR, Exclude<T, IApiPopup>, T5, REQUEST_INFO>,
@@ -65,7 +67,7 @@ function handleRequest<T extends object, REQUEST, RESPONSE, ERROR, T5, REQUEST_I
             dispatch(action.createResponseAction(res, requestInfo) as unknown as AppAction);
             return res;
         }))
-        .catch(async (e: Response) => {
+        .catch((e: Response) => {
             dispatch(action.createErrorAction('Request failed', requestInfo) as unknown as AppAction);
             throw e;
         });
@@ -264,7 +266,7 @@ export function uploadRoundForSelectedGame(): AppThunkAction {
 }
 
 export function selectCategoryForSelectedGame(categoryId: number): AppThunkAction {
-    return (dispatch, getState, { requestFn }) => {
+    return (dispatch, getState) => {
         const gameId = selectedGameIdSelector(getState());
         if (gameId == null) {
             return;
@@ -274,7 +276,7 @@ export function selectCategoryForSelectedGame(categoryId: number): AppThunkActio
 }
 
 export function selectAnswerForSelectedGame(answerIndex: number): AppThunkAction {
-    return (dispatch, getState, { requestFn }) => {
+    return (dispatch, getState) => {
         const state = getState();
         const gameId = selectedGameIdSelector(state);
         const gameState = selectedGameStateSelector(state);
@@ -289,7 +291,7 @@ export function selectAnswerForSelectedGame(answerIndex: number): AppThunkAction
 }
 
 export function nextQuestionSelectedGame(): AppThunkAction {
-    return (dispatch, getState, { requestFn }) => {
+    return (dispatch, getState) => {
         const state = getState();
         const gameId = selectedGameIdSelector(state);
         const game = selectedGameSelector(state);
@@ -337,7 +339,7 @@ export function uploadRoundForSelectedQuiz(): AppThunkAction {
 }
 
 export function nextQuestionSelectedQuiz(): AppThunkAction {
-    return (dispatch, getState, { requestFn }) => {
+    return (dispatch, getState) => {
         const state = getState();
         const quizId = selectedQuizIdSelector(state);
         const quiz = selectedQuizSelector(state);
@@ -359,7 +361,7 @@ export function nextQuestionSelectedQuiz(): AppThunkAction {
     };
 }
 export function selectAnswerForSelectedQuiz(answerIndex: number): AppThunkAction {
-    return (dispatch, getState, { requestFn }) => {
+    return (dispatch, getState) => {
         const state = getState();
         const quizId = selectedQuizIdSelector(state);
         if (showAnswerSelector(state) || quizId == null) {

@@ -1,10 +1,13 @@
 import { connect } from 'react-redux';
 
-import { IAppStore } from '../redux/interfaces/IAppStore';
+import type { IAppStore } from '../redux/interfaces/IAppStore';
 import { selectedQuizQuestionSelector, selectedQuizStateSelector, showAnswerSelector } from '../redux/selectors/ui.selectors';
-import { AppThunkDispatch, nextQuestionSelectedQuiz, selectAnswerForSelectedQuiz } from '../redux/thunks';
+import type { AppThunkDispatch} from '../redux/thunks';
+import { nextQuestionSelectedQuiz, selectAnswerForSelectedQuiz } from '../redux/thunks';
 import { getOpponentAnswerIndexByPercentage } from '../redux/utils';
-import { IInterrogationDispatchProps, IInterrogationStateProps, Interrogation } from './Interrogation';
+
+import type { IInterrogationDispatchProps, IInterrogationStateProps} from './Interrogation';
+import { Interrogation } from './Interrogation';
 
 const mapStateToProps = (state: IAppStore): IInterrogationStateProps => {
     const question = selectedQuizQuestionSelector(state);

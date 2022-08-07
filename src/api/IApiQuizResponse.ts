@@ -1,4 +1,4 @@
-import { IApiQuiz } from './IApiQuiz';
+import type { IApiQuiz } from './IApiQuiz';
 
 export interface IApiQuizResponse {
     quiz: IApiQuiz;

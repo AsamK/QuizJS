@@ -1,4 +1,4 @@
-import { IsoDate } from './types';
+import type { IsoDate } from './types';
 
 export interface IDateRange {
     upper: IsoDate;

@@ -5,7 +5,7 @@ import './Question.css';
 interface IQuestionProps {
     question: string;
     imageUrl?: string;
-    onClick: () => void;
+    onClick?: () => void;
 }
 
 const Question = ({ question, imageUrl, onClick }: IQuestionProps) => {

@@ -9,6 +9,7 @@ import { loggedInSelector, mainViewSelector } from '../redux/selectors/ui.select
 import { extraThunkArgument, useThunkDispatch } from '../redux/store';
 import { loadData, login } from '../redux/thunks';
 import { createRequestFn, QD_SERVER } from '../settings';
+
 import './App.css';
 import { Button } from './Button';
 import CategorySelection from './CategorySelection';
@@ -38,7 +39,7 @@ function App(): React.ReactElement {
             dispatch(cookieLoaded(cookie));
             extraThunkArgument.requestFn = createRequestFn(QD_SERVER.host, cookie);
         }
-    }, []);
+    }, [dispatch]);
 
     useRefresh(() => {
         if (loggedIn) {

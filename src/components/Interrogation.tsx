@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { IApiCategory } from '../api/IApiCategory';
+import type { IApiCategory } from '../api/IApiCategory';
 import { TIME_ELAPSED_ANSWER } from '../consts';
 import { getRandomOrder, shuffleArray } from '../utils/utils';
+
 import Answer, { AnswerState } from './Answer';
 import './Interrogation.css';
 import ProgressBar from './ProgressBar';
@@ -22,8 +23,8 @@ export interface IInterrogationStateProps {
     opponentName: string | null;
 }
 export interface IInterrogationDispatchProps {
-    onAnswerClick: (index: number) => void;
-    onContinueClick: () => void;
+    onAnswerClick?: (index: number) => void;
+    onContinueClick?: () => void;
 }
 
 interface IInterrogationProps extends IInterrogationStateProps, IInterrogationDispatchProps {
@@ -35,27 +36,27 @@ export function Interrogation({
 }: IInterrogationProps): React.ReactElement<IInterrogationProps> {
     const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
 
-    function updateElapsedSeconds(): boolean {
-        if (timeLimit == null) {
-            return false;
-        }
-        const nextElapsedSeconds = getElapsedSeconds();
-        if (nextElapsedSeconds >= timeLimit) {
-            onAnswerClick(TIME_ELAPSED_ANSWER);
-        }
-        if (nextElapsedSeconds < elapsedSeconds || nextElapsedSeconds - elapsedSeconds > 0.1) {
-            setElapsedSeconds(nextElapsedSeconds);
-        }
-        return true;
-    }
-
-    function getElapsedSeconds(): number {
+    const getElapsedSeconds = React.useCallback(function (): number {
         if (firstShownTimestamp == null) {
             return 0;
         }
         const endTimestamp = answeredTimestamp == null ? Date.now() : answeredTimestamp;
         return (endTimestamp - firstShownTimestamp) / 1000;
-    }
+    }, [answeredTimestamp, firstShownTimestamp]);
+
+    const updateElapsedSeconds = React.useCallback(function (): boolean {
+        if (timeLimit == null) {
+            return false;
+        }
+        const nextElapsedSeconds = getElapsedSeconds();
+        if (nextElapsedSeconds >= timeLimit) {
+            onAnswerClick?.(TIME_ELAPSED_ANSWER);
+        }
+        if (nextElapsedSeconds < elapsedSeconds || nextElapsedSeconds - elapsedSeconds > 0.1) {
+            setElapsedSeconds(nextElapsedSeconds);
+        }
+        return true;
+    }, [elapsedSeconds, getElapsedSeconds, onAnswerClick, timeLimit]);
 
     const timer = React.useRef<number | null>(null);
     React.useEffect(() => {
@@ -81,8 +82,9 @@ export function Interrogation({
         }
 
         return cleanUpTimer;
-    }, [firstShownTimestamp, answeredTimestamp, elapsedSeconds, timeLimit, onAnswerClick]);
+    }, [firstShownTimestamp, answeredTimestamp, elapsedSeconds, timeLimit, onAnswerClick, updateElapsedSeconds]);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const answerOrder = React.useMemo(() => getRandomOrder(4), [question]);
 
     const answerElements = answers
@@ -97,7 +99,7 @@ export function Interrogation({
             info={
                 opponentAnswerIndex !== i ? undefined : opponentName || undefined
             }
-            onClick={() => onAnswerClick(i)}
+            onClick={() => onAnswerClick?.(i)}
         />);
     const remainingSeconds = timeLimit == null || timeLimit <= 0
         ? 0

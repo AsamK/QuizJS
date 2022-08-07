@@ -1,5 +1,5 @@
-import { IGameState, IQuizState } from './interfaces/IAppStore';
-import { IQuestion } from './interfaces/IQuestion';
+import type { IGameState, IQuizState } from './interfaces/IAppStore';
+import type { IQuestion } from './interfaces/IQuestion';
 
 export function getGameStateOrDefault(state: Map<number, IGameState>, gameId?: number | null): IGameState {
     const s = gameId == null ? null : state.get(gameId);

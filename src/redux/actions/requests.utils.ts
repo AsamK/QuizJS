@@ -1,5 +1,3 @@
-import { assertUnreachable } from '../../utils/utils';
-
 interface IRequestAction<REQUEST_ACTION_TYPE, REQUEST_INFO> {
     type: REQUEST_ACTION_TYPE;
     requestActionType: RequestActionType.REQUEST;
@@ -37,7 +35,7 @@ export enum LoadingState {
 }
 
 export class ActionType<
-    REQUEST_ACTION_TYPE,
+    REQUEST_ACTION_TYPE extends string,
     RESPONSE_ACTION_TYPE,
     ERROR_ACTION_TYPE,
     RESPONSE_PAYLOAD,
@@ -105,8 +103,5 @@ export function getNextLoadingState(state: LoadingState, requestActionType: Requ
             return LoadingState.LOADING;
         case RequestActionType.ERROR:
             return LoadingState.ERROR;
-        default:
-            assertUnreachable(requestActionType);
-            return state;
     }
 }

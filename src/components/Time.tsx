@@ -11,7 +11,7 @@ export interface ITimeProps {
 
 export function Time(props: ITimeProps): React.ReactElement<ITimeProps> {
     const [timerInterval, setTimerInterval] = React.useState<number | null>(null);
-    const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+    const [, forceUpdate] = React.useReducer((x: number) => x + 1, 0);
 
     const timer = React.useRef<number | null>(null);
     useRefresh(() => {
@@ -45,16 +45,16 @@ export function Time(props: ITimeProps): React.ReactElement<ITimeProps> {
     const days = Math.trunc(hours / 24);
     let nextInterval;
     if (days > 0 && showDays) {
-        age = days + 'd';
+        age = `${days}d`;
         nextInterval = 1000 * 60 * 60;
     } else if (hours > 0) {
-        age = hours + 'h';
+        age = `${hours}h`;
         nextInterval = 1000 * 60 * 15;
     } else if (minutes > 0 || !showSeconds) {
-        age = minutes + 'min';
+        age = `${minutes}min`;
         nextInterval = (1000 * 15);
     } else {
-        age = seconds + 's';
+        age = `${seconds}s`;
         nextInterval = 1000;
     }
     if (nextInterval !== timerInterval) {

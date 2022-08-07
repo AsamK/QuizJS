@@ -1,16 +1,17 @@
-import { IApiBooleanResult } from '../../api/IApiBooleanResult';
-import { IApiGameResponse } from '../../api/IApiGameResponse';
-import { IApiGamesResponse } from '../../api/IApiGamesResponse';
-import { IApiGameStats } from '../../api/IApiGameStats';
-import { IApiPopup } from '../../api/IApiPopup';
-import { IApiQuizResponse } from '../../api/IApiQuizResponse';
-import { IApiSendMessageResponse } from '../../api/IApiSendMessageResponse';
-import { IApiStateResponse } from '../../api/IApiStateResponse';
-import { IApiStats } from '../../api/IApiStats';
-import { IApiUser } from '../../api/IApiUser';
-import { IApiUserSearchResponse } from '../../api/IApiUserSearchResponse';
-import { AppAction } from '../interfaces/AppAction';
-import { IMessage } from '../interfaces/IMessage';
+import type { IApiBooleanResult } from '../../api/IApiBooleanResult';
+import type { IApiGameResponse } from '../../api/IApiGameResponse';
+import type { IApiGamesResponse } from '../../api/IApiGamesResponse';
+import type { IApiGameStats } from '../../api/IApiGameStats';
+import type { IApiPopup } from '../../api/IApiPopup';
+import type { IApiQuizResponse } from '../../api/IApiQuizResponse';
+import type { IApiSendMessageResponse } from '../../api/IApiSendMessageResponse';
+import type { IApiStateResponse } from '../../api/IApiStateResponse';
+import type { IApiStats } from '../../api/IApiStats';
+import type { IApiUser } from '../../api/IApiUser';
+import type { IApiUserSearchResponse } from '../../api/IApiUserSearchResponse';
+import type { AppAction } from '../interfaces/AppAction';
+import type { IMessage } from '../interfaces/IMessage';
+
 import { ActionType } from './requests.utils';
 
 export const INITIAL_MESSAGES = 'INITIAL_MESSAGES';
@@ -51,7 +52,7 @@ export const giveUpGameAction = new ActionType
 
 export const sendGameMessageAction = new ActionType
     <'SEND_GAME_MESSAGE_REQUEST', 'SEND_GAME_MESSAGE_RESPONSE', 'SEND_GAME_MESSAGE_ERROR',
-        IApiSendMessageResponse, IApiPopup, { id: number, message: string }>
+        IApiSendMessageResponse, IApiPopup, { id: number; message: string }>
     ('SEND_GAME_MESSAGE_REQUEST', 'SEND_GAME_MESSAGE_RESPONSE', 'SEND_GAME_MESSAGE_ERROR');
 
 export const uploadRoundAction = new ActionType
@@ -79,7 +80,7 @@ export const findUserAction = new ActionType
     ('FIND_USER_REQUEST', 'FIND_USER_RESPONSE', 'FIND_USER_ERROR');
 
 export const addFriendAction = new ActionType
-    <'ADD_FRIEND_REQUEST', 'ADD_FRIEND_RESPONSE', 'ADD_FRIEND_ERROR', never, IApiPopup, { id: string, name: string }>
+    <'ADD_FRIEND_REQUEST', 'ADD_FRIEND_RESPONSE', 'ADD_FRIEND_ERROR', never, IApiPopup, { id: string; name: string }>
     ('ADD_FRIEND_REQUEST', 'ADD_FRIEND_RESPONSE', 'ADD_FRIEND_ERROR');
 
 export const removeFriendAction = new ActionType

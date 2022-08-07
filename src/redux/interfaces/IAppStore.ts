@@ -1,15 +1,16 @@
-import { QuestionType } from '../../api/IApiGame';
-import { IApiGameStats } from '../../api/IApiGameStats';
-import { IApiStats } from '../../api/IApiStats';
-import { LoadingState } from '../actions/requests.utils';
-import { ICategory } from './ICategory';
-import { IGame } from './IGame';
-import { IMessage } from './IMessage';
-import { IOpponent } from './IOpponent';
-import { IQuestion } from './IQuestion';
-import { IQuiz } from './IQuiz';
-import { IQuizAnswer } from './IQuizAnswer';
-import { IUser } from './IUser';
+import type { QuestionType } from '../../api/IApiGame';
+import type { IApiGameStats } from '../../api/IApiGameStats';
+import type { IApiStats } from '../../api/IApiStats';
+import type { LoadingState } from '../actions/requests.utils';
+
+import type { ICategory } from './ICategory';
+import type { IGame } from './IGame';
+import type { IMessage } from './IMessage';
+import type { IOpponent } from './IOpponent';
+import type { IQuestion } from './IQuestion';
+import type { IQuiz } from './IQuiz';
+import type { IQuizAnswer } from './IQuizAnswer';
+import type { IUser } from './IUser';
 
 export interface IAppStore {
     entities: IStoreEntities;

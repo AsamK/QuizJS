@@ -1,6 +1,6 @@
-import { QuestionType } from '../../api/IApiGame';
-import { AppAction } from '../interfaces/AppAction';
-import { IGameState, IQuizState } from '../interfaces/IAppStore';
+import type { QuestionType } from '../../api/IApiGame';
+import type { AppAction } from '../interfaces/AppAction';
+import type { IGameState, IQuizState } from '../interfaces/IAppStore';
 
 export const COOKIE_LOADED = 'COOKIE_LOADED';
 

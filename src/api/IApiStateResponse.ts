@@ -1,5 +1,5 @@
-import { IApiSettings } from './IApiSettings';
-import { IApiUser } from './IApiUser';
+import type { IApiSettings } from './IApiSettings';
+import type { IApiUser } from './IApiUser';
 
 export interface IApiStateResponse {
     fullscreen_promos: [];

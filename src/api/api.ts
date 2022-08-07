@@ -1,17 +1,20 @@
+// TODO improve json casts
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { toFormUrlencoded } from '../utils/utils';
-import { IApiBooleanResult } from './IApiBooleanResult';
-import { IApiGameResponse } from './IApiGameResponse';
-import { IApiGamesResponse } from './IApiGamesResponse';
-import { IApiGameStats } from './IApiGameStats';
-import { IApiOpponent } from './IApiOpponent';
-import { IApiPopup } from './IApiPopup';
-import { IApiQuizAnswer } from './IApiQuiz';
-import { IApiQuizResponse } from './IApiQuizResponse';
-import { IApiSendMessageResponse } from './IApiSendMessageResponse';
-import { IApiStateResponse } from './IApiStateResponse';
-import { IApiStats } from './IApiStats';
-import { IApiUser } from './IApiUser';
-import { IApiUserSearchResponse } from './IApiUserSearchResponse';
+
+import type { IApiBooleanResult } from './IApiBooleanResult';
+import type { IApiGameResponse } from './IApiGameResponse';
+import type { IApiGamesResponse } from './IApiGamesResponse';
+import type { IApiGameStats } from './IApiGameStats';
+import type { IApiOpponent } from './IApiOpponent';
+import type { IApiPopup } from './IApiPopup';
+import type { IApiQuizAnswer } from './IApiQuiz';
+import type { IApiQuizResponse } from './IApiQuizResponse';
+import type { IApiSendMessageResponse } from './IApiSendMessageResponse';
+import type { IApiStateResponse } from './IApiStateResponse';
+import type { IApiStats } from './IApiStats';
+import type { IApiUser } from './IApiUser';
+import type { IApiUserSearchResponse } from './IApiUserSearchResponse';
 import { MD5 } from './md5';
 
 const CONTENT_TYPE_URLENCODED = 'application/x-www-form-urlencoded;charset=UTF-8';
@@ -25,15 +28,15 @@ export interface IRequestOptions {
 export type BackendRequestFn = (method: 'GET' | 'POST', path: string, options: IRequestOptions) => Promise<Response>;
 
 export function apiLogin(requestFn: BackendRequestFn, userName: string, passwordSalt: string, password: string,
-): Promise<IApiPopup | { cookie: string, body: IApiStateResponse }> {
+): Promise<IApiPopup | { cookie: string | null; body: IApiStateResponse }> {
     const passwordHash = getPasswordHash(passwordSalt, password);
     const body = toFormUrlencoded({
         name: userName,
         pwd: passwordHash,
     });
     return requestFn('POST', 'users/login', { body, contentType: CONTENT_TYPE_URLENCODED }).then(response =>
-        response.json().then(responseBody => {
-            if (responseBody.logged_in) {
+        response.json().then((responseBody: IApiPopup | IApiStateResponse) => {
+            if ('logged_in' in responseBody) {
                 return {
                     body: responseBody,
                     cookie: response.headers.get('Set-Cookie') || response.headers.get('X-Set-Cookie'),
@@ -45,7 +48,7 @@ export function apiLogin(requestFn: BackendRequestFn, userName: string, password
 }
 
 export function apiCreateUser(requestFn: BackendRequestFn, userName: string, email: string, passwordSalt: string, password: string,
-): Promise<IApiPopup | { cookie: string, body: IApiStateResponse }> {
+): Promise<IApiPopup | { cookie: string | null; body: IApiStateResponse }> {
     const passwordHash = getPasswordHash(passwordSalt, password);
     const body = toFormUrlencoded({
         email,
@@ -53,8 +56,8 @@ export function apiCreateUser(requestFn: BackendRequestFn, userName: string, ema
         pwd: passwordHash,
     });
     return requestFn('POST', 'users/create', { body, contentType: CONTENT_TYPE_URLENCODED }).then(response =>
-        response.json().then(responseBody => {
-            if (responseBody.logged_in) {
+        response.json().then((responseBody: IApiPopup | IApiStateResponse) => {
+            if ('logged_in' in responseBody) {
                 return {
                     body: responseBody,
                     cookie: response.headers.get('Set-Cookie') || response.headers.get('X-Set-Cookie'),
@@ -250,19 +253,19 @@ export interface IApiDailyChallengeQuestion {
 
 export interface IApiDailyChallengeResponse {
     todaysChallenge: {
-        locale: string, // de-DE
-        challengeDate: string, // "2019-01-20",
+        locale: string; // de-DE
+        challengeDate: string; // "2019-01-20",
         questions: {
-            id: number,
-            name: string,
-            color: string,
-            questions: IApiDailyChallengeQuestion[],
-        }[],
+            id: number;
+            name: string;
+            color: string;
+            questions: IApiDailyChallengeQuestion[];
+        }[];
     };
     tomorrowsCategory: {
-        id: number,
-        name: string,
-        color: string,
+        id: number;
+        name: string;
+        color: string;
     };
 }
 

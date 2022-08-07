@@ -1,6 +1,6 @@
-import { IApiQuizQuestion } from './IApiQuizQuestion';
-import { IDateRange } from './IDateRange';
-import { Color, IsoDate } from './types';
+import type { IApiQuizQuestion } from './IApiQuizQuestion';
+import type { IDateRange } from './IDateRange';
+import type { Color, IsoDate } from './types';
 
 export interface IApiQuizAnswer {
     answer: number;
@@ -13,10 +13,10 @@ export interface IApiQuiz {
     name: string;
     color: Color;
     card_image: {
-        url_ldpi: string,
-        url_mdpi: string,
-        url_hdpi: string,
-        url_xhdpi: string,
+        url_ldpi: string;
+        url_mdpi: string;
+        url_hdpi: string;
+        url_xhdpi: string;
     };
     show_until: null;
     pub_daterange: IDateRange;
@@ -27,9 +27,9 @@ export interface IApiQuiz {
     questions: IApiQuizQuestion[];
     quiz_sponsor: null;
     your_answers: {
-        give_up: boolean,
-        answers: IApiQuizAnswer[],
-        finish_date: IsoDate,
+        give_up: boolean;
+        answers: IApiQuizAnswer[];
+        finish_date: IsoDate;
     };
     push_message: null;
     your_ranking: number;

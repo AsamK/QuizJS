@@ -1,20 +1,21 @@
-import { IApiGame } from '../../api/IApiGame';
-import { IApiGameStats } from '../../api/IApiGameStats';
-import { IApiMessage } from '../../api/IApiMessage';
-import { IApiQuestion } from '../../api/IApiQuestion';
-import { IApiQuiz } from '../../api/IApiQuiz';
-import { IApiQuizQuestion } from '../../api/IApiQuizQuestion';
-import { IApiStats } from '../../api/IApiStats';
+import type { IApiGame } from '../../api/IApiGame';
+import type { IApiGameStats } from '../../api/IApiGameStats';
+import type { IApiMessage } from '../../api/IApiMessage';
+import type { IApiQuestion } from '../../api/IApiQuestion';
+import type { IApiQuiz } from '../../api/IApiQuiz';
+import type { IApiQuizQuestion } from '../../api/IApiQuizQuestion';
+import type { IApiStats } from '../../api/IApiStats';
 import { addFriendAction, appDataAction, createGameAction, declineGameAction, findUserAction, giveUpGameAction, INITIAL_MESSAGES, loadGameAction, loadGamesAction, loadGameStatsAction, loadQuizAction, loadStatsAction, loginAction, removeFriendAction, sendGameMessageAction, updateUserAction, uploadQuizRoundAction, uploadRoundAction } from '../actions/entities.actions';
-import { getNextLoadingState, LoadingState } from '../actions/requests.utils';
-import { AppAction } from '../interfaces/AppAction';
-import { ICategory } from '../interfaces/ICategory';
-import { IGame } from '../interfaces/IGame';
-import { IMessage } from '../interfaces/IMessage';
-import { IOpponent } from '../interfaces/IOpponent';
-import { IQuestion } from '../interfaces/IQuestion';
-import { IQuiz } from '../interfaces/IQuiz';
-import { IUser } from '../interfaces/IUser';
+import type { LoadingState } from '../actions/requests.utils';
+import { getNextLoadingState } from '../actions/requests.utils';
+import type { AppAction } from '../interfaces/AppAction';
+import type { ICategory } from '../interfaces/ICategory';
+import type { IGame } from '../interfaces/IGame';
+import type { IMessage } from '../interfaces/IMessage';
+import type { IOpponent } from '../interfaces/IOpponent';
+import type { IQuestion } from '../interfaces/IQuestion';
+import type { IQuiz } from '../interfaces/IQuiz';
+import type { IUser } from '../interfaces/IUser';
 import { immutableModifyAtPosition, immutableReplaceAtPositionOrAppend } from '../utils';
 
 export function loadingStates(state: { [requestId: string]: LoadingState } = {}, action: AppAction): typeof state {
@@ -52,13 +53,14 @@ export function user(state: IUser | null = null, action: AppAction): typeof stat
 export function friends(state: IUser[] = [], action: AppAction): typeof state {
     switch (action.type) {
         case appDataAction.RESPONSE:
-        case loginAction.RESPONSE:
+        case loginAction.RESPONSE: {
             const userFriends = action.response.user.friends;
             if (!userFriends) {
                 return state;
             }
 
             return userFriends;
+        }
         case addFriendAction.RESPONSE: {
             if (state.find(f => f.user_id === action.requestInfo.id)) {
                 // Prevent dupliate entry
@@ -218,7 +220,7 @@ export function gameImageQuestions(state: Map<number, Map<number, number>> = new
                     if (!result) {
                         result = new Map(state);
                     }
-                    result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map()));
+                    result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map<number, number>()));
                 });
             return result || state;
         }
@@ -230,7 +232,7 @@ export function gameImageQuestions(state: Map<number, Map<number, number>> = new
                 return state;
             }
             const result = new Map(state);
-            result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map()));
+            result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map<number, number>()));
             return result;
         }
         case loadGamesAction.RESPONSE: {
@@ -243,7 +245,7 @@ export function gameImageQuestions(state: Map<number, Map<number, number>> = new
                     if (!result) {
                         result = new Map(state);
                     }
-                    result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map()));
+                    result.set(game.game_id, game.image_questions.reduce((map, q) => map.set(q.index, q.question.q_id), new Map<number, number>()));
                 });
             return result || state;
         }

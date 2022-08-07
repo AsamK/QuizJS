@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { friendStatsSelector } from '../redux/selectors/entities.selectors';
 import { useThunkDispatch } from '../redux/store';
 import { loadFriendStats } from '../redux/thunks';
+
 import Avatar from './Avatar';
 import './FriendStatistics.css';
 import { useRefresh } from './utils';

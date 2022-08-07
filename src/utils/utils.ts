@@ -1,4 +1,4 @@
-import { BackendRequestFn } from '../api/api';
+import type { BackendRequestFn } from '../api/api';
 
 export function shuffleArray<T>(array: T[], targetIndices: number[]): typeof array {
     const n = array.length;
@@ -18,7 +18,7 @@ export function shuffleArray<T>(array: T[], targetIndices: number[]): typeof arr
  * @param length Number of elements in result array
  */
 export function getRandomOrder(length: number): number[] {
-    const result = new Array(length);
+    const result = new Array<number>(length);
     for (let i = 0; i < length; i++) {
         let j;
         do {
@@ -65,10 +65,6 @@ export function createProxiedRequestFn(proxyUrl: string, targetHost: string, coo
 
         return response;
     };
-}
-
-export function assertUnreachable(v: never): void {
-    console.error('Reached unreachable code!');
 }
 
 export function debounce<P>(fn: (...args: P[]) => void, milliSeconds: number): (...args: P[]) => void {

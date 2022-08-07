@@ -1,9 +1,12 @@
 import { connect } from 'react-redux';
 
-import { IAppStore } from '../redux/interfaces/IAppStore';
+import type { IAppStore } from '../redux/interfaces/IAppStore';
 import { selectedGameCategory, selectedGameQuestionIndexForAnswersSelector, selectedGameQuestionSelector, selectedGameSelector, selectedGameStateSelector } from '../redux/selectors/ui.selectors';
-import { AppThunkDispatch, nextQuestionSelectedGame, selectAnswerForSelectedGame } from '../redux/thunks';
-import { IInterrogationDispatchProps, IInterrogationStateProps, Interrogation } from './Interrogation';
+import type { AppThunkDispatch} from '../redux/thunks';
+import { nextQuestionSelectedGame, selectAnswerForSelectedGame } from '../redux/thunks';
+
+import type { IInterrogationDispatchProps, IInterrogationStateProps} from './Interrogation';
+import { Interrogation } from './Interrogation';
 
 const mapStateToProps = (state: IAppStore): IInterrogationStateProps => {
     const game = selectedGameSelector(state);

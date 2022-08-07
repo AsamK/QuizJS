@@ -9,40 +9,40 @@ export interface IApiSettings {
     splash_freq: number;
     refresh_table_freq: number;
     lifelines_enabled: boolean;
-    lifelines: {};
+    lifelines: object;
     max_free_games: number;
     check_limbo_games: boolean;
     coin_bundles: {
         coins_bundle_4: {
-            color: string
-            text: string
+            color: string;
+            text: string;
             coins: number;
-            coins_str: string
+            coins_str: string;
         };
         coins_bundle_5: {
-            color: string
-            text: string
+            color: string;
+            text: string;
             coins: number;
-            coins_str: string
+            coins_str: string;
         };
         coins_bundle_2: {
-            color: string
-            text: string
+            color: string;
+            text: string;
             coins: number;
-            coins_str: string
+            coins_str: string;
         };
         coins_bundle_3: {
-            color: string
-            text: string
+            color: string;
+            text: string;
             coins: number;
-            coins_str: string
+            coins_str: string;
         };
         coins_bundle_1: {
-            color: string
-            text: string
+            color: string;
+            text: string;
             coins: number;
-            coins_str: string
-        }
+            coins_str: string;
+        };
     };
     fulmium: boolean;
     feo: boolean;

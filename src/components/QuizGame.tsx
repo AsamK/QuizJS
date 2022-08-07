@@ -7,6 +7,7 @@ import { AnswerType } from '../redux/interfaces/IGameRoundState';
 import { userSelector } from '../redux/selectors/entities.selectors';
 import { selectedQuizQuestionsSelector, selectedQuizRoundStateSelector, selectedQuizSelector } from '../redux/selectors/ui.selectors';
 import { useThunkDispatch } from '../redux/store';
+
 import Avatar from './Avatar';
 import { Button } from './Button';
 import GameRounds from './GameRounds';
@@ -60,7 +61,7 @@ function QuizGame(): React.ReactElement {
     </div >;
 }
 
-function ShowQuestion({ round, question: questionIndex }: { round: number, question: number }): React.ReactElement | null {
+function ShowQuestion({ round, question: questionIndex }: { round: number; question: number }): React.ReactElement | null {
     const quiz = useSelector(selectedQuizSelector);
     const quizQuestions = useSelector(selectedQuizQuestionsSelector);
     const quizRound = useSelector(selectedQuizRoundStateSelector);
@@ -79,8 +80,6 @@ function ShowQuestion({ round, question: questionIndex }: { round: number, quest
         answers={[question.correct, question.wrong1, question.wrong2, question.wrong3]}
         category={null}
         firstShownTimestamp={0}
-        onAnswerClick={() => { }}
-        onContinueClick={() => { }}
         opponentName="Quiz"
         timeLimit={0}
         imageUrl={question.image_url}

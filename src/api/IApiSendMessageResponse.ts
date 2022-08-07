@@ -1,4 +1,4 @@
-import { IApiMessage } from './IApiMessage';
+import type { IApiMessage } from './IApiMessage';
 
 export interface IApiSendMessageResponse {
     m: IApiMessage[];

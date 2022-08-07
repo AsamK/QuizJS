@@ -1,7 +1,8 @@
-import { Property } from 'csstype';
+import type { Property } from 'csstype';
 import React from 'react';
 
-import { AnswerType, IGameRoundState } from '../redux/interfaces/IGameRoundState';
+import type { IGameRoundState } from '../redux/interfaces/IGameRoundState';
+import { AnswerType } from '../redux/interfaces/IGameRoundState';
 import './GameRounds.css';
 
 export interface IGameRoundsStateProps {
@@ -9,7 +10,7 @@ export interface IGameRoundsStateProps {
     onQuestionClick: (round: number, question: number) => void;
 }
 
-const QuestionItem = ({ color, onClick }: { color: Property.BackgroundColor, onClick: () => void }) => {
+const QuestionItem = ({ color, onClick }: { color: Property.BackgroundColor; onClick: () => void }) => {
     return <div className="qd-game-round_question-block" style={{ backgroundColor: color }} onClick={onClick}>
     </div>;
 };

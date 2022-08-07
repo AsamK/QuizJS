@@ -1,4 +1,4 @@
-import { IApiCategory } from './IApiCategory';
+import type { IApiCategory } from './IApiCategory';
 
 interface IApiQuizQuestionImage {
     profilePic: boolean;
@@ -21,10 +21,10 @@ export interface IApiQuizQuestion {
     sort_order: number;
     stats: {
         correct_answer_ratio: number;
-        correct_answer_percent: number
-        wrong1_answer_percent: number
-        wrong2_answer_percent: number
-        wrong3_answer_percent: number
+        correct_answer_percent: number;
+        wrong1_answer_percent: number;
+        wrong2_answer_percent: number;
+        wrong3_answer_percent: number;
     };
     question: string;
     wrong1: string;

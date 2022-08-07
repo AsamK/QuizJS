@@ -4,14 +4,16 @@ import { GameState } from '../../api/IApiGame';
 import { CATEGORIES_PER_ROUND, QUESTIONS_PER_ROUND } from '../../consts';
 import { addFriendAction, createGameAction, declineGameAction, giveUpGameAction, removeFriendAction, sendGameMessageAction, uploadRoundAction } from '../actions/entities.actions';
 import { LoadingState } from '../actions/requests.utils';
-import { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
-import { ICategory } from '../interfaces/ICategory';
-import { AnswerType, IGameRoundState } from '../interfaces/IGameRoundState';
-import { IMessage } from '../interfaces/IMessage';
-import { IQuestion } from '../interfaces/IQuestion';
-import { IQuizAnswer } from '../interfaces/IQuizAnswer';
+import type { IAppStore, IGameState, IQuizState } from '../interfaces/IAppStore';
+import type { ICategory } from '../interfaces/ICategory';
+import type { IGameRoundState } from '../interfaces/IGameRoundState';
+import { AnswerType } from '../interfaces/IGameRoundState';
+import type { IMessage } from '../interfaces/IMessage';
+import type { IQuestion } from '../interfaces/IQuestion';
+import type { IQuizAnswer } from '../interfaces/IQuizAnswer';
 import { MainView } from '../MainView';
 import { getGameStateOrDefault, getOpponentAnswerIndexByPercentage, getQuizStateOrDefault } from '../utils';
+
 import { categoriesSelector, friendsSelector, gameImageQuestionsSelector, gameQuestionsSelector, gamesSelector, loadingSelector, messagesSelector, questionsSelector, quizQuestionsSelector, quizzesSelector } from './entities.selectors';
 
 const uiSelector = (state: IAppStore) => state.ui;
