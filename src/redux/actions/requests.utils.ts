@@ -60,7 +60,9 @@ export class ActionType<
             requestActionType: RequestActionType.REQUEST,
             requestId:
                 this.REQUEST +
-                (requestInfo && 'id' in requestInfo ? requestInfo.id.toString() : ''),
+                (typeof requestInfo === 'object' && 'id' in requestInfo
+                    ? requestInfo.id.toString()
+                    : ''),
             requestInfo,
             type: this.REQUEST,
         };
@@ -74,7 +76,9 @@ export class ActionType<
             requestActionType: RequestActionType.RESPONSE,
             requestId:
                 this.REQUEST +
-                (requestInfo && 'id' in requestInfo ? requestInfo.id.toString() : ''),
+                (typeof requestInfo === 'object' && 'id' in requestInfo
+                    ? requestInfo.id.toString()
+                    : ''),
             requestInfo,
             response,
             type: this.RESPONSE,
@@ -90,7 +94,9 @@ export class ActionType<
             requestActionType: RequestActionType.ERROR,
             requestId:
                 this.REQUEST +
-                (requestInfo && 'id' in requestInfo ? requestInfo.id.toString() : ''),
+                (typeof requestInfo === 'object' && 'id' in requestInfo
+                    ? requestInfo.id.toString()
+                    : ''),
             requestInfo,
             type: this.ERROR,
         };
