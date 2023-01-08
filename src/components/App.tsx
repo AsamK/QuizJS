@@ -22,7 +22,6 @@ import Profile from './Profile';
 import QuizGame from './QuizGame';
 import QuizInterrogation from './QuizInterrogation';
 import Start from './Start';
-import { useRefresh } from './utils';
 
 function App(): React.ReactElement {
     const isRefreshing = useSelector(refreshLoadingSelector);
@@ -40,12 +39,6 @@ function App(): React.ReactElement {
             extraThunkArgument.requestFn = createRequestFn(QD_SERVER.host, cookie);
         }
     }, [dispatch]);
-
-    useRefresh(() => {
-        if (loggedIn) {
-            dispatch(loadData());
-        }
-    }, [loggedIn]);
 
     let content;
 

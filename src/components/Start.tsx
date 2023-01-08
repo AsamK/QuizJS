@@ -16,11 +16,13 @@ import {
     userSelector,
 } from '../redux/selectors/entities.selectors';
 import { useThunkDispatch } from '../redux/store';
+import { loadData } from '../redux/thunks';
 
 import Avatar from './Avatar';
 import { Button } from './Button';
 import './Start.css';
 import { Time } from './Time';
+import { useRefresh } from './utils';
 
 interface IStartElementProps {
     game: IGame;
@@ -102,6 +104,10 @@ function StartQuizElement({
 }
 
 function Start(): React.ReactElement {
+    useRefresh(() => {
+        dispatch(loadData());
+    }, []);
+
     const games = useSelector(gamesSelector);
     const quizzes = useSelector(quizzesSelector);
     const user = useSelector(userSelector);
